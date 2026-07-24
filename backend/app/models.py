@@ -35,6 +35,21 @@ class ServiceItem(Base):
     orders: Mapped[list["CareOrder"]] = relationship(back_populates="service_item")
 
 
+class Employee(Base):
+    __tablename__ = "employees"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    name: Mapped[str] = mapped_column(String(50), nullable=False, index=True)
+    username: Mapped[str] = mapped_column(String(50), unique=True, index=True)
+    password_hash: Mapped[str] = mapped_column(String(255))
+    phone: Mapped[str] = mapped_column(String(30), nullable=False, unique=True)
+    service_area: Mapped[str | None] = mapped_column(String(120))
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True, index=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+
+    accepted_orders: Mapped[list["CareOrder"]] = relationship(back_populates="employee")
+
+
 class CareOrder(Base):
     __tablename__ = "care_orders"
 
@@ -51,7 +66,13 @@ class CareOrder(Base):
     distance_km: Mapped[float | None] = mapped_column(Numeric(8, 2))
     note: Mapped[str | None] = mapped_column(Text)
     status: Mapped[str] = mapped_column(String(30), default="pending", index=True)
+    employee_id: Mapped[int | None] = mapped_column(ForeignKey("employees.id"), index=True)
+    accepted_at: Mapped[datetime | None] = mapped_column(DateTime)
+    started_at: Mapped[datetime | None] = mapped_column(DateTime)
+    completed_at: Mapped[datetime | None] = mapped_column(DateTime)
+    stopped_at: Mapped[datetime | None] = mapped_column(DateTime)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
 
     hospital: Mapped[HospitalUnit] = relationship(back_populates="orders")
     service_item: Mapped[ServiceItem] = relationship(back_populates="orders")
+    employee: Mapped[Employee | None] = relationship(back_populates="accepted_orders")

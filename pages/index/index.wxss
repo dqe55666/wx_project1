@@ -48,7 +48,25 @@ page {
   padding: 0;
 }
 
+.top-actions {
+  display: flex;
+  flex: 0 0 auto;
+  gap: 12rpx;
+}
+
+.employee-btn {
+  background: #ffffff;
+  border: 1rpx solid #b9d7d1;
+  border-radius: 8rpx;
+  color: #0f766e;
+  font-size: 24rpx;
+  height: 68rpx;
+  line-height: 66rpx;
+  padding: 0 16rpx;
+}
+
 .location-btn::after,
+.employee-btn::after,
 .submit-btn::after {
   border: 0;
 }

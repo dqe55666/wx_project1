@@ -1,0 +1,51 @@
+<scroll-view class="scrollarea" scroll-y>
+  <view class="page">
+    <view class="heading">
+      <text class="title">员工接单</text>
+      <text class="subtitle">选择当前员工后，可查看和接取预约订单</text>
+    </view>
+
+    <view class="employee-panel">
+      <text class="label">当前员工</text>
+      <picker mode="selector" range="{{employees}}" range-key="name" value="{{selectedEmployeeIndex}}" bindchange="onEmployeeChange">
+        <view class="employee-picker">
+          <block wx:if="{{employees.length}}">
+            <view>
+              <text class="employee-name">{{employees[selectedEmployeeIndex].name}}</text>
+              <text class="employee-area">{{employees[selectedEmployeeIndex].service_area || '未设置服务区域'}}</text>
+            </view>
+            <text class="picker-arrow">切换</text>
+          </block>
+          <text wx:else class="muted">暂无可用员工</text>
+        </view>
+      </picker>
+    </view>
+
+    <view class="tabs">
+      <view class="tab {{activeTab === 'pending' ? 'active' : ''}}" data-tab="pending" bindtap="onTabChange">待接订单</view>
+      <view class="tab {{activeTab === 'accepted' ? 'active' : ''}}" data-tab="accepted" bindtap="onTabChange">我的订单</view>
+    </view>
+
+    <view wx:if="{{loading}}" class="empty">订单加载中</view>
+    <block wx:elif="{{orders.length}}">
+      <view wx:for="{{orders}}" wx:key="id" class="order-card">
+        <view class="order-top">
+          <text class="order-no">{{item.order_no}}</text>
+          <text class="order-status {{item.status}}">{{item.statusText}}</text>
+        </view>
+        <view class="service-name">{{item.service_name}}</view>
+        <view class="order-detail">患者：{{item.patient_name}} {{item.patient_phone}}</view>
+        <view class="order-detail">预约：{{item.appointmentDisplay}}</view>
+        <view class="order-detail">地点：{{item.hospital_name}}</view>
+        <view class="order-detail">地址：{{item.address_detail}}</view>
+        <view wx:if="{{item.note}}" class="note">备注：{{item.note}}</view>
+        <view class="order-footer">
+          <text class="distance">{{item.distanceDisplay}}</text>
+          <button wx:if="{{activeTab === 'pending'}}" class="accept-btn" loading="{{acceptingId === item.id}}" disabled="{{acceptingId !== null}}" data-id="{{item.id}}" bindtap="acceptOrder">接单</button>
+          <text wx:else class="accepted-by">已由我接单</text>
+        </view>
+      </view>
+    </block>
+    <view wx:else class="empty">{{activeTab === 'pending' ? '暂无待接订单' : '还没有已接订单'}}</view>
+  </view>
+</scroll-view>

@@ -14,6 +14,8 @@ class Settings(BaseSettings):
     cors_origins: str = "*"
     amap_key: str = ""
     amap_private_key: str = ""
+    staff_token_secret: str = "change-this-in-production"
+    staff_token_expire_seconds: int = 28800
 
     model_config = SettingsConfigDict(
         env_file=BACKEND_DIR / ".env",

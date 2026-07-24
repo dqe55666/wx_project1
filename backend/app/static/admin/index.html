@@ -47,7 +47,8 @@
         font-size: 13px;
         margin: 12px 0 6px;
       }
-      input {
+      input,
+      select {
         border: 1px solid #bcccdc;
         border-radius: 6px;
         font-size: 14px;
@@ -140,11 +141,33 @@
         display: flex;
         gap: 8px;
       }
+      .order-actions {
+        align-items: center;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+      .order-actions button {
+        height: 32px;
+        padding: 0 10px;
+      }
+      .order-select {
+        font-size: 13px;
+        height: 32px;
+        max-width: 112px;
+        padding: 0 6px;
+      }
       .status {
         color: #52616f;
         font-size: 13px;
         margin-top: 10px;
         min-height: 20px;
+      }
+      .account-hint {
+        color: #52616f;
+        font-size: 13px;
+        line-height: 1.5;
+        margin: -8px 0 14px;
       }
       .wide {
         grid-column: 1 / -1;
@@ -209,6 +232,23 @@
       </section>
 
       <section>
+        <h2>员工管理</h2>
+        <div class="account-hint">登录账号默认为员工姓名，初始密码为 123456。</div>
+        <form id="employeeForm">
+          <input id="employeeId" type="hidden" />
+          <label for="employeeName">员工姓名</label>
+          <input id="employeeName" required placeholder="例如：王护理" />
+          <label for="employeePhone">联系电话</label>
+          <input id="employeePhone" required placeholder="13800000000" />
+          <label for="employeeArea">服务区域</label>
+          <input id="employeeArea" placeholder="例如：黄浦区、徐汇区" />
+          <button class="primary" type="submit">添加员工</button>
+          <button class="secondary" id="employeeResetBtn" type="button">清空</button>
+          <div class="status" id="employeeStatus"></div>
+        </form>
+      </section>
+
+      <section>
         <h2>单位列表</h2>
         <table>
           <thead>
@@ -224,6 +264,23 @@
         </table>
       </section>
 
+      <section>
+        <h2>员工列表</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>姓名</th>
+              <th>登录账号</th>
+              <th>联系电话</th>
+              <th>服务区域</th>
+              <th>状态</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody id="employeeRows"></tbody>
+        </table>
+      </section>
+
       <section class="wide">
         <h2>最近订单</h2>
         <table>
@@ -235,21 +292,29 @@
               <th>服务</th>
               <th>预约时间</th>
               <th>距离</th>
+              <th>接单员工</th>
               <th>状态</th>
+              <th>操作</th>
             </tr>
           </thead>
           <tbody id="orderRows"></tbody>
         </table>
+        <div class="status" id="orderStatus"></div>
       </section>
     </main>
 
     <script>
       const form = document.querySelector("#hospitalForm");
+      const employeeForm = document.querySelector("#employeeForm");
       const statusEl = document.querySelector("#status");
+      const employeeStatusEl = document.querySelector("#employeeStatus");
       const searchStatusEl = document.querySelector("#searchStatus");
       const rowsEl = document.querySelector("#hospitalRows");
       const orderRowsEl = document.querySelector("#orderRows");
+      const orderStatusEl = document.querySelector("#orderStatus");
+      const employeeRowsEl = document.querySelector("#employeeRows");
       const poiRowsEl = document.querySelector("#poiRows");
+      let adminEmployees = [];
 
       function value(id) {
         return document.querySelector(`#${id}`).value.trim();
@@ -257,6 +322,14 @@
 
       function setStatus(text) {
         statusEl.textContent = text;
+      }
+
+      function setEmployeeStatus(text) {
+        employeeStatusEl.textContent = text;
+      }
+
+      function setOrderStatus(text) {
+        orderStatusEl.textContent = text;
       }
 
       function setSearchStatus(text) {
@@ -267,6 +340,11 @@
         form.reset();
         document.querySelector("#hospitalId").value = "";
         document.querySelector("#radius").value = "15";
+      }
+
+      function resetEmployeeForm() {
+        employeeForm.reset();
+        document.querySelector("#employeeId").value = "";
       }
 
       async function loadHospitals() {
@@ -314,10 +392,17 @@
       async function loadOrders() {
         const res = await fetch("/api/admin/orders");
         const orders = await res.json();
+        const activeEmployees = adminEmployees.filter((employee) => employee.is_active);
         orderRowsEl.innerHTML = orders.length
           ? orders
               .map(
-                (item) => `
+                (item) => {
+                  const canManage = !["completed", "stopped"].includes(item.status);
+                  const employeeOptions = activeEmployees
+                    .map((employee) => `<option value="${employee.id}" ${employee.id === item.employee_id ? "selected" : ""}>${employee.name}</option>`)
+                    .join("");
+                  const statusText = item.status === "in_progress" ? "工作中" : item.status === "completed" ? "已完成" : item.status === "stopped" ? "已停止" : item.status === "accepted" ? "已接单" : "待接单";
+                  return `
                   <tr>
                     <td>${item.order_no}</td>
                     <td>${item.patient_name}<br />${item.patient_phone}</td>
@@ -325,12 +410,98 @@
                     <td>${item.service_name}</td>
                     <td>${item.appointment_time.replace("T", " ")}</td>
                     <td>${item.distance_km === null ? "未定位" : `${item.distance_km} km`}</td>
-                    <td>${item.status}</td>
+                    <td>${item.employee_name || "待接单"}</td>
+                    <td>${statusText}</td>
+                    <td>${canManage ? `<div class="order-actions">${["pending", "accepted"].includes(item.status) ? `<select class="order-select" data-employee-select="${item.id}"><option value="">指定员工</option>${employeeOptions}</select><button class="secondary" type="button" data-order-assign="${item.id}">指定</button>` : ""}<button class="secondary" type="button" data-order-finish="${item.id}">结束</button><button class="danger" type="button" data-order-stop="${item.id}">停止</button></div>` : "-"}</td>
+                  </tr>
+                `;
+                }
+              )
+              .join("")
+          : `<tr><td colspan="9">暂无订单</td></tr>`;
+        orderRowsEl.querySelectorAll("[data-order-assign]").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const select = btn.parentElement.querySelector("select");
+            if (!select.value) {
+              setOrderStatus("请先选择员工");
+              return;
+            }
+            updateOrder(btn.dataset.orderAssign, "assign", { employee_id: Number(select.value) });
+          });
+        });
+        orderRowsEl.querySelectorAll("[data-order-finish]").forEach((btn) => {
+          btn.addEventListener("click", () => updateOrder(btn.dataset.orderFinish, "finish"));
+        });
+        orderRowsEl.querySelectorAll("[data-order-stop]").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            if (window.confirm("确定停止该订单吗？")) updateOrder(btn.dataset.orderStop, "stop");
+          });
+        });
+      }
+
+      async function updateOrder(orderId, action, payload) {
+        const res = await fetch(`/api/admin/orders/${orderId}/${action}`, {
+          method: "POST",
+          headers: payload ? { "Content-Type": "application/json" } : undefined,
+          body: payload ? JSON.stringify(payload) : undefined,
+        });
+        if (!res.ok) {
+          const error = await res.json().catch(() => ({}));
+          setOrderStatus(error.detail || "操作失败，请刷新后重试");
+          loadOrders();
+          return;
+        }
+        setOrderStatus(action === "assign" ? "已指定接单员工" : action === "finish" ? "订单已手动结束" : "订单已手动停止");
+        loadOrders();
+      }
+
+      async function loadEmployees() {
+        const res = await fetch("/api/admin/employees");
+        const employees = await res.json();
+        adminEmployees = employees;
+        employeeRowsEl.innerHTML = employees.length
+          ? employees
+              .map(
+                (item) => `
+                  <tr>
+                    <td>${item.name}</td>
+                    <td>${item.username}</td>
+                    <td>${item.phone}</td>
+                    <td>${item.service_area || "-"}</td>
+                    <td>${item.is_active ? "启用" : "停用"}</td>
+                    <td>
+                      <div class="actions">
+                        <button class="secondary" type="button" data-employee-edit="${item.id}">编辑</button>
+                        ${item.is_active ? `<button class="danger" type="button" data-employee-delete="${item.id}">停用</button>` : ""}
+                      </div>
+                    </td>
                   </tr>
                 `
               )
               .join("")
-          : `<tr><td colspan="7">暂无订单</td></tr>`;
+          : `<tr><td colspan="6">暂无员工</td></tr>`;
+        employeeRowsEl.querySelectorAll("[data-employee-edit]").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const item = employees.find((employee) => employee.id === Number(btn.dataset.employeeEdit));
+            document.querySelector("#employeeId").value = item.id;
+            document.querySelector("#employeeName").value = item.name;
+            document.querySelector("#employeePhone").value = item.phone;
+            document.querySelector("#employeeArea").value = item.service_area || "";
+            setEmployeeStatus("正在编辑员工信息");
+          });
+        });
+        employeeRowsEl.querySelectorAll("[data-employee-delete]").forEach((btn) => {
+          btn.addEventListener("click", async () => {
+            const res = await fetch(`/api/admin/employees/${btn.dataset.employeeDelete}`, { method: "DELETE" });
+            if (!res.ok) {
+              setEmployeeStatus("停用失败");
+              return;
+            }
+            setEmployeeStatus("员工已停用");
+            loadEmployees();
+          });
+        });
+        loadOrders();
       }
 
       function searchNearbyHospitals() {
@@ -431,12 +602,38 @@
         loadHospitals();
       });
 
+      employeeForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const id = value("employeeId");
+        const payload = {
+          name: value("employeeName"),
+          phone: value("employeePhone"),
+          service_area: value("employeeArea") || null,
+          is_active: true,
+        };
+        const res = await fetch(id ? `/api/admin/employees/${id}` : "/api/admin/employees", {
+          method: id ? "PUT" : "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        if (!res.ok) {
+          const error = await res.json().catch(() => ({}));
+          setEmployeeStatus(error.detail || "保存失败，请检查数据");
+          return;
+        }
+        resetEmployeeForm();
+        setEmployeeStatus("保存成功");
+        loadEmployees();
+      });
+
       document.querySelector("#resetBtn").addEventListener("click", resetForm);
+      document.querySelector("#employeeResetBtn").addEventListener("click", resetEmployeeForm);
       document.querySelector("#nearbyBtn").addEventListener("click", searchNearbyHospitals);
       document.querySelector("#keywordBtn").addEventListener("click", () => {
         searchAmapHospitals({ keyword: value("hospitalKeyword") });
       });
       loadHospitals();
+      loadEmployees();
       loadOrders();
     </script>
   </body>

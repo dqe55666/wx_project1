@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>员工接单工作台</title>
+    <style>
+      :root { color: #17202a; background: #f5f7f8; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+      * { box-sizing: border-box; }
+      body { margin: 0; }
+      button, input { font: inherit; }
+      button { border: 0; border-radius: 6px; cursor: pointer; height: 38px; padding: 0 14px; }
+      .login-shell { align-items: center; display: flex; justify-content: center; min-height: 100vh; padding: 24px; }
+      .login-panel { background: #fff; border: 1px solid #d9e2ec; border-radius: 8px; padding: 28px; width: min(100%, 380px); }
+      h1 { font-size: 22px; margin: 0; }
+      h2 { font-size: 17px; margin: 0; }
+      .lead, .meta { color: #64727d; font-size: 14px; line-height: 1.5; }
+      .lead { margin: 8px 0 22px; }
+      label { color: #52616f; display: block; font-size: 13px; margin: 14px 0 6px; }
+      input { border: 1px solid #bcccdc; border-radius: 6px; height: 40px; padding: 0 10px; width: 100%; }
+      .primary { background: #0f766e; color: #fff; }
+      .login-panel .primary { margin-top: 20px; width: 100%; }
+      .error { color: #b42318; font-size: 13px; margin-top: 12px; min-height: 20px; }
+      #workbench { display: none; }
+      header { background: #fff; border-bottom: 1px solid #d9e2ec; }
+      .header-inner { align-items: center; display: flex; justify-content: space-between; margin: 0 auto; max-width: 1180px; padding: 18px 28px; }
+      .identity { color: #52616f; font-size: 14px; margin-top: 5px; }
+      .header-actions { align-items: center; display: flex; gap: 12px; }
+      .logout { background: #e7f5f2; color: #0f766e; }
+      main { margin: 0 auto; max-width: 1180px; padding: 24px 28px; }
+      .toolbar { align-items: center; display: flex; justify-content: space-between; margin-bottom: 18px; }
+      .tabs { display: flex; gap: 8px; }
+      .tab { background: #e9eef1; color: #52616f; }
+      .tab.active { background: #0f766e; color: #fff; }
+      .refresh { background: #fff; border: 1px solid #bcccdc; color: #334e68; }
+      .order-list { display: grid; gap: 12px; }
+      .order { background: #fff; border: 1px solid #d9e2ec; border-radius: 8px; padding: 18px; }
+      .order-head, .order-foot { align-items: center; display: flex; gap: 12px; justify-content: space-between; }
+      .order-no { color: #64727d; font-size: 13px; }
+      .badge { border-radius: 4px; font-size: 12px; padding: 4px 8px; }
+      .pending { background: #fff4d6; color: #8a5a00; }
+      .accepted { background: #e7f5f2; color: #0f766e; }
+      .in-progress { background: #e5eefc; color: #175cd3; }
+      .completed { background: #eaf7ed; color: #18794e; }
+      .service { font-size: 18px; font-weight: 650; margin: 12px 0 8px; }
+      .details { color: #52616f; display: grid; font-size: 14px; gap: 5px; line-height: 1.45; }
+      .note { background: #f5f7f8; color: #52616f; font-size: 14px; line-height: 1.45; margin-top: 12px; padding: 10px; }
+      .order-foot { border-top: 1px solid #edf2f7; margin-top: 14px; padding-top: 14px; }
+      .action { background: #0f766e; color: #fff; }
+      .start { background: #175cd3; color: #fff; }
+      .empty { color: #64727d; padding: 72px 0; text-align: center; }
+      @media (max-width: 640px) { .header-inner, main { padding-left: 16px; padding-right: 16px; } .toolbar { align-items: flex-start; gap: 12px; flex-direction: column; } .tabs { width: 100%; } .tab { flex: 1; padding: 0 8px; } }
+    </style>
+  </head>
+  <body>
+    <section class="login-shell" id="loginView">
+      <form class="login-panel" id="loginForm">
+        <h1>员工接单工作台</h1>
+        <p class="lead">使用员工账号登录后接单并更新工作状态。</p>
+        <label for="username">员工账号</label>
+        <input id="username" autocomplete="username" required placeholder="员工姓名" />
+        <label for="password">密码</label>
+        <input id="password" autocomplete="current-password" required type="password" placeholder="请输入密码" />
+        <button class="primary" id="loginButton" type="submit">登录</button>
+        <div class="error" id="loginError"></div>
+      </form>
+    </section>
+
+    <div id="workbench">
+      <header>
+        <div class="header-inner">
+          <div>
+            <h1>员工接单工作台</h1>
+            <div class="identity" id="identity"></div>
+          </div>
+          <div class="header-actions"><button class="logout" id="logoutButton" type="button">退出登录</button></div>
+        </div>
+      </header>
+      <main>
+        <div class="toolbar">
+          <div class="tabs">
+            <button class="tab active" data-status="pending" type="button">待接订单</button>
+            <button class="tab" data-status="accepted" type="button">已接订单</button>
+            <button class="tab" data-status="in_progress" type="button">工作中</button>
+            <button class="tab" data-status="completed" type="button">已完成</button>
+          </div>
+          <button class="refresh" id="refreshButton" type="button">刷新订单</button>
+        </div>
+        <div class="order-list" id="orderList"></div>
+      </main>
+    </div>
+
+    <script>
+      const loginView = document.querySelector("#loginView");
+      const workbench = document.querySelector("#workbench");
+      const orderList = document.querySelector("#orderList");
+      let accessToken = localStorage.getItem("staffAccessToken") || "";
+      let activeStatus = "pending";
+
+      function escapeHtml(value) {
+        return String(value ?? "").replace(/[&<>'"]/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" })[char]);
+      }
+
+      async function request(path, options = {}) {
+        const response = await fetch(path, {
+          ...options,
+          headers: { "Content-Type": "application/json", ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}), ...(options.headers || {}) },
+        });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(data.detail || "请求失败，请稍后重试");
+        return data;
+      }
+
+      function setAuthenticated(employee) {
+        loginView.style.display = "none";
+        workbench.style.display = "block";
+        document.querySelector("#identity").textContent = `${employee.name}${employee.service_area ? ` · ${employee.service_area}` : ""}`;
+        loadOrders();
+      }
+
+      async function restoreSession() {
+        if (!accessToken) return;
+        try { setAuthenticated(await request("/api/staff/me")); } catch (_) { logout(); }
+      }
+
+      function logout() {
+        accessToken = "";
+        localStorage.removeItem("staffAccessToken");
+        workbench.style.display = "none";
+        loginView.style.display = "flex";
+      }
+
+      function statusText(status) {
+        return { pending: "待接单", accepted: "已接单", in_progress: "工作中", completed: "已完成", stopped: "已停止" }[status] || status;
+      }
+
+      function setActiveStatus(status) {
+        activeStatus = status;
+        document.querySelectorAll(".tab").forEach((item) => item.classList.toggle("active", item.dataset.status === status));
+      }
+
+      async function loadOrders() {
+        orderList.innerHTML = '<div class="empty">订单加载中...</div>';
+        try {
+          const orders = await request(`/api/staff/orders?status=${activeStatus}`);
+          orderList.innerHTML = orders.length ? orders.map((order) => `
+            <article class="order">
+              <div class="order-head"><span class="order-no">${escapeHtml(order.order_no)}</span><span class="badge ${order.status === "in_progress" ? "in-progress" : order.status}">${statusText(order.status)}</span></div>
+              <div class="service">${escapeHtml(order.service_name)}</div>
+              <div class="details">
+                <div>患者：${escapeHtml(order.patient_name)} ${escapeHtml(order.patient_phone)}</div>
+                <div>预约：${escapeHtml(order.appointment_time.replace("T", " ").slice(0, 16))}</div>
+                <div>医院：${escapeHtml(order.hospital_name)}</div>
+                <div>地址：${escapeHtml(order.address_detail)}</div>
+              </div>
+              ${order.note ? `<div class="note">备注：${escapeHtml(order.note)}</div>` : ""}
+              <div class="order-foot"><span class="meta">${order.distance_km === null ? "距离待定位" : `${order.distance_km} km`}</span>${order.status === "pending" ? `<button class="action" data-action="accept" data-id="${order.id}" type="button">接单</button>` : order.status === "accepted" ? `<button class="start" data-action="start" data-id="${order.id}" type="button">开始工作</button>` : order.status === "in_progress" ? `<button class="action" data-action="finish" data-id="${order.id}" type="button">结束工作</button>` : `<span class="meta">已完成</span>`}</div>
+            </article>`).join("") : '<div class="empty">暂无相关订单</div>';
+          orderList.querySelectorAll("[data-action]").forEach((button) => button.addEventListener("click", () => updateOrder(button)));
+        } catch (error) {
+          orderList.innerHTML = `<div class="empty">${escapeHtml(error.message)}</div>`;
+        }
+      }
+
+      async function updateOrder(button) {
+        const action = button.dataset.action;
+        button.disabled = true;
+        button.textContent = action === "accept" ? "正在接单" : action === "start" ? "正在开始" : "正在结束";
+        try {
+          await request(`/api/staff/orders/${button.dataset.id}/${action}`, { method: "POST" });
+          setActiveStatus({ accept: "accepted", start: "in_progress", finish: "completed" }[action]);
+          await loadOrders();
+        } catch (error) {
+          alert(error.message);
+          await loadOrders();
+        }
+      }
+
+      document.querySelector("#loginForm").addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const error = document.querySelector("#loginError");
+        const button = document.querySelector("#loginButton");
+        error.textContent = "";
+        button.disabled = true;
+        try {
+          const result = await request("/api/staff/login", { method: "POST", body: JSON.stringify({ username: document.querySelector("#username").value.trim(), password: document.querySelector("#password").value }) });
+          accessToken = result.access_token;
+          localStorage.setItem("staffAccessToken", accessToken);
+          setAuthenticated(result.employee);
+        } catch (err) { error.textContent = err.message; } finally { button.disabled = false; }
+      });
+      document.querySelectorAll(".tab").forEach((tab) => tab.addEventListener("click", () => { setActiveStatus(tab.dataset.status); loadOrders(); }));
+      document.querySelector("#refreshButton").addEventListener("click", loadOrders);
+      document.querySelector("#logoutButton").addEventListener("click", logout);
+      restoreSession();
+    </script>
+  </body>
+</html>

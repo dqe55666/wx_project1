@@ -5,7 +5,10 @@
         <text class="title">护理上门预约</text>
         <text class="subtitle">选择医院单位与服务项目，提交后等待陪护人员接单</text>
       </view>
-      <button class="location-btn" loading="{{locating}}" disabled="{{locating}}" bindtap="refreshLocation">定位</button>
+      <view class="top-actions">
+        <button class="employee-btn" bindtap="openEmployeePage">员工接单</button>
+        <button class="location-btn" loading="{{locating}}" disabled="{{locating}}" bindtap="refreshLocation">定位</button>
+      </view>
     </view>
 
     <view wx:if="{{currentAddress}}" class="location-strip">
@@ -59,7 +62,7 @@
       <view class="time-row">
         <view class="time-field">
           <text class="label">预约日期</text>
-          <picker mode="date" value="{{form.appointmentDate}}" bindchange="onFieldInput" data-field="appointmentDate">
+          <picker mode="date" value="{{form.appointmentDate}}" start="{{form.appointmentDate}}" bindchange="onFieldInput" data-field="appointmentDate">
             <view class="date-value">{{form.appointmentDate}}</view>
           </picker>
         </view>

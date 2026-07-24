@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, text
+from sqlalchemy import create_engine, inspect, text
 from sqlalchemy.engine import make_url
 from sqlalchemy.orm import DeclarativeBase, sessionmaker
 
@@ -39,3 +39,33 @@ def get_db():
         yield db
     finally:
         db.close()
+
+
+def upgrade_schema():
+    """Add columns introduced after the initial tables were deployed."""
+    inspector = inspect(engine)
+    table_names = set(inspector.get_table_names())
+    statements = []
+    if "care_orders" in table_names:
+        order_columns = {column["name"] for column in inspector.get_columns("care_orders")}
+        if "employee_id" not in order_columns:
+            statements.append("ALTER TABLE care_orders ADD COLUMN employee_id INTEGER NULL")
+        if "accepted_at" not in order_columns:
+            statements.append("ALTER TABLE care_orders ADD COLUMN accepted_at DATETIME NULL")
+        if "started_at" not in order_columns:
+            statements.append("ALTER TABLE care_orders ADD COLUMN started_at DATETIME NULL")
+        if "completed_at" not in order_columns:
+            statements.append("ALTER TABLE care_orders ADD COLUMN completed_at DATETIME NULL")
+        if "stopped_at" not in order_columns:
+            statements.append("ALTER TABLE care_orders ADD COLUMN stopped_at DATETIME NULL")
+    if "employees" in table_names:
+        employee_columns = {column["name"] for column in inspector.get_columns("employees")}
+        if "username" not in employee_columns:
+            statements.append("ALTER TABLE employees ADD COLUMN username VARCHAR(50) NULL")
+        if "password_hash" not in employee_columns:
+            statements.append("ALTER TABLE employees ADD COLUMN password_hash VARCHAR(255) NULL")
+    if not statements:
+        return
+    with engine.begin() as connection:
+        for statement in statements:
+            connection.execute(text(statement))

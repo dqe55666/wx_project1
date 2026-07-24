@@ -144,6 +144,10 @@ Page({
     this.setData({ selectedHospitalIndex: Number(e.detail.value) })
   },
 
+  openEmployeePage() {
+    wx.navigateTo({ url: '/pages/employee/employee' })
+  },
+
   onServiceChange(e) {
     this.setData({ selectedServiceIndex: Number(e.detail.value) })
   },
@@ -178,9 +182,12 @@ Page({
     if (!hospitals.length) return '请选择医院单位'
     if (!services.length) return '请选择服务项目'
     if (!form.patientName.trim()) return '请填写患者姓名'
-    if (!form.patientPhone.trim()) return '请填写联系电话'
+    if (!/^[0-9+()\- ]{6,30}$/.test(form.patientPhone.trim())) return '请填写正确的联系电话'
     if (!form.addressDetail.trim()) return '请填写服务地址'
     if (!form.appointmentDate || !form.appointmentTime) return '请选择预约时间'
+    if (new Date(`${form.appointmentDate}T${form.appointmentTime}:00`).getTime() <= Date.now()) {
+      return '预约时间需晚于当前时间'
+    }
     return ''
   },
 
