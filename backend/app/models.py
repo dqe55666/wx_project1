@@ -1,0 +1,57 @@
+from datetime import datetime
+
+from sqlalchemy import Boolean, DateTime, ForeignKey, Integer, Numeric, String, Text
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+
+from .database import Base
+
+
+class HospitalUnit(Base):
+    __tablename__ = "hospital_units"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    name: Mapped[str] = mapped_column(String(120), nullable=False, index=True)
+    address: Mapped[str] = mapped_column(String(255), nullable=False)
+    latitude: Mapped[float] = mapped_column(Numeric(10, 7), nullable=False)
+    longitude: Mapped[float] = mapped_column(Numeric(10, 7), nullable=False)
+    phone: Mapped[str | None] = mapped_column(String(30))
+    service_radius_km: Mapped[int] = mapped_column(Integer, default=15)
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True, index=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+
+    orders: Mapped[list["CareOrder"]] = relationship(back_populates="hospital")
+
+
+class ServiceItem(Base):
+    __tablename__ = "service_items"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    name: Mapped[str] = mapped_column(String(80), nullable=False)
+    description: Mapped[str | None] = mapped_column(String(255))
+    price_cents: Mapped[int] = mapped_column(Integer, nullable=False)
+    duration_minutes: Mapped[int] = mapped_column(Integer, default=120)
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True, index=True)
+
+    orders: Mapped[list["CareOrder"]] = relationship(back_populates="service_item")
+
+
+class CareOrder(Base):
+    __tablename__ = "care_orders"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    order_no: Mapped[str] = mapped_column(String(32), unique=True, index=True)
+    hospital_id: Mapped[int] = mapped_column(ForeignKey("hospital_units.id"))
+    service_item_id: Mapped[int] = mapped_column(ForeignKey("service_items.id"))
+    patient_name: Mapped[str] = mapped_column(String(50), nullable=False)
+    patient_phone: Mapped[str] = mapped_column(String(30), nullable=False)
+    appointment_time: Mapped[datetime] = mapped_column(DateTime, nullable=False)
+    address_detail: Mapped[str] = mapped_column(String(255), nullable=False)
+    latitude: Mapped[float | None] = mapped_column(Numeric(10, 7))
+    longitude: Mapped[float | None] = mapped_column(Numeric(10, 7))
+    distance_km: Mapped[float | None] = mapped_column(Numeric(8, 2))
+    note: Mapped[str | None] = mapped_column(Text)
+    status: Mapped[str] = mapped_column(String(30), default="pending", index=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+
+    hospital: Mapped[HospitalUnit] = relationship(back_populates="orders")
+    service_item: Mapped[ServiceItem] = relationship(back_populates="orders")

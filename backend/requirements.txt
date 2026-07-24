@@ -1,0 +1,6 @@
+fastapi>=0.110
+uvicorn[standard]>=0.27
+sqlalchemy>=2.0
+pymysql>=1.1
+pydantic-settings>=2.2
+certifi>=2024.2.2

@@ -1,0 +1,443 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>护理预约管理端</title>
+    <style>
+      :root {
+        color: #17202a;
+        background: #f6f8fa;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+      }
+      header {
+        background: #ffffff;
+        border-bottom: 1px solid #d9e2ec;
+        padding: 18px 28px;
+      }
+      h1 {
+        font-size: 22px;
+        margin: 0;
+      }
+      main {
+        display: grid;
+        gap: 20px;
+        grid-template-columns: minmax(320px, 420px) 1fr;
+        padding: 24px 28px;
+      }
+      section {
+        background: #ffffff;
+        border: 1px solid #d9e2ec;
+        border-radius: 8px;
+        padding: 18px;
+      }
+      h2 {
+        font-size: 17px;
+        margin: 0 0 16px;
+      }
+      label {
+        color: #52616f;
+        display: block;
+        font-size: 13px;
+        margin: 12px 0 6px;
+      }
+      input {
+        border: 1px solid #bcccdc;
+        border-radius: 6px;
+        font-size: 14px;
+        height: 38px;
+        padding: 0 10px;
+        width: 100%;
+      }
+      .row {
+        display: grid;
+        gap: 12px;
+        grid-template-columns: 1fr 1fr;
+      }
+      button {
+        border: 0;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 14px;
+        height: 38px;
+        padding: 0 14px;
+      }
+      .primary {
+        background: #0f766e;
+        color: white;
+        margin-top: 16px;
+      }
+      .secondary {
+        background: #e6f4f1;
+        color: #0f766e;
+      }
+      .danger {
+        background: #fee2e2;
+        color: #991b1b;
+      }
+      .search-tools {
+        border-top: 1px solid #edf2f7;
+        margin-top: 18px;
+        padding-top: 18px;
+      }
+      .search-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 12px;
+      }
+      .poi-list {
+        display: grid;
+        gap: 10px;
+        margin-top: 14px;
+        max-height: 360px;
+        overflow: auto;
+      }
+      .poi-item {
+        border: 1px solid #d9e2ec;
+        border-radius: 8px;
+        padding: 12px;
+      }
+      .poi-head {
+        align-items: flex-start;
+        display: flex;
+        gap: 10px;
+        justify-content: space-between;
+      }
+      .poi-name {
+        font-weight: 650;
+        line-height: 1.4;
+      }
+      .poi-meta {
+        color: #52616f;
+        font-size: 13px;
+        line-height: 1.5;
+        margin-top: 8px;
+      }
+      table {
+        border-collapse: collapse;
+        width: 100%;
+      }
+      th,
+      td {
+        border-bottom: 1px solid #edf2f7;
+        font-size: 14px;
+        padding: 12px 8px;
+        text-align: left;
+        vertical-align: top;
+      }
+      th {
+        color: #52616f;
+        font-weight: 600;
+      }
+      .actions {
+        display: flex;
+        gap: 8px;
+      }
+      .status {
+        color: #52616f;
+        font-size: 13px;
+        margin-top: 10px;
+        min-height: 20px;
+      }
+      .wide {
+        grid-column: 1 / -1;
+      }
+      @media (max-width: 860px) {
+        main {
+          grid-template-columns: 1fr;
+          padding: 16px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>护理预约管理端</h1>
+    </header>
+    <main>
+      <section>
+        <h2>医院单位</h2>
+        <form id="hospitalForm">
+          <input id="hospitalId" type="hidden" />
+          <label for="name">单位名称</label>
+          <input id="name" required placeholder="例如：第一人民医院护理站" />
+          <label for="address">地址</label>
+          <input id="address" required placeholder="详细地址" />
+          <div class="row">
+            <div>
+              <label for="latitude">纬度</label>
+              <input id="latitude" required type="number" step="0.0000001" />
+            </div>
+            <div>
+              <label for="longitude">经度</label>
+              <input id="longitude" required type="number" step="0.0000001" />
+            </div>
+          </div>
+          <div class="row">
+            <div>
+              <label for="phone">联系电话</label>
+              <input id="phone" placeholder="021-12345678" />
+            </div>
+            <div>
+              <label for="radius">服务半径 km</label>
+              <input id="radius" type="number" min="1" max="200" value="15" />
+            </div>
+          </div>
+          <button class="primary" type="submit">添加单位</button>
+          <button class="secondary" id="resetBtn" type="button">清空</button>
+          <div class="status" id="status"></div>
+        </form>
+
+        <div class="search-tools">
+          <h2>高德医院检索</h2>
+          <label for="hospitalKeyword">医院名称</label>
+          <input id="hospitalKeyword" placeholder="输入医院名，或留空搜附近医院" />
+          <div class="search-actions">
+            <button class="secondary" id="nearbyBtn" type="button">定位搜附近30km</button>
+            <button class="secondary" id="keywordBtn" type="button">按名称搜索</button>
+          </div>
+          <div class="status" id="searchStatus"></div>
+          <div class="poi-list" id="poiRows"></div>
+        </div>
+      </section>
+
+      <section>
+        <h2>单位列表</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>名称</th>
+              <th>地址</th>
+              <th>坐标</th>
+              <th>半径</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody id="hospitalRows"></tbody>
+        </table>
+      </section>
+
+      <section class="wide">
+        <h2>最近订单</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>订单号</th>
+              <th>患者</th>
+              <th>医院单位</th>
+              <th>服务</th>
+              <th>预约时间</th>
+              <th>距离</th>
+              <th>状态</th>
+            </tr>
+          </thead>
+          <tbody id="orderRows"></tbody>
+        </table>
+      </section>
+    </main>
+
+    <script>
+      const form = document.querySelector("#hospitalForm");
+      const statusEl = document.querySelector("#status");
+      const searchStatusEl = document.querySelector("#searchStatus");
+      const rowsEl = document.querySelector("#hospitalRows");
+      const orderRowsEl = document.querySelector("#orderRows");
+      const poiRowsEl = document.querySelector("#poiRows");
+
+      function value(id) {
+        return document.querySelector(`#${id}`).value.trim();
+      }
+
+      function setStatus(text) {
+        statusEl.textContent = text;
+      }
+
+      function setSearchStatus(text) {
+        searchStatusEl.textContent = text;
+      }
+
+      function resetForm() {
+        form.reset();
+        document.querySelector("#hospitalId").value = "";
+        document.querySelector("#radius").value = "15";
+      }
+
+      async function loadHospitals() {
+        const res = await fetch("/api/hospitals?include_inactive=true");
+        const hospitals = await res.json();
+        rowsEl.innerHTML = hospitals
+          .map(
+            (item) => `
+              <tr>
+                <td>${item.name}${item.is_active ? "" : "（停用）"}</td>
+                <td>${item.address}</td>
+                <td>${item.latitude}, ${item.longitude}</td>
+                <td>${item.service_radius_km} km</td>
+                <td>
+                  <div class="actions">
+                    <button class="secondary" type="button" data-edit="${item.id}">编辑</button>
+                    <button class="danger" type="button" data-delete="${item.id}">停用</button>
+                  </div>
+                </td>
+              </tr>
+            `
+          )
+          .join("");
+        rowsEl.querySelectorAll("[data-edit]").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const item = hospitals.find((hospital) => hospital.id === Number(btn.dataset.edit));
+            document.querySelector("#hospitalId").value = item.id;
+            document.querySelector("#name").value = item.name;
+            document.querySelector("#address").value = item.address;
+            document.querySelector("#latitude").value = item.latitude;
+            document.querySelector("#longitude").value = item.longitude;
+            document.querySelector("#phone").value = item.phone || "";
+            document.querySelector("#radius").value = item.service_radius_km;
+          });
+        });
+        rowsEl.querySelectorAll("[data-delete]").forEach((btn) => {
+          btn.addEventListener("click", async () => {
+            await fetch(`/api/admin/hospitals/${btn.dataset.delete}`, { method: "DELETE" });
+            setStatus("单位已停用");
+            loadHospitals();
+          });
+        });
+      }
+
+      async function loadOrders() {
+        const res = await fetch("/api/admin/orders");
+        const orders = await res.json();
+        orderRowsEl.innerHTML = orders.length
+          ? orders
+              .map(
+                (item) => `
+                  <tr>
+                    <td>${item.order_no}</td>
+                    <td>${item.patient_name}<br />${item.patient_phone}</td>
+                    <td>${item.hospital_name}</td>
+                    <td>${item.service_name}</td>
+                    <td>${item.appointment_time.replace("T", " ")}</td>
+                    <td>${item.distance_km === null ? "未定位" : `${item.distance_km} km`}</td>
+                    <td>${item.status}</td>
+                  </tr>
+                `
+              )
+              .join("")
+          : `<tr><td colspan="7">暂无订单</td></tr>`;
+      }
+
+      function searchNearbyHospitals() {
+        if (!navigator.geolocation) {
+          setSearchStatus("当前浏览器不支持定位");
+          return;
+        }
+        setSearchStatus("正在定位当前位置...");
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            const { latitude, longitude } = position.coords;
+            const keyword = value("hospitalKeyword");
+            searchAmapHospitals({ latitude, longitude, keyword });
+          },
+          () => {
+            setSearchStatus("定位失败，请允许浏览器定位权限，或使用医院名称搜索");
+          },
+          { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
+        );
+      }
+
+      async function searchAmapHospitals({ latitude, longitude, keyword }) {
+        const params = new URLSearchParams();
+        if (keyword) params.set("keyword", keyword);
+        if (latitude && longitude) {
+          params.set("lat", latitude);
+          params.set("lng", longitude);
+          params.set("radius_km", "30");
+        }
+        setSearchStatus("正在检索医院...");
+        const res = await fetch(`/api/amap/hospitals?${params.toString()}`);
+        if (!res.ok) {
+          const error = await res.json().catch(() => ({}));
+          setSearchStatus(error.detail || "医院检索失败");
+          return;
+        }
+        const pois = await res.json();
+        renderPoiRows(pois);
+        setSearchStatus(pois.length ? `找到 ${pois.length} 家医院` : "未找到医院");
+      }
+
+      function renderPoiRows(pois) {
+        poiRowsEl.innerHTML = pois
+          .map(
+            (item, index) => `
+              <div class="poi-item">
+                <div class="poi-head">
+                  <div class="poi-name">${item.name}</div>
+                  <button class="secondary" type="button" data-poi="${index}">填入</button>
+                </div>
+                <div class="poi-meta">
+                  ${item.address || "地址暂无"}<br />
+                  ${item.phone || "电话暂无"} · ${item.distance_m === null ? "距离暂无" : `${(item.distance_m / 1000).toFixed(1)} km`}
+                </div>
+              </div>
+            `
+          )
+          .join("");
+        poiRowsEl.querySelectorAll("[data-poi]").forEach((btn) => {
+          btn.addEventListener("click", () => fillHospitalForm(pois[Number(btn.dataset.poi)]));
+        });
+      }
+
+      function fillHospitalForm(item) {
+        document.querySelector("#hospitalId").value = "";
+        document.querySelector("#name").value = item.name;
+        document.querySelector("#address").value = item.address;
+        document.querySelector("#latitude").value = item.latitude;
+        document.querySelector("#longitude").value = item.longitude;
+        document.querySelector("#phone").value = item.phone || "";
+        document.querySelector("#radius").value = "15";
+        setStatus("已填入医院信息，确认后点击添加单位");
+      }
+
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const id = value("hospitalId");
+        const payload = {
+          name: value("name"),
+          address: value("address"),
+          latitude: Number(value("latitude")),
+          longitude: Number(value("longitude")),
+          phone: value("phone") || null,
+          service_radius_km: Number(value("radius") || 15),
+          is_active: true,
+        };
+        const res = await fetch(id ? `/api/admin/hospitals/${id}` : "/api/admin/hospitals", {
+          method: id ? "PUT" : "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        if (!res.ok) {
+          setStatus("保存失败，请检查数据");
+          return;
+        }
+        resetForm();
+        setStatus("保存成功");
+        loadHospitals();
+      });
+
+      document.querySelector("#resetBtn").addEventListener("click", resetForm);
+      document.querySelector("#nearbyBtn").addEventListener("click", searchNearbyHospitals);
+      document.querySelector("#keywordBtn").addEventListener("click", () => {
+        searchAmapHospitals({ keyword: value("hospitalKeyword") });
+      });
+      loadHospitals();
+      loadOrders();
+    </script>
+  </body>
+</html>

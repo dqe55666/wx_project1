@@ -5,9 +5,17 @@
   ],
   "window": {
     "navigationBarTextStyle": "black",
-    "navigationBarTitleText": "Weixin",
+    "navigationBarTitleText": "护理上门预约",
     "navigationBarBackgroundColor": "#ffffff"
   },
+  "permission": {
+    "scope.userLocation": {
+      "desc": "用于计算您与医院单位的距离"
+    }
+  },
+  "requiredPrivateInfos": [
+    "getLocation"
+  ],
   "style": "v2",
   "componentFramework": "glass-easel",
   "sitemapLocation": "sitemap.json",

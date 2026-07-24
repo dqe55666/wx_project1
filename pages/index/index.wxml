@@ -1,27 +1,81 @@
-<!--index.wxml-->
 <scroll-view class="scrollarea" scroll-y type="list">
-  <view class="container">
-    <view class="userinfo">
-      <block wx:if="{{canIUseNicknameComp && !hasUserInfo}}">
-        <button class="avatar-wrapper" open-type="chooseAvatar" bind:chooseavatar="onChooseAvatar">
-          <image class="avatar" src="{{userInfo.avatarUrl}}"></image>
-        </button>
-        <view class="nickname-wrapper">
-          <text class="nickname-label">昵称</text>
-          <input type="nickname" class="nickname-input" placeholder="请输入昵称" bind:change="onInputChange" />
+  <view class="page">
+    <view class="topbar">
+      <view>
+        <text class="title">护理上门预约</text>
+        <text class="subtitle">选择医院单位与服务项目，提交后等待陪护人员接单</text>
+      </view>
+      <button class="location-btn" loading="{{locating}}" disabled="{{locating}}" bindtap="refreshLocation">定位</button>
+    </view>
+
+    <view wx:if="{{currentAddress}}" class="location-strip">
+      <text class="location-label">当前位置</text>
+      <text class="location-address">{{currentAddress}}</text>
+    </view>
+
+    <view class="panel">
+      <view class="section-title">医院单位</view>
+      <picker mode="selector" range="{{hospitals}}" range-key="name" value="{{selectedHospitalIndex}}" bindchange="onHospitalChange">
+        <view class="picker-field">
+          <block wx:if="{{hospitals.length}}">
+            <text>{{hospitals[selectedHospitalIndex].name}}</text>
+            <text class="muted">{{hospitals[selectedHospitalIndex].displayDistance}}</text>
+          </block>
+          <text wx:elif="{{hospitalLoading}}" class="muted">医院单位加载中</text>
+          <text wx:else class="muted">暂无可选医院单位</text>
         </view>
-      </block>
-      <block wx:elif="{{!hasUserInfo}}">
-        <button wx:if="{{canIUseGetUserProfile}}" bindtap="getUserProfile"> 获取头像昵称 </button>
-        <view wx:else> 请使用2.10.4及以上版本基础库 </view>
-      </block>
-      <block wx:else>
-        <image bindtap="bindViewTap" class="userinfo-avatar" src="{{userInfo.avatarUrl}}" mode="cover"></image>
-        <text class="userinfo-nickname">{{userInfo.nickName}}</text>
-      </block>
+      </picker>
+      <view wx:if="{{hospitals.length}}" class="hint">{{hospitals[selectedHospitalIndex].address}}</view>
     </view>
-    <view class="usermotto">
-      <text class="user-motto">{{motto}}</text>
+
+    <view class="panel">
+      <view class="section-title">服务项目</view>
+      <picker mode="selector" range="{{services}}" range-key="name" value="{{selectedServiceIndex}}" bindchange="onServiceChange">
+        <view class="picker-field">
+          <block wx:if="{{services.length}}">
+            <text>{{services[selectedServiceIndex].name}}</text>
+            <text class="muted">{{services[selectedServiceIndex].displayPrice}}</text>
+          </block>
+          <text wx:else class="muted">暂无服务项目</text>
+        </view>
+      </picker>
+      <view wx:if="{{services.length}}" class="hint">{{services[selectedServiceIndex].description}}</view>
     </view>
+
+    <view class="panel">
+      <view class="section-title">预约信息</view>
+      <view class="field">
+        <text class="label">患者姓名</text>
+        <input value="{{form.patientName}}" data-field="patientName" bindinput="onFieldInput" placeholder="请输入姓名" />
+      </view>
+      <view class="field">
+        <text class="label">联系电话</text>
+        <input value="{{form.patientPhone}}" data-field="patientPhone" bindinput="onFieldInput" type="number" placeholder="请输入手机号" />
+      </view>
+      <view class="field">
+        <text class="label">服务地址</text>
+        <input value="{{form.addressDetail}}" data-field="addressDetail" bindinput="onFieldInput" placeholder="定位后自动填充，可补充楼栋、病区、门牌号" />
+      </view>
+      <view class="time-row">
+        <view class="time-field">
+          <text class="label">预约日期</text>
+          <picker mode="date" value="{{form.appointmentDate}}" bindchange="onFieldInput" data-field="appointmentDate">
+            <view class="date-value">{{form.appointmentDate}}</view>
+          </picker>
+        </view>
+        <view class="time-field">
+          <text class="label">预约时间</text>
+          <picker mode="time" value="{{form.appointmentTime}}" bindchange="onFieldInput" data-field="appointmentTime">
+            <view class="date-value">{{form.appointmentTime}}</view>
+          </picker>
+        </view>
+      </view>
+      <view class="field">
+        <text class="label">备注</text>
+        <textarea value="{{form.note}}" data-field="note" bindinput="onFieldInput" placeholder="护理需求、行动情况等" />
+      </view>
+    </view>
+
+    <button class="submit-btn" loading="{{submitting}}" disabled="{{submitting}}" bindtap="submitOrder">提交预约</button>
   </view>
 </scroll-view>
