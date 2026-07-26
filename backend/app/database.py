@@ -58,6 +58,8 @@ def upgrade_schema():
             statements.append("ALTER TABLE care_orders ADD COLUMN completed_at DATETIME NULL")
         if "stopped_at" not in order_columns:
             statements.append("ALTER TABLE care_orders ADD COLUMN stopped_at DATETIME NULL")
+        if "review_token" not in order_columns:
+            statements.append("ALTER TABLE care_orders ADD COLUMN review_token VARCHAR(64) NULL")
     if "employees" in table_names:
         employee_columns = {column["name"] for column in inspector.get_columns("employees")}
         if "username" not in employee_columns:

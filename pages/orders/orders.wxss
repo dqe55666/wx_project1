@@ -1,0 +1,31 @@
+page { height: 100vh; background: #f5f7f8; }
+.scrollarea { height: 100vh; }
+.page { min-height: 100vh; padding: 32rpx 28rpx calc(40rpx + env(safe-area-inset-bottom)); box-sizing: border-box; }
+.heading { margin-bottom: 24rpx; }
+.title { color: #15232d; display: block; font-size: 44rpx; font-weight: 700; line-height: 1.25; }
+.subtitle { color: #64727d; display: block; font-size: 26rpx; line-height: 1.5; margin-top: 10rpx; }
+.order-card { background: #fff; border: 1rpx solid #dbe4ea; border-radius: 8rpx; margin-bottom: 18rpx; padding: 22rpx 24rpx; }
+.order-top { align-items: center; display: flex; justify-content: space-between; }
+.order-no { color: #64727d; font-size: 23rpx; }
+.status { border-radius: 4rpx; font-size: 22rpx; padding: 5rpx 10rpx; }
+.status.pending { background: #fff4d6; color: #9a6700; }
+.status.accepted { background: #e7f5f2; color: #0f766e; }
+.status.in_progress { background: #e5eefc; color: #175cd3; }
+.status.completed { background: #eaf7ed; color: #18794e; }
+.status.stopped { background: #fce7e7; color: #b42318; }
+.service-name { color: #15232d; font-size: 32rpx; font-weight: 600; margin: 16rpx 0 12rpx; }
+.detail { color: #52616f; font-size: 25rpx; line-height: 1.55; }
+.review-btn, .submit-review-btn { background: #0f766e; border-radius: 6rpx; color: #fff; font-size: 26rpx; height: 66rpx; line-height: 66rpx; margin: 18rpx 0 0; padding: 0 24rpx; }
+.review-btn::after, .submit-review-btn::after, .cancel-btn::after, .star::after { border: 0; }
+.review-result { background: #f2f8f6; color: #30404a; font-size: 25rpx; line-height: 1.5; margin-top: 18rpx; padding: 16rpx; }
+.review-score { color: #0f766e; display: block; font-weight: 600; margin-bottom: 6rpx; }
+.review-form { border-top: 1rpx solid #edf2f5; margin-top: 18rpx; padding-top: 18rpx; }
+.form-label { color: #64727d; display: block; font-size: 24rpx; margin-bottom: 10rpx; }
+.stars { display: flex; gap: 8rpx; margin-bottom: 16rpx; }
+.star { background: transparent; color: #c5cdd3; font-size: 46rpx; height: 60rpx; line-height: 60rpx; margin: 0; padding: 0 6rpx; }
+.star.selected { color: #e69a19; }
+textarea { background: #f8fafb; border: 1rpx solid #dbe4ea; box-sizing: border-box; color: #15232d; font-size: 27rpx; height: 150rpx; padding: 14rpx; width: 100%; }
+.review-actions { display: flex; gap: 14rpx; justify-content: flex-end; margin-top: 16rpx; }
+.cancel-btn { background: #e9eef1; border-radius: 6rpx; color: #52616f; font-size: 26rpx; height: 66rpx; line-height: 66rpx; margin: 0; }
+.submit-review-btn { margin: 0; }
+.empty { color: #7b8790; font-size: 27rpx; padding: 80rpx 0; text-align: center; }

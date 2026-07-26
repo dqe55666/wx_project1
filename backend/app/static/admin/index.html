@@ -294,6 +294,7 @@
               <th>距离</th>
               <th>接单员工</th>
               <th>状态</th>
+              <th>评价</th>
               <th>操作</th>
             </tr>
           </thead>
@@ -318,6 +319,16 @@
 
       function value(id) {
         return document.querySelector(`#${id}`).value.trim();
+      }
+
+      function escapeHtml(value) {
+        return String(value ?? "").replace(/[&<>'"]/g, (char) => ({
+          "&": "&amp;",
+          "<": "&lt;",
+          ">": "&gt;",
+          "'": "&#39;",
+          '"': "&quot;",
+        })[char]);
       }
 
       function setStatus(text) {
@@ -412,13 +423,14 @@
                     <td>${item.distance_km === null ? "未定位" : `${item.distance_km} km`}</td>
                     <td>${item.employee_name || "待接单"}</td>
                     <td>${statusText}</td>
+                    <td>${item.review ? `${item.review.rating} 分<br />${escapeHtml(item.review.content)}` : "-"}</td>
                     <td>${canManage ? `<div class="order-actions">${["pending", "accepted"].includes(item.status) ? `<select class="order-select" data-employee-select="${item.id}"><option value="">指定员工</option>${employeeOptions}</select><button class="secondary" type="button" data-order-assign="${item.id}">指定</button>` : ""}<button class="secondary" type="button" data-order-finish="${item.id}">结束</button><button class="danger" type="button" data-order-stop="${item.id}">停止</button></div>` : "-"}</td>
                   </tr>
                 `;
                 }
               )
               .join("")
-          : `<tr><td colspan="9">暂无订单</td></tr>`;
+          : `<tr><td colspan="10">暂无订单</td></tr>`;
         orderRowsEl.querySelectorAll("[data-order-assign]").forEach((btn) => {
           btn.addEventListener("click", () => {
             const select = btn.parentElement.querySelector("select");

@@ -144,8 +144,8 @@ Page({
     this.setData({ selectedHospitalIndex: Number(e.detail.value) })
   },
 
-  openEmployeePage() {
-    wx.navigateTo({ url: '/pages/employee/employee' })
+  openOrdersPage() {
+    wx.navigateTo({ url: '/pages/orders/orders' })
   },
 
   onServiceChange(e) {
@@ -226,10 +226,16 @@ Page({
         method: 'POST',
         data: payload
       })
+      const savedOrders = wx.getStorageSync('customerOrders') || []
+      if (!savedOrders.some((item) => item.id === order.id)) {
+        savedOrders.unshift({ id: order.id, token: order.review_token })
+        wx.setStorageSync('customerOrders', savedOrders)
+      }
       wx.showModal({
         title: '预约已提交',
         content: `订单号：${order.order_no}`,
-        showCancel: false
+        showCancel: false,
+        success: () => wx.navigateTo({ url: '/pages/orders/orders' })
       })
       this.setData({
         'form.patientName': '',

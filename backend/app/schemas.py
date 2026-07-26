@@ -61,12 +61,13 @@ class EmployeeOut(EmployeeBase):
     model_config = ConfigDict(from_attributes=True)
 
 
-class OrderAccept(BaseModel):
-    employee_id: int
-
-
 class OrderAssign(BaseModel):
     employee_id: int
+
+
+class ReviewCreate(BaseModel):
+    rating: int = Field(ge=1, le=5)
+    content: str = Field(min_length=1, max_length=1000)
 
 
 class StaffLogin(BaseModel):
@@ -89,6 +90,7 @@ class OrderCreate(BaseModel):
 class OrderOut(BaseModel):
     id: int
     order_no: str
+    review_token: str
     hospital_id: int
     service_item_id: int
     patient_name: str

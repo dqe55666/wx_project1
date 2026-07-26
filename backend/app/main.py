@@ -17,7 +17,7 @@ from .amap import reverse_geocode, search_hospitals
 from .config import settings
 from .database import Base, SessionLocal, engine, get_db, upgrade_schema
 from .geo import haversine_km
-from .models import CareOrder, Employee, HospitalUnit, ServiceItem
+from .models import CareOrder, Employee, HospitalUnit, OrderReview, ServiceItem
 from .schemas import (
     EmployeeCreate,
     EmployeeOut,
@@ -26,9 +26,9 @@ from .schemas import (
     HospitalOut,
     HospitalUpdate,
     OrderCreate,
-    OrderAccept,
     OrderAssign,
     OrderOut,
+    ReviewCreate,
     ServiceItemOut,
     StaffLogin,
 )
@@ -113,6 +113,9 @@ def seed_data(db: Session):
             employee.username = employee.name
         if not employee.password_hash:
             employee.password_hash = hash_password("123456")
+    for order in db.query(CareOrder).all():
+        if not order.review_token:
+            order.review_token = secrets.token_urlsafe(24)
     db.commit()
 
 
@@ -256,11 +259,6 @@ def list_services(db: Session = Depends(get_db)):
     return db.query(ServiceItem).filter(ServiceItem.is_active.is_(True)).all()
 
 
-@app.get("/api/employees", response_model=list[EmployeeOut])
-def list_active_employees(db: Session = Depends(get_db)):
-    return db.query(Employee).filter(Employee.is_active.is_(True)).order_by(Employee.id).all()
-
-
 @app.get("/api/admin/employees", response_model=list[EmployeeOut])
 def list_employees(db: Session = Depends(get_db)):
     return db.query(Employee).order_by(Employee.created_at.desc()).all()
@@ -335,6 +333,15 @@ def order_to_dict(order: CareOrder):
         "started_at": order.started_at.isoformat() if order.started_at else None,
         "completed_at": order.completed_at.isoformat() if order.completed_at else None,
         "stopped_at": order.stopped_at.isoformat() if order.stopped_at else None,
+        "review": (
+            {
+                "rating": order.review.rating,
+                "content": order.review.content,
+                "created_at": order.review.created_at.isoformat(),
+            }
+            if order.review
+            else None
+        ),
         "created_at": order.created_at.isoformat(),
     }
 
@@ -518,25 +525,64 @@ def admin_stop_order(order_id: int, db: Session = Depends(get_db)):
     return admin_close_order(order_id, "stopped", db)
 
 
-@app.get("/api/employee/orders")
-def list_employee_orders(
-    employee_id: int = Query(...),
-    status: str = Query(default="all", pattern="^(all|pending|accepted)$"),
-    limit: int = Query(default=50, ge=1, le=200),
+def get_customer_order(order_id: int, review_token: str, db: Session) -> CareOrder:
+    order = (
+        db.query(CareOrder)
+        .filter(CareOrder.id == order_id, CareOrder.review_token == review_token)
+        .first()
+    )
+    if not order:
+        raise HTTPException(status_code=404, detail="预约不存在或访问凭据无效")
+    return order
+
+
+def customer_order_to_dict(order: CareOrder):
+    return {
+        "id": order.id,
+        "order_no": order.order_no,
+        "hospital_name": order.hospital.name,
+        "service_name": order.service_item.name,
+        "appointment_time": order.appointment_time.isoformat(),
+        "status": order.status,
+        "employee_name": order.employee.name if order.employee else None,
+        "review": (
+            {
+                "rating": order.review.rating,
+                "content": order.review.content,
+                "created_at": order.review.created_at.isoformat(),
+            }
+            if order.review
+            else None
+        ),
+    }
+
+
+@app.get("/api/customer/orders/{order_id}")
+def get_customer_order_status(
+    order_id: int,
+    token: str = Query(..., min_length=16, max_length=64),
     db: Session = Depends(get_db),
 ):
-    employee = db.get(Employee, employee_id)
-    if not employee or not employee.is_active:
-        raise HTTPException(status_code=400, detail="请选择有效员工")
-    return get_orders_for_employee(employee, status, db, limit)
+    return customer_order_to_dict(get_customer_order(order_id, token, db))
 
 
-@app.post("/api/employee/orders/{order_id}/accept")
-def accept_order(order_id: int, payload: OrderAccept, db: Session = Depends(get_db)):
-    employee = db.get(Employee, payload.employee_id)
-    if not employee or not employee.is_active:
-        raise HTTPException(status_code=400, detail="请选择有效员工")
-    return order_to_dict(claim_order(order_id, employee, db))
+@app.post("/api/customer/orders/{order_id}/review")
+def create_order_review(
+    order_id: int,
+    payload: ReviewCreate,
+    token: str = Query(..., min_length=16, max_length=64),
+    db: Session = Depends(get_db),
+):
+    order = get_customer_order(order_id, token, db)
+    if order.status != "completed":
+        raise HTTPException(status_code=409, detail="服务结束后才能评价")
+    if order.review:
+        raise HTTPException(status_code=409, detail="该订单已评价")
+    review = OrderReview(order_id=order.id, **payload.model_dump())
+    db.add(review)
+    db.commit()
+    db.refresh(order)
+    return customer_order_to_dict(order)
 
 
 @app.post("/api/orders", response_model=OrderOut)
@@ -561,6 +607,7 @@ def create_order(payload: OrderCreate, db: Session = Depends(get_db)):
     order = CareOrder(
         **payload.model_dump(),
         order_no=f"CO{datetime.utcnow():%Y%m%d%H%M%S}{randint(1000, 9999)}",
+        review_token=secrets.token_urlsafe(24),
         distance_km=distance,
         status="pending",
     )

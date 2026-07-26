@@ -1,0 +1,42 @@
+<scroll-view class="scrollarea" scroll-y>
+  <view class="page">
+    <view class="heading">
+      <text class="title">我的预约</text>
+      <text class="subtitle">服务完成后可提交一次评价</text>
+    </view>
+
+    <view wx:if="{{loading}}" class="empty">预约加载中</view>
+    <block wx:elif="{{orders.length}}">
+      <view wx:for="{{orders}}" wx:key="id" class="order-card">
+        <view class="order-top">
+          <text class="order-no">{{item.order_no}}</text>
+          <text class="status {{item.status}}">{{item.statusText}}</text>
+        </view>
+        <view class="service-name">{{item.service_name}}</view>
+        <view class="detail">预约：{{item.appointmentDisplay}}</view>
+        <view class="detail">医院：{{item.hospital_name}}</view>
+        <view wx:if="{{item.employee_name}}" class="detail">服务人员：{{item.employee_name}}</view>
+
+        <view wx:if="{{item.review}}" class="review-result">
+          <text class="review-score">{{item.review.rating}} / 5 分</text>
+          <text>{{item.review.content}}</text>
+        </view>
+        <block wx:elif="{{item.canReview}}">
+          <button wx:if="{{activeReviewId !== item.id}}" class="review-btn" data-id="{{item.id}}" bindtap="openReview">评价服务</button>
+          <view wx:else class="review-form">
+            <text class="form-label">服务评分</text>
+            <view class="stars">
+              <button wx:for="{{[1, 2, 3, 4, 5]}}" wx:key="*this" wx:for-item="star" class="star {{reviewRating >= star ? 'selected' : ''}}" data-rating="{{star}}" bindtap="selectRating">★</button>
+            </view>
+            <textarea value="{{reviewContent}}" bindinput="onReviewInput" maxlength="1000" placeholder="请分享本次服务感受" />
+            <view class="review-actions">
+              <button class="cancel-btn" bindtap="cancelReview">取消</button>
+              <button class="submit-review-btn" loading="{{submittingReview}}" disabled="{{submittingReview}}" bindtap="submitReview">提交评价</button>
+            </view>
+          </view>
+        </block>
+      </view>
+    </block>
+    <view wx:else class="empty">暂无本机提交的预约</view>
+  </view>
+</scroll-view>

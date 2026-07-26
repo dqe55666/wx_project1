@@ -55,6 +55,7 @@ class CareOrder(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     order_no: Mapped[str] = mapped_column(String(32), unique=True, index=True)
+    review_token: Mapped[str] = mapped_column(String(64), unique=True, index=True)
     hospital_id: Mapped[int] = mapped_column(ForeignKey("hospital_units.id"))
     service_item_id: Mapped[int] = mapped_column(ForeignKey("service_items.id"))
     patient_name: Mapped[str] = mapped_column(String(50), nullable=False)
@@ -76,3 +77,16 @@ class CareOrder(Base):
     hospital: Mapped[HospitalUnit] = relationship(back_populates="orders")
     service_item: Mapped[ServiceItem] = relationship(back_populates="orders")
     employee: Mapped[Employee | None] = relationship(back_populates="accepted_orders")
+    review: Mapped["OrderReview | None"] = relationship(back_populates="order", uselist=False)
+
+
+class OrderReview(Base):
+    __tablename__ = "order_reviews"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    order_id: Mapped[int] = mapped_column(ForeignKey("care_orders.id"), unique=True, index=True)
+    rating: Mapped[int] = mapped_column(Integer, nullable=False)
+    content: Mapped[str] = mapped_column(Text, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+
+    order: Mapped[CareOrder] = relationship(back_populates="review")

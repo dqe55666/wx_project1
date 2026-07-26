@@ -54,7 +54,7 @@ page {
   gap: 12rpx;
 }
 
-.employee-btn {
+.orders-btn {
   background: #ffffff;
   border: 1rpx solid #b9d7d1;
   border-radius: 8rpx;
@@ -66,7 +66,7 @@ page {
 }
 
 .location-btn::after,
-.employee-btn::after,
+.orders-btn::after,
 .submit-btn::after {
   border: 0;
 }

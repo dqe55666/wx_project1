@@ -6,7 +6,7 @@
         <text class="subtitle">选择医院单位与服务项目，提交后等待陪护人员接单</text>
       </view>
       <view class="top-actions">
-        <button class="employee-btn" bindtap="openEmployeePage">员工接单</button>
+        <button class="orders-btn" bindtap="openOrdersPage">我的预约</button>
         <button class="location-btn" loading="{{locating}}" disabled="{{locating}}" bindtap="refreshLocation">定位</button>
       </view>
     </view>
