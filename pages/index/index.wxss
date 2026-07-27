@@ -1,6 +1,6 @@
 page {
   height: 100vh;
-  background: #f5f7f8;
+  background: #fff5f8;
 }
 
 .scrollarea {
@@ -13,6 +13,7 @@ page {
   box-sizing: border-box;
 }
 
+/* 顶部栏优化 - 横向布局 */
 .topbar {
   display: flex;
   align-items: flex-start;
@@ -21,48 +22,58 @@ page {
   margin-bottom: 24rpx;
 }
 
+.title-wrapper {
+  flex: 1;
+}
+
 .title {
-  color: #15232d;
+  color: #e91e63;
   display: block;
-  font-size: 44rpx;
+  font-size: 48rpx;
   font-weight: 700;
-  line-height: 1.25;
+  line-height: 1.2;
+  margin-bottom: 12rpx;
 }
 
 .subtitle {
-  color: #64727d;
+  color: #bd548f;
   display: block;
-  font-size: 26rpx;
-  line-height: 1.5;
-  margin-top: 10rpx;
+  font-size: 24rpx;
+  line-height: 1.6;
+}
+
+/* 按钮组优化 */
+.top-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12rpx;
+  width: 200rpx;
+}
+
+.orders-btn, .location-btn {
+  flex: none;
 }
 
 .location-btn {
-  background: #e7f5f2;
+  background: linear-gradient(135deg, #fce4ec, #f8bbd0);
   border-radius: 8rpx;
-  color: #0f766e;
-  flex: 0 0 136rpx;
+  color: #e91e63;
   font-size: 26rpx;
   height: 68rpx;
   line-height: 68rpx;
   padding: 0;
-}
-
-.top-actions {
-  display: flex;
-  flex: 0 0 auto;
-  gap: 12rpx;
+  text-align: center;
 }
 
 .orders-btn {
   background: #ffffff;
-  border: 1rpx solid #b9d7d1;
+  border: 2rpx solid #e91e63;
   border-radius: 8rpx;
-  color: #0f766e;
+  color: #e91e63;
   font-size: 24rpx;
   height: 68rpx;
   line-height: 66rpx;
-  padding: 0 16rpx;
+  padding: 0 24rpx;
 }
 
 .location-btn::after,
@@ -71,69 +82,87 @@ page {
   border: 0;
 }
 
+/* 当前位置条 */
 .location-strip {
-  background: #edf7f4;
-  border: 1rpx solid #cfe7e2;
-  border-radius: 8rpx;
+  background: linear-gradient(to right, #fce4ec, #f8bbd0);
+  border: 1rpx solid #f8bbd0;
+  border-radius: 12rpx;
   display: flex;
+  align-items: center;
   gap: 16rpx;
-  margin-bottom: 20rpx;
-  padding: 18rpx 20rpx;
+  margin-bottom: 24rpx;
+  padding: 20rpx 24rpx;
 }
 
 .location-label {
-  color: #0f766e;
-  flex: 0 0 112rpx;
+  color: #e91e63;
   font-size: 24rpx;
   font-weight: 600;
+  white-space: nowrap;
 }
 
 .location-address {
-  color: #30404a;
-  flex: 1;
+  color: #c2185b;
   font-size: 24rpx;
-  line-height: 1.45;
+  line-height: 1.4;
+  word-break: break-all;
 }
 
+/* 卡片式面板 */
 .panel {
   background: #ffffff;
-  border: 1rpx solid #dbe4ea;
-  border-radius: 8rpx;
+  border: 1rpx solid #f8bbd0;
+  border-radius: 16rpx;
   margin-bottom: 20rpx;
   padding: 24rpx;
+  box-shadow: 0 2rpx 8rpx rgba(233, 30, 99, 0.05);
 }
 
 .section-title {
-  color: #15232d;
+  color: #e91e63;
   font-size: 30rpx;
   font-weight: 600;
-  margin-bottom: 18rpx;
+  margin-bottom: 20rpx;
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
 }
 
 .picker-field {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  min-height: 76rpx;
-  color: #1f2d36;
+  min-height: 80rpx;
+  background: #fafafa;
+  border-radius: 8rpx;
+  padding: 0 24rpx;
+  border: 1rpx solid #f8bbd0;
+}
+
+.picker-text {
+  color: #880e4f;
   font-size: 30rpx;
+  line-height: 1.4;
 }
 
 .muted {
-  color: #6b7b86;
+  color: #bd548f;
   font-size: 26rpx;
+  margin-left: 16rpx;
 }
 
 .hint {
-  border-top: 1rpx solid #edf2f5;
-  color: #6b7b86;
-  font-size: 25rpx;
-  line-height: 1.45;
-  padding-top: 14rpx;
+  border-top: 1rpx dashed #f8bbd0;
+  color: #bd548f;
+  font-size: 24rpx;
+  line-height: 1.5;
+  padding-top: 16rpx;
+  margin-top: 16rpx;
 }
 
+/* 表单字段 */
 .field {
-  border-bottom: 1rpx solid #edf2f5;
+  border-bottom: 1rpx solid #f8bbd0;
   padding: 16rpx 0;
 }
 
@@ -142,49 +171,70 @@ page {
 }
 
 .label {
-  color: #64727d;
+  color: #bd548f;
   display: block;
   font-size: 24rpx;
-  margin-bottom: 10rpx;
+  margin-bottom: 12rpx;
+  font-weight: 500;
 }
 
 input,
 textarea {
-  color: #15232d;
+  color: #c2185b;
   font-size: 30rpx;
   min-height: 56rpx;
   width: 100%;
+  background: #fff8fa;
+  border: 1rpx solid #f8bbd0;
+  border-radius: 8rpx;
+  padding: 12rpx 16rpx;
 }
 
 textarea {
   height: 120rpx;
+  resize: none;
 }
 
+/* 时间选择行 */
 .time-row {
   display: grid;
-  gap: 18rpx;
+  gap: 20rpx;
   grid-template-columns: 1fr 1fr;
+  margin-bottom: 20rpx;
 }
 
 .time-field {
-  border-bottom: 1rpx solid #edf2f5;
-  padding: 16rpx 0;
+  border-bottom: none;
+  padding: 0;
 }
 
 .date-value {
-  color: #15232d;
+  color: #880e4f;
   font-size: 30rpx;
   min-height: 56rpx;
   line-height: 56rpx;
+  background: #fff8fa;
+  border: 1rpx solid #f8bbd0;
+  border-radius: 8rpx;
+  padding: 0 16rpx;
+  text-align: center;
 }
 
+/* 提交按钮 */
 .submit-btn {
-  background: #0f766e;
-  border-radius: 8rpx;
+  background: linear-gradient(135deg, #e91e63, #f48fb1);
+  border: none;
+  border-radius: 12rpx;
   color: #ffffff;
   font-size: 32rpx;
   font-weight: 600;
   height: 92rpx;
   line-height: 92rpx;
-  margin-top: 28rpx;
+  margin-top: 24rpx;
+  box-shadow: 0 4rpx 12rpx rgba(233, 30, 99, 0.3);
+  transition: transform 0.2s ease;
+}
+
+.submit-btn:active {
+  transform: scale(0.98);
 }
