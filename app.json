@@ -1,7 +1,12 @@
 {
   "pages": [
     "pages/index/index",
+    "pages/booking/booking",
+    "pages/mine/mine",
+    "pages/knowledge/knowledge",
+    "pages/bottle/bottle",
     "pages/orders/orders",
+    "pages/tracking/tracking",
     "pages/logs/logs"
   ],
   "window": {
@@ -11,7 +16,7 @@
   },
   "permission": {
     "scope.userLocation": {
-      "desc": "用于计算您与医院单位的距离"
+      "desc": "用于显示您与陪护人员的实时位置"
     }
   },
   "requiredPrivateInfos": [

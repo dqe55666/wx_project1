@@ -69,6 +69,18 @@ Page({
     }[status] || status
   },
 
+  openTracking(e) {
+    const orderId = Number(e.currentTarget.dataset.id)
+    const saved = (wx.getStorageSync('customerOrders') || []).find((item) => item.id === orderId)
+    if (!saved) {
+      wx.showToast({ title: '订单凭据已失效', icon: 'none' })
+      return
+    }
+    wx.navigateTo({
+      url: `/pages/tracking/tracking?id=${orderId}&token=${encodeURIComponent(saved.token)}`
+    })
+  },
+
   openReview(e) {
     this.setData({
       activeReviewId: Number(e.currentTarget.dataset.id),

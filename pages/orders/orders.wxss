@@ -103,6 +103,22 @@ page {
   padding: 0 24rpx; 
 }
 
+.tracking-btn {
+  background: #e0f2f1;
+  border: 1rpx solid #4db6ac;
+  border-radius: 6rpx;
+  color: #00796b;
+  font-size: 26rpx;
+  height: 66rpx;
+  line-height: 66rpx;
+  margin: 18rpx 0 0;
+  padding: 0 24rpx;
+}
+
+.tracking-btn::after {
+  border: 0;
+}
+
 .review-btn::after, .submit-review-btn::after, .cancel-btn::after, .star::after { 
   border: 0; 
 }

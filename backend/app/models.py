@@ -64,6 +64,7 @@ class CareOrder(Base):
     address_detail: Mapped[str] = mapped_column(String(255), nullable=False)
     latitude: Mapped[float | None] = mapped_column(Numeric(10, 7))
     longitude: Mapped[float | None] = mapped_column(Numeric(10, 7))
+    customer_location_updated_at: Mapped[datetime | None] = mapped_column(DateTime)
     distance_km: Mapped[float | None] = mapped_column(Numeric(8, 2))
     note: Mapped[str | None] = mapped_column(Text)
     status: Mapped[str] = mapped_column(String(30), default="pending", index=True)
@@ -72,6 +73,9 @@ class CareOrder(Base):
     started_at: Mapped[datetime | None] = mapped_column(DateTime)
     completed_at: Mapped[datetime | None] = mapped_column(DateTime)
     stopped_at: Mapped[datetime | None] = mapped_column(DateTime)
+    staff_latitude: Mapped[float | None] = mapped_column(Numeric(10, 7))
+    staff_longitude: Mapped[float | None] = mapped_column(Numeric(10, 7))
+    staff_location_updated_at: Mapped[datetime | None] = mapped_column(DateTime)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
 
     hospital: Mapped[HospitalUnit] = relationship(back_populates="orders")

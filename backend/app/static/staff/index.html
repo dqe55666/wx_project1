@@ -26,8 +26,28 @@
       .header-inner { align-items: center; display: flex; justify-content: space-between; margin: 0 auto; max-width: 1180px; padding: 18px 28px; }
       .identity { color: #52616f; font-size: 14px; margin-top: 5px; }
       .header-actions { align-items: center; display: flex; gap: 12px; }
+      .location-share { background: #e7f5f2; border: 1px solid #7bc9bf; color: #0f766e; }
       .logout { background: #e7f5f2; color: #0f766e; }
+      .location-status { color: #52616f; font-size: 13px; margin: 0 auto; max-width: 1180px; padding: 10px 28px 0; }
+      .location-status.error { color: #b42318; }
+      .primary-nav { border-bottom: 1px solid #d9e2ec; background: #fff; }
+      .primary-nav-inner { display: flex; gap: 8px; margin: 0 auto; max-width: 1180px; padding: 0 28px; }
+      .view-tab { background: transparent; border-bottom: 3px solid transparent; border-radius: 0; color: #64727d; font-weight: 600; height: 48px; padding: 0 18px; }
+      .view-tab.active { border-bottom-color: #0f766e; color: #0f766e; }
+      .tracking-map-panel { background: #fff; border: 1px solid #d9e2ec; border-radius: 8px; margin-bottom: 18px; overflow: hidden; }
+      .tracking-map-heading { align-items: center; border-bottom: 1px solid #edf2f7; display: flex; justify-content: space-between; padding: 15px 18px; }
+      .tracking-map-heading h2 { color: #17202a; }
+      .tracking-map-key { color: #64727d; font-size: 13px; }
+      #locationMap { display: block; height: 340px; object-fit: cover; width: 100%; }
+      .map-message { color: #64727d; font-size: 14px; padding: 14px 18px; }
       main { margin: 0 auto; max-width: 1180px; padding: 24px 28px; }
+      .view-panel { display: none; }
+      .view-panel.active { display: block; }
+      .summary-grid { display: grid; gap: 14px; grid-template-columns: repeat(3, minmax(0, 1fr)); margin-bottom: 18px; }
+      .summary-card { background: #fff; border: 1px solid #d9e2ec; border-radius: 8px; padding: 18px; }
+      .summary-label { color: #64727d; display: block; font-size: 13px; }
+      .summary-value { color: #17202a; display: block; font-size: 30px; font-weight: 700; line-height: 1.15; margin-top: 8px; }
+      .summary-hint { color: #0f766e; display: block; font-size: 13px; margin-top: 7px; }
       .toolbar { align-items: center; display: flex; justify-content: space-between; margin-bottom: 18px; }
       .tabs { display: flex; gap: 8px; }
       .tab { background: #e9eef1; color: #52616f; }
@@ -47,9 +67,26 @@
       .note { background: #f5f7f8; color: #52616f; font-size: 14px; line-height: 1.45; margin-top: 12px; padding: 10px; }
       .order-foot { border-top: 1px solid #edf2f7; margin-top: 14px; padding-top: 14px; }
       .action { background: #0f766e; color: #fff; }
+      .action:disabled { background: #9aa9ac; cursor: not-allowed; }
       .start { background: #175cd3; color: #fff; }
       .empty { color: #64727d; padding: 72px 0; text-align: center; }
-      @media (max-width: 640px) { .header-inner, main { padding-left: 16px; padding-right: 16px; } .toolbar { align-items: flex-start; gap: 12px; flex-direction: column; } .tabs { width: 100%; } .tab { flex: 1; padding: 0 8px; } }
+      .profile-layout { display: grid; gap: 18px; grid-template-columns: minmax(280px, 0.8fr) minmax(0, 1.2fr); }
+      .profile-panel, .account-panel { background: #fff; border: 1px solid #d9e2ec; border-radius: 8px; padding: 22px; }
+      .profile-top { align-items: center; display: flex; gap: 16px; }
+      .avatar { align-items: center; background: #0f766e; border-radius: 50%; color: #fff; display: flex; font-size: 25px; font-weight: 700; height: 58px; justify-content: center; width: 58px; }
+      .profile-name { color: #17202a; display: block; font-size: 20px; font-weight: 700; }
+      .profile-role { color: #64727d; display: block; font-size: 14px; margin-top: 5px; }
+      .profile-details { border-top: 1px solid #edf2f7; display: grid; gap: 16px; margin-top: 22px; padding-top: 18px; }
+      .profile-detail-label { color: #64727d; display: block; font-size: 13px; }
+      .profile-detail-value { color: #334e68; display: block; font-size: 15px; margin-top: 5px; }
+      .account-panel h2 { margin-bottom: 16px; }
+      .account-row { align-items: center; border-top: 1px solid #edf2f7; display: flex; justify-content: space-between; padding: 16px 0; }
+      .account-row:first-of-type { border-top: 0; padding-top: 0; }
+      .account-label { color: #334e68; font-size: 15px; }
+      .account-value { color: #64727d; font-size: 14px; text-align: right; }
+      .account-value.online { color: #0f766e; font-weight: 600; }
+      .workspace-link { background: #0f766e; color: #fff; margin: 20px 0 0; }
+      @media (max-width: 640px) { .header-inner, main, .primary-nav-inner { padding-left: 16px; padding-right: 16px; } .header-inner { align-items: flex-start; gap: 14px; flex-direction: column; } .toolbar { align-items: flex-start; gap: 12px; flex-direction: column; } .tabs { width: 100%; } .tab { flex: 1; padding: 0 8px; } .summary-grid, .profile-layout { grid-template-columns: 1fr; } .location-status { padding-left: 16px; padding-right: 16px; } .view-tab { flex: 1; padding: 0 8px; } }
     </style>
   </head>
   <body>
@@ -73,20 +110,64 @@
             <h1>员工接单工作台</h1>
             <div class="identity" id="identity"></div>
           </div>
-          <div class="header-actions"><button class="logout" id="logoutButton" type="button">退出登录</button></div>
+          <div class="header-actions">
+            <button class="location-share" id="locationShareButton" type="button">开启位置共享</button>
+            <button class="logout" id="logoutButton" type="button">退出登录</button>
+          </div>
         </div>
       </header>
-      <main>
-        <div class="toolbar">
-          <div class="tabs">
-            <button class="tab active" data-status="pending" type="button">待接订单</button>
-            <button class="tab" data-status="accepted" type="button">已接订单</button>
-            <button class="tab" data-status="in_progress" type="button">工作中</button>
-            <button class="tab" data-status="completed" type="button">已完成</button>
-          </div>
-          <button class="refresh" id="refreshButton" type="button">刷新订单</button>
+      <nav class="primary-nav" aria-label="主导航">
+        <div class="primary-nav-inner">
+          <button class="view-tab active" data-view="workspace" type="button">工作台</button>
+          <button class="view-tab" data-view="profile" type="button">我的</button>
         </div>
-        <div class="order-list" id="orderList"></div>
+      </nav>
+      <div class="location-status" id="locationStatus">位置共享未开启</div>
+      <main>
+        <section class="view-panel active" id="workspaceView">
+          <section class="summary-grid" aria-label="服务概览">
+            <article class="summary-card"><span class="summary-label">进行中订单</span><strong class="summary-value" id="activeOrderCount">0</strong><span class="summary-hint">已接单与服务中</span></article>
+            <article class="summary-card"><span class="summary-label">待接订单</span><strong class="summary-value" id="pendingOrderCount">0</strong><span class="summary-hint">可接单服务需求</span></article>
+            <article class="summary-card"><span class="summary-label">已完成服务</span><strong class="summary-value" id="completedOrderCount">0</strong><span class="summary-hint">累计当前账号订单</span></article>
+          </section>
+          <section class="tracking-map-panel">
+            <div class="tracking-map-heading">
+              <h2>实时位置地图</h2>
+              <span class="tracking-map-key">青色：我　粉色：用户</span>
+            </div>
+            <img id="locationMap" alt="员工与用户实时位置地图" hidden />
+            <div class="map-message" id="mapMessage">开启位置共享后显示进行中订单的位置。</div>
+          </section>
+          <div class="toolbar">
+            <div class="tabs">
+              <button class="tab active" data-status="pending" type="button">待接订单</button>
+              <button class="tab" data-status="accepted" type="button">已接订单</button>
+              <button class="tab" data-status="in_progress" type="button">工作中</button>
+              <button class="tab" data-status="completed" type="button">已完成</button>
+            </div>
+            <button class="refresh" id="refreshButton" type="button">刷新订单</button>
+          </div>
+          <div class="order-list" id="orderList"></div>
+        </section>
+
+        <section class="view-panel" id="profileView">
+          <div class="profile-layout">
+            <section class="profile-panel">
+              <div class="profile-top"><div class="avatar" id="profileAvatar">护</div><div><span class="profile-name" id="profileName">员工</span><span class="profile-role" id="profileArea">服务区域待确认</span></div></div>
+              <div class="profile-details">
+                <div><span class="profile-detail-label">联系电话</span><span class="profile-detail-value" id="profilePhone">-</span></div>
+                <div><span class="profile-detail-label">员工编号</span><span class="profile-detail-value" id="profileId">-</span></div>
+              </div>
+            </section>
+            <section class="account-panel">
+              <h2>工作状态</h2>
+              <div class="account-row"><span class="account-label">位置共享</span><span class="account-value" id="profileLocationStatus">未开启</span></div>
+              <div class="account-row"><span class="account-label">进行中服务</span><span class="account-value" id="profileActiveOrders">0 个订单</span></div>
+              <div class="account-row"><span class="account-label">已完成服务</span><span class="account-value" id="profileCompletedOrders">0 个订单</span></div>
+              <button class="workspace-link" id="openWorkspaceButton" type="button">进入工作台</button>
+            </section>
+          </div>
+        </section>
       </main>
     </div>
 
@@ -94,8 +175,27 @@
       const loginView = document.querySelector("#loginView");
       const workbench = document.querySelector("#workbench");
       const orderList = document.querySelector("#orderList");
+      const locationShareButton = document.querySelector("#locationShareButton");
+      const locationStatus = document.querySelector("#locationStatus");
+      const locationMapMessage = document.querySelector("#mapMessage");
+      const activeOrderCount = document.querySelector("#activeOrderCount");
+      const pendingOrderCount = document.querySelector("#pendingOrderCount");
+      const completedOrderCount = document.querySelector("#completedOrderCount");
+      const profileName = document.querySelector("#profileName");
+      const profileArea = document.querySelector("#profileArea");
+      const profilePhone = document.querySelector("#profilePhone");
+      const profileId = document.querySelector("#profileId");
+      const profileAvatar = document.querySelector("#profileAvatar");
+      const profileLocationStatus = document.querySelector("#profileLocationStatus");
+      const profileActiveOrders = document.querySelector("#profileActiveOrders");
+      const profileCompletedOrders = document.querySelector("#profileCompletedOrders");
       let accessToken = localStorage.getItem("staffAccessToken") || "";
       let activeStatus = "pending";
+      let locationTimer = null;
+      let locationSharingEnabled = false;
+      let lastSharedLocation = null;
+      let mapImageUrl = null;
+      let currentEmployee = null;
 
       function escapeHtml(value) {
         return String(value ?? "").replace(/[&<>'"]/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" })[char]);
@@ -115,6 +215,9 @@
         loginView.style.display = "none";
         workbench.style.display = "block";
         document.querySelector("#identity").textContent = `${employee.name}${employee.service_area ? ` · ${employee.service_area}` : ""}`;
+        currentEmployee = employee;
+        renderProfile(employee);
+        refreshOverview();
         loadOrders();
       }
 
@@ -124,10 +227,44 @@
       }
 
       function logout() {
+        stopLocationSharing();
+        locationSharingEnabled = false;
         accessToken = "";
         localStorage.removeItem("staffAccessToken");
         workbench.style.display = "none";
         loginView.style.display = "flex";
+        currentEmployee = null;
+      }
+
+      function renderProfile(employee) {
+        profileName.textContent = employee.name || "员工";
+        profileArea.textContent = employee.service_area || "服务区域待确认";
+        profilePhone.textContent = employee.phone || "未登记";
+        profileId.textContent = employee.id ? `EMP-${String(employee.id).padStart(4, "0")}` : "-";
+        profileAvatar.textContent = (employee.name || "护").slice(0, 1);
+      }
+
+      function renderOverview(orders) {
+        const activeCount = orders.filter((order) => ["accepted", "in_progress"].includes(order.status)).length;
+        const pendingCount = orders.filter((order) => order.status === "pending").length;
+        const completedCount = orders.filter((order) => order.status === "completed").length;
+        activeOrderCount.textContent = activeCount;
+        pendingOrderCount.textContent = pendingCount;
+        completedOrderCount.textContent = completedCount;
+        profileActiveOrders.textContent = `${activeCount} 个订单`;
+        profileCompletedOrders.textContent = `${completedCount} 个订单`;
+      }
+
+      async function refreshOverview() {
+        if (!accessToken) return;
+        try { renderOverview(await request("/api/staff/orders?status=all")); } catch (_) {}
+      }
+
+      function setView(view) {
+        document.querySelectorAll(".view-tab").forEach((tab) => tab.classList.toggle("active", tab.dataset.view === view));
+        document.querySelector("#workspaceView").classList.toggle("active", view === "workspace");
+        document.querySelector("#profileView").classList.toggle("active", view === "profile");
+        if (view === "profile") refreshOverview();
       }
 
       function statusText(status) {
@@ -142,7 +279,12 @@
       async function loadOrders() {
         orderList.innerHTML = '<div class="empty">订单加载中...</div>';
         try {
-          const orders = await request(`/api/staff/orders?status=${activeStatus}`);
+          const [orders, allOrders] = await Promise.all([
+            request(`/api/staff/orders?status=${activeStatus}`),
+            request("/api/staff/orders?status=all")
+          ]);
+          const hasActiveOrder = allOrders.some((order) => ["accepted", "in_progress"].includes(order.status));
+          renderOverview(allOrders);
           orderList.innerHTML = orders.length ? orders.map((order) => `
             <article class="order">
               <div class="order-head"><span class="order-no">${escapeHtml(order.order_no)}</span><span class="badge ${order.status === "in_progress" ? "in-progress" : order.status}">${statusText(order.status)}</span></div>
@@ -154,12 +296,105 @@
                 <div>地址：${escapeHtml(order.address_detail)}</div>
               </div>
               ${order.note ? `<div class="note">备注：${escapeHtml(order.note)}</div>` : ""}
-              <div class="order-foot"><span class="meta">${order.distance_km === null ? "距离待定位" : `${order.distance_km} km`}</span>${order.status === "pending" ? `<button class="action" data-action="accept" data-id="${order.id}" type="button">接单</button>` : order.status === "accepted" ? `<button class="start" data-action="start" data-id="${order.id}" type="button">开始工作</button>` : order.status === "in_progress" ? `<button class="action" data-action="finish" data-id="${order.id}" type="button">结束工作</button>` : `<span class="meta">已完成</span>`}</div>
+              <div class="order-foot"><span class="meta">${order.distance_km === null ? "距离待定位" : `${order.distance_km} km`}</span>${order.status === "pending" ? hasActiveOrder ? `<span class="meta">请先完成当前订单</span>` : `<button class="action" data-action="accept" data-id="${order.id}" type="button">接单</button>` : order.status === "accepted" ? `<button class="start" data-action="start" data-id="${order.id}" type="button">开始工作</button>` : order.status === "in_progress" ? `<button class="action" data-action="finish" data-id="${order.id}" type="button">结束工作</button>` : `<span class="meta">已完成</span>`}</div>
             </article>`).join("") : '<div class="empty">暂无相关订单</div>';
           orderList.querySelectorAll("[data-action]").forEach((button) => button.addEventListener("click", () => updateOrder(button)));
+          syncLocationSharing();
         } catch (error) {
           orderList.innerHTML = `<div class="empty">${escapeHtml(error.message)}</div>`;
         }
+      }
+
+      function setLocationStatus(message, isError = false) {
+        locationStatus.textContent = message;
+        locationStatus.classList.toggle("error", isError);
+        profileLocationStatus.textContent = message;
+        profileLocationStatus.classList.toggle("online", locationSharingEnabled && !isError);
+      }
+
+      function getCurrentLocation() {
+        return new Promise((resolve, reject) => {
+          if (!navigator.geolocation) {
+            reject(new Error("当前浏览器不支持定位"));
+            return;
+          }
+          navigator.geolocation.getCurrentPosition(resolve, (error) => {
+            const message = error.code === 1 ? "定位权限被拒绝，请在浏览器设置中允许位置访问" : "当前位置获取失败，请检查网络或定位服务";
+            reject(new Error(message));
+          }, { enableHighAccuracy: true, maximumAge: 10000, timeout: 10000 });
+        });
+      }
+
+      async function uploadLocation(orders) {
+        if (!orders.length) {
+          setLocationStatus("位置共享已开启，等待接单");
+          return;
+        }
+        const position = await getCurrentLocation();
+        const payload = { latitude: position.coords.latitude, longitude: position.coords.longitude };
+        const results = await Promise.all(orders.map((order) => request(`/api/staff/orders/${order.id}/location`, { method: "POST", body: JSON.stringify(payload) })));
+        if (!results.length) return;
+        lastSharedLocation = payload;
+        setLocationStatus(`位置已更新，将每 15 秒同步一次（${orders.length} 个进行中订单）`);
+      }
+
+      async function renderLocationMap(orders) {
+        const mapImage = document.querySelector("#locationMap");
+        if (!orders.length) {
+          mapImage.hidden = true;
+          locationMapMessage.textContent = "暂无进行中订单，接单后将显示双方位置。";
+          return;
+        }
+        try {
+          const response = await fetch("/api/staff/location-map", { headers: accessToken ? { Authorization: `Bearer ${accessToken}` } : {} });
+          if (response.status === 204) {
+            mapImage.hidden = true;
+            locationMapMessage.textContent = "等待员工和用户开启位置共享。";
+            return;
+          }
+          if (!response.ok) throw new Error("地图加载失败");
+          const imageUrl = URL.createObjectURL(await response.blob());
+          if (mapImageUrl) URL.revokeObjectURL(mapImageUrl);
+          mapImageUrl = imageUrl;
+          mapImage.src = imageUrl;
+          mapImage.hidden = false;
+          locationMapMessage.textContent = "位置将在页面停留期间自动刷新。";
+        } catch (_) {
+          mapImage.hidden = true;
+          locationMapMessage.textContent = "地图暂时不可用，请检查高德地图服务配置。";
+        }
+      }
+
+      function stopLocationSharing() {
+        if (locationTimer) {
+          clearInterval(locationTimer);
+          locationTimer = null;
+        }
+      }
+
+      async function syncLocationSharing() {
+        if (!locationSharingEnabled) return;
+        try {
+          const allOrders = await request("/api/staff/orders?status=all");
+          renderOverview(allOrders);
+          const activeOrders = allOrders.filter((order) => ["accepted", "in_progress"].includes(order.status));
+          await uploadLocation(activeOrders);
+          await renderLocationMap(activeOrders);
+        } catch (error) {
+          setLocationStatus(error.message || "位置同步失败", true);
+        }
+      }
+
+      async function startLocationSharing() {
+        if (!window.isSecureContext && location.hostname !== "localhost" && location.hostname !== "127.0.0.1") {
+          setLocationStatus("位置共享需要通过 HTTPS 或 localhost 访问员工工作台", true);
+          return;
+        }
+        locationSharingEnabled = true;
+        locationShareButton.textContent = "刷新位置";
+        stopLocationSharing();
+        await syncLocationSharing();
+        locationTimer = setInterval(syncLocationSharing, 15000);
       }
 
       async function updateOrder(button) {
@@ -190,7 +425,10 @@
         } catch (err) { error.textContent = err.message; } finally { button.disabled = false; }
       });
       document.querySelectorAll(".tab").forEach((tab) => tab.addEventListener("click", () => { setActiveStatus(tab.dataset.status); loadOrders(); }));
+      document.querySelectorAll(".view-tab").forEach((tab) => tab.addEventListener("click", () => setView(tab.dataset.view)));
       document.querySelector("#refreshButton").addEventListener("click", loadOrders);
+      document.querySelector("#openWorkspaceButton").addEventListener("click", () => setView("workspace"));
+      locationShareButton.addEventListener("click", startLocationSharing);
       document.querySelector("#logoutButton").addEventListener("click", logout);
       restoreSession();
     </script>

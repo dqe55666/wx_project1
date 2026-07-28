@@ -14,6 +14,7 @@ from .config import settings
 AMAP_REGEOCODE_URL = "https://restapi.amap.com/v3/geocode/regeo"
 AMAP_PLACE_AROUND_URL = "https://restapi.amap.com/v5/place/around"
 AMAP_PLACE_TEXT_URL = "https://restapi.amap.com/v5/place/text"
+AMAP_STATIC_MAP_URL = "https://restapi.amap.com/v3/staticmap"
 HOSPITAL_POI_TYPE = "090000"
 
 
@@ -108,6 +109,31 @@ def amap_get(url: str, params: dict[str, str]):
             return json.loads(response.read().decode("utf-8"))
     except (OSError, URLError, json.JSONDecodeError) as exc:
         raise HTTPException(status_code=502, detail="高德地图服务请求失败") from exc
+
+
+def static_map(params: dict[str, str]):
+    if not settings.amap_key:
+        raise HTTPException(status_code=500, detail="未配置高德 Web 服务 Key")
+
+    params["key"] = settings.amap_key
+    if settings.amap_private_key:
+        params["sig"] = build_signature(params, settings.amap_private_key)
+
+    try:
+        context = ssl.create_default_context(cafile=certifi.where())
+        with urlopen(
+            f"{AMAP_STATIC_MAP_URL}?{urlencode(params)}", timeout=8, context=context
+        ) as response:
+            content = response.read()
+            content_type = response.headers.get_content_type()
+        if content_type == "application/json":
+            detail = json.loads(content.decode("utf-8")).get("info") or "高德静态地图服务失败"
+            raise HTTPException(status_code=502, detail=detail)
+        return content, content_type
+    except HTTPException:
+        raise
+    except (OSError, URLError, json.JSONDecodeError) as exc:
+        raise HTTPException(status_code=502, detail="高德静态地图服务请求失败") from exc
 
 
 def normalize_poi(item):

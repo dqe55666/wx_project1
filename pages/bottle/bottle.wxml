@@ -1,0 +1,20 @@
+<scroll-view class="scrollarea" scroll-y>
+  <view class="page">
+    <view class="heading">
+      <text class="title">漂瓶</text>
+      <text class="subtitle">放出一句心情，也可以捞起一条温柔留言。</text>
+    </view>
+
+    <view class="bottle-panel">
+      <text class="panel-label">捞到的漂瓶</text>
+      <text class="bottle-text">{{bottleText}}</text>
+      <button class="secondary-btn" bindtap="pickBottle">再捞一条</button>
+    </view>
+
+    <view class="write-panel">
+      <text class="panel-label">写一只漂瓶</text>
+      <textarea value="{{message}}" bindinput="onMessageInput" maxlength="200" placeholder="写下今天的心情、感谢或鼓励" />
+      <button class="primary-btn" bindtap="sendBottle">放出漂瓶</button>
+    </view>
+  </view>
+</scroll-view>

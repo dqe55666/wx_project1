@@ -1,0 +1,16 @@
+<scroll-view class="scrollarea" scroll-y>
+  <view class="page">
+    <view class="heading">
+      <text class="title">每日知识</text>
+      <text class="subtitle">护理陪护的小提醒，每天看一点。</text>
+    </view>
+
+    <view class="tip-list">
+      <view wx:for="{{tips}}" wx:key="title" class="tip-card">
+        <text class="tip-index">知识 {{index + 1}}</text>
+        <text class="tip-title">{{item.title}}</text>
+        <text class="tip-content">{{item.content}}</text>
+      </view>
+    </view>
+  </view>
+</scroll-view>
