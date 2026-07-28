@@ -1,34 +1,123 @@
+const app = getApp()
+
 Page({
   data: {
-    entries: [
-      {
-        title: '预约陪护',
-        desc: '选择医院单位与服务项目，提交上门陪护需求',
-        url: '/pages/booking/booking',
-        tone: 'primary'
-      },
-      {
-        title: '我的',
-        desc: '查看预约记录、评价服务与管理常用信息',
-        url: '/pages/mine/mine',
-        tone: 'mint'
-      },
-      {
-        title: '每日知识',
-        desc: '学习陪护、康复与居家护理小知识',
-        url: '/pages/knowledge/knowledge',
-        tone: 'sun'
-      },
-      {
-        title: '漂瓶',
-        desc: '写下心情或捞取一条温柔留言',
-        url: '/pages/bottle/bottle',
-        tone: 'sea'
-      }
-    ]
+    hospitals: [],
+    services: [],
+    selectedHospitalIndex: 0,
+    selectedServiceIndex: 0,
+    locationReady: false,
+    hospitalLoading: false,
+    locating: false,
+    submitting: false,
+    form: {
+      patientName: '',
+      patientPhone: '',
+      addressDetail: '',
+      appointmentDate: '',
+      appointmentTime: '09:00',
+      note: ''
+    },
+    currentAddress: '',
+    userLocation: null
   },
 
-<<<<<<< HEAD
+  onLoad() {
+    this.setData({
+      'form.appointmentDate': this.formatDate(new Date())
+    })
+    this.loadServices()
+    this.loadHospitals()
+    this.refreshLocation()
+  },
+
+  request(path, options = {}) {
+    return new Promise((resolve, reject) => {
+      wx.request({
+        url: `${app.globalData.apiBaseUrl}${path}`,
+        method: options.method || 'GET',
+        data: options.data,
+        header: {
+          'content-type': 'application/json'
+        },
+        success: (res) => {
+          if (res.statusCode >= 200 && res.statusCode < 300) {
+            resolve(res.data)
+            return
+          }
+          reject(res.data)
+        },
+        fail: reject
+      })
+    })
+  },
+
+  async loadHospitals(location) {
+    this.setData({ hospitalLoading: true })
+    try {
+      const query = location ? `?lat=${location.latitude}&lng=${location.longitude}` : ''
+      console.info('[hospitals] request', query || 'without location')
+      const hospitals = await this.request(`/api/hospitals${query}`)
+      console.info('[hospitals] response count', hospitals.length)
+      if (!hospitals.length && this.data.hospitals.length) {
+        wx.showToast({ title: '定位后暂无匹配单位，保留原列表', icon: 'none' })
+        return
+      }
+      this.setData({
+        hospitals: hospitals.map((item) => ({
+          ...item,
+          displayDistance: this.formatDistance(item.distance_km)
+        })),
+        selectedHospitalIndex: 0
+      })
+    } catch (err) {
+      console.error('[hospitals] failed', err)
+      wx.showToast({ title: '医院列表加载失败', icon: 'none' })
+    } finally {
+      this.setData({ hospitalLoading: false })
+    }
+  },
+
+  async loadServices() {
+    try {
+      const services = await this.request('/api/services')
+      this.setData({
+        services: services.map((item) => ({
+          ...item,
+          displayPrice: this.formatPrice(item.price_cents)
+        }))
+      })
+    } catch (err) {
+      wx.showToast({ title: '服务项目加载失败', icon: 'none' })
+    }
+  },
+
+  refreshLocation() {
+    this.setData({ locating: true })
+    wx.getLocation({
+      type: 'gcj02',
+      success: (res) => {
+        const userLocation = {
+          latitude: res.latitude,
+          longitude: res.longitude
+        }
+        this.setData({
+          userLocation,
+          locationReady: true
+        })
+        this.loadHospitals(userLocation)
+        this.reverseGeocodeLocation(userLocation)
+      },
+      fail: () => {
+        this.setData({
+          locationReady: false,
+          locating: false
+        })
+        wx.showToast({ title: '未授权定位，将不显示距离', icon: 'none' })
+      }
+    })
+  },
+
   async reverseGeocodeLocation(location) {
     try {
       const result = await this.request(`/api/location/regeo?lat=${location.latitude}&lng=${location.longitude}`)
@@ -174,12 +263,6 @@ Page({
       wx.showToast({ title: err.detail || '提交失败，请稍后重试', icon: 'none' })
     } finally {
       this.setData({ submitting: false })
-=======
-  openEntry(e) {
-    const { url } = e.currentTarget.dataset
-    if (url) {
-      wx.navigateTo({ url })
->>>>>>> 356664a594e3c96cd7bbca97cde122c4c2859d3d
     }
   }
 })
