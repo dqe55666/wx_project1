@@ -1,0 +1,71 @@
+page {
+  height: 100vh;
+  background: #fffaf0;
+}
+
+.scrollarea {
+  height: 100vh;
+}
+
+.page {
+  box-sizing: border-box;
+  min-height: 100vh;
+  padding: 34rpx 28rpx calc(44rpx + env(safe-area-inset-bottom));
+}
+
+.heading {
+  margin-bottom: 24rpx;
+}
+
+.title {
+  color: #3e3425;
+  display: block;
+  font-size: 46rpx;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.subtitle {
+  color: #7a6951;
+  display: block;
+  font-size: 26rpx;
+  line-height: 1.5;
+  margin-top: 10rpx;
+}
+
+.tip-list {
+  display: grid;
+  gap: 18rpx;
+}
+
+.tip-card {
+  background: #ffffff;
+  border: 1rpx solid #eadfca;
+  border-radius: 8rpx;
+  padding: 26rpx;
+}
+
+.tip-index {
+  color: #f9a825;
+  display: block;
+  font-size: 23rpx;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.tip-title {
+  color: #3e3425;
+  display: block;
+  font-size: 31rpx;
+  font-weight: 700;
+  line-height: 1.4;
+  margin-top: 8rpx;
+}
+
+.tip-content {
+  color: #6d5f4a;
+  display: block;
+  font-size: 26rpx;
+  line-height: 1.65;
+  margin-top: 12rpx;
+}

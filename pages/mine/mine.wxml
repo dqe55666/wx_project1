@@ -1,0 +1,31 @@
+<scroll-view class="scrollarea" scroll-y>
+  <view class="page">
+    <view class="heading">
+      <text class="title">我的</text>
+      <text class="subtitle">管理预约记录与常用服务。</text>
+    </view>
+
+    <view class="summary">
+      <text class="summary-label">本机预约记录</text>
+      <text class="summary-count">{{savedOrderCount}}</text>
+    </view>
+
+    <view class="action-list">
+      <view class="action-item" bindtap="openOrders" hover-class="action-item-active">
+        <view>
+          <text class="action-title">我的预约</text>
+          <text class="action-desc">查看订单进度，服务完成后提交评价</text>
+        </view>
+        <text class="action-arrow">›</text>
+      </view>
+
+      <view class="action-item" bindtap="openBooking" hover-class="action-item-active">
+        <view>
+          <text class="action-title">再次预约</text>
+          <text class="action-desc">快速进入陪护预约表单</text>
+        </view>
+        <text class="action-arrow">›</text>
+      </view>
+    </view>
+  </view>
+</scroll-view>

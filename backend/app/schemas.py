@@ -70,6 +70,11 @@ class ReviewCreate(BaseModel):
     content: str = Field(min_length=1, max_length=1000)
 
 
+class LocationUpdate(BaseModel):
+    latitude: float = Field(ge=-90, le=90)
+    longitude: float = Field(ge=-180, le=180)
+
+
 class StaffLogin(BaseModel):
     username: str = Field(min_length=2, max_length=50)
     password: str = Field(min_length=6, max_length=128)

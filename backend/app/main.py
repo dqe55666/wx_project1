@@ -6,14 +6,14 @@ from datetime import datetime
 from pathlib import Path
 from random import randint
 
-from fastapi import Depends, FastAPI, HTTPException, Query, status
+from fastapi import Depends, FastAPI, HTTPException, Query, Response, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy import or_
 from sqlalchemy.orm import Session
 
-from .amap import reverse_geocode, search_hospitals
+from .amap import reverse_geocode, search_hospitals, static_map
 from .config import settings
 from .database import Base, SessionLocal, engine, get_db, upgrade_schema
 from .geo import haversine_km
@@ -25,6 +25,7 @@ from .schemas import (
     HospitalCreate,
     HospitalOut,
     HospitalUpdate,
+    LocationUpdate,
     OrderCreate,
     OrderAssign,
     OrderOut,
@@ -324,6 +325,13 @@ def order_to_dict(order: CareOrder):
         "service_name": order.service_item.name,
         "appointment_time": order.appointment_time.isoformat(),
         "address_detail": order.address_detail,
+        "latitude": float(order.latitude) if order.latitude is not None else None,
+        "longitude": float(order.longitude) if order.longitude is not None else None,
+        "customer_location_updated_at": (
+            order.customer_location_updated_at.isoformat()
+            if order.customer_location_updated_at
+            else None
+        ),
         "distance_km": float(order.distance_km) if order.distance_km is not None else None,
         "note": order.note,
         "status": order.status,
@@ -333,6 +341,9 @@ def order_to_dict(order: CareOrder):
         "started_at": order.started_at.isoformat() if order.started_at else None,
         "completed_at": order.completed_at.isoformat() if order.completed_at else None,
         "stopped_at": order.stopped_at.isoformat() if order.stopped_at else None,
+        "staff_location_updated_at": (
+            order.staff_location_updated_at.isoformat() if order.staff_location_updated_at else None
+        ),
         "review": (
             {
                 "rating": order.review.rating,
@@ -369,6 +380,18 @@ def get_orders_for_employee(employee: Employee, order_status: str, db: Session, 
 
 
 def claim_order(order_id: int, employee: Employee, db: Session):
+    db.query(Employee).filter(Employee.id == employee.id).with_for_update().one()
+    active_order = (
+        db.query(CareOrder.id)
+        .filter(
+            CareOrder.employee_id == employee.id,
+            CareOrder.status.in_(["accepted", "in_progress"]),
+        )
+        .first()
+    )
+    if active_order:
+        db.rollback()
+        raise HTTPException(status_code=409, detail="您有进行中的订单，请完成后再接新单")
     updated = (
         db.query(CareOrder)
         .filter(CareOrder.id == order_id, CareOrder.status == "pending", CareOrder.employee_id.is_(None))
@@ -396,13 +419,23 @@ def staff_login(payload: StaffLogin, db: Session = Depends(get_db)):
     return {
         "access_token": create_staff_token(employee.id),
         "token_type": "bearer",
-        "employee": {"id": employee.id, "name": employee.name, "service_area": employee.service_area},
+        "employee": {
+            "id": employee.id,
+            "name": employee.name,
+            "phone": employee.phone,
+            "service_area": employee.service_area,
+        },
     }
 
 
 @app.get("/api/staff/me")
 def staff_me(employee: Employee = Depends(require_staff)):
-    return {"id": employee.id, "name": employee.name, "service_area": employee.service_area}
+    return {
+        "id": employee.id,
+        "name": employee.name,
+        "phone": employee.phone,
+        "service_area": employee.service_area,
+    }
 
 
 @app.get("/api/staff/orders")
@@ -472,30 +505,116 @@ def staff_finish_order(
     return order_to_dict(db.get(CareOrder, order_id))
 
 
+@app.post("/api/staff/orders/{order_id}/location")
+def update_staff_location(
+    order_id: int,
+    payload: LocationUpdate,
+    employee: Employee = Depends(require_staff),
+    db: Session = Depends(get_db),
+):
+    order = (
+        db.query(CareOrder)
+        .filter(
+            CareOrder.id == order_id,
+            CareOrder.employee_id == employee.id,
+            CareOrder.status.in_(["accepted", "in_progress"]),
+        )
+        .first()
+    )
+    if not order:
+        raise HTTPException(status_code=409, detail="该订单当前不能更新位置")
+    order.staff_latitude = payload.latitude
+    order.staff_longitude = payload.longitude
+    order.staff_location_updated_at = datetime.utcnow()
+    db.commit()
+    return {"ok": True, "updated_at": order.staff_location_updated_at.isoformat()}
+
+
+@app.get("/api/staff/location-map")
+def staff_location_map(
+    employee: Employee = Depends(require_staff), db: Session = Depends(get_db)
+):
+    orders = (
+        db.query(CareOrder)
+        .filter(
+            CareOrder.employee_id == employee.id,
+            CareOrder.status.in_(["accepted", "in_progress"]),
+        )
+        .all()
+    )
+    points = []
+    markers = []
+    staff_order = next(
+        (
+            order
+            for order in orders
+            if order.staff_latitude is not None and order.staff_longitude is not None
+        ),
+        None,
+    )
+    if staff_order:
+        staff_point = (float(staff_order.staff_longitude), float(staff_order.staff_latitude))
+        points.append(staff_point)
+        markers.append(f"mid,0x00897B,S:{staff_point[0]:.6f},{staff_point[1]:.6f}")
+    for order in orders:
+        if order.latitude is None or order.longitude is None:
+            continue
+        customer_point = (float(order.longitude), float(order.latitude))
+        points.append(customer_point)
+        markers.append(f"mid,0xE91E63,C:{customer_point[0]:.6f},{customer_point[1]:.6f}")
+    if not points:
+        return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+    center_lng = sum(point[0] for point in points) / len(points)
+    center_lat = sum(point[1] for point in points) / len(points)
+    image, content_type = static_map(
+        {
+            "location": f"{center_lng:.6f},{center_lat:.6f}",
+            "zoom": "13" if len(points) > 1 else "15",
+            "size": "1000*460",
+            "markers": "|".join(markers),
+        }
+    )
+    return Response(content=image, media_type=content_type)
+
+
 @app.post("/api/admin/orders/{order_id}/assign")
 def admin_assign_order(
     order_id: int, payload: OrderAssign, db: Session = Depends(get_db)
 ):
-    employee = db.get(Employee, payload.employee_id)
+    employee = (
+        db.query(Employee).filter(Employee.id == payload.employee_id).with_for_update().first()
+    )
     if not employee or not employee.is_active:
         raise HTTPException(status_code=400, detail="请选择有效员工")
-    updated = (
+    order = (
         db.query(CareOrder)
         .filter(CareOrder.id == order_id, CareOrder.status.in_(["pending", "accepted"]))
-        .update(
-            {
-                CareOrder.employee_id: employee.id,
-                CareOrder.status: "accepted",
-                CareOrder.accepted_at: datetime.utcnow(),
-            },
-            synchronize_session=False,
-        )
+        .with_for_update()
+        .first()
     )
-    if not updated:
+    if not order:
         db.rollback()
         raise HTTPException(status_code=409, detail="仅待接单或已接单的订单可以指定员工")
+    if order.employee_id == employee.id:
+        return order_to_dict(order)
+    active_order = (
+        db.query(CareOrder.id)
+        .filter(
+            CareOrder.employee_id == employee.id,
+            CareOrder.status.in_(["accepted", "in_progress"]),
+        )
+        .first()
+    )
+    if active_order:
+        db.rollback()
+        raise HTTPException(status_code=409, detail="该员工有进行中的订单，不能再分配新订单")
+    order.employee_id = employee.id
+    order.status = "accepted"
+    order.accepted_at = datetime.utcnow()
     db.commit()
-    return order_to_dict(db.get(CareOrder, order_id))
+    db.refresh(order)
+    return order_to_dict(order)
 
 
 def admin_close_order(order_id: int, target_status: str, db: Session):
@@ -557,6 +676,38 @@ def customer_order_to_dict(order: CareOrder):
     }
 
 
+def customer_location_to_dict(order: CareOrder):
+    return {
+        "order_no": order.order_no,
+        "status": order.status,
+        "employee_name": order.employee.name if order.employee else None,
+        "customer_location": (
+            {
+                "latitude": float(order.latitude),
+                "longitude": float(order.longitude),
+                "updated_at": (
+                    order.customer_location_updated_at.isoformat()
+                    if order.customer_location_updated_at
+                    else None
+                ),
+            }
+            if order.latitude is not None and order.longitude is not None
+            else None
+        ),
+        "staff_location": (
+            {
+                "latitude": float(order.staff_latitude),
+                "longitude": float(order.staff_longitude),
+                "updated_at": order.staff_location_updated_at.isoformat(),
+            }
+            if order.staff_latitude is not None
+            and order.staff_longitude is not None
+            and order.staff_location_updated_at is not None
+            else None
+        ),
+    }
+
+
 @app.get("/api/customer/orders/{order_id}")
 def get_customer_order_status(
     order_id: int,
@@ -564,6 +715,32 @@ def get_customer_order_status(
     db: Session = Depends(get_db),
 ):
     return customer_order_to_dict(get_customer_order(order_id, token, db))
+
+
+@app.get("/api/customer/orders/{order_id}/location")
+def get_customer_order_location(
+    order_id: int,
+    token: str = Query(..., min_length=16, max_length=64),
+    db: Session = Depends(get_db),
+):
+    return customer_location_to_dict(get_customer_order(order_id, token, db))
+
+
+@app.post("/api/customer/orders/{order_id}/location")
+def update_customer_order_location(
+    order_id: int,
+    payload: LocationUpdate,
+    token: str = Query(..., min_length=16, max_length=64),
+    db: Session = Depends(get_db),
+):
+    order = get_customer_order(order_id, token, db)
+    if order.status not in {"accepted", "in_progress"}:
+        raise HTTPException(status_code=409, detail="当前订单不能更新位置")
+    order.latitude = payload.latitude
+    order.longitude = payload.longitude
+    order.customer_location_updated_at = datetime.utcnow()
+    db.commit()
+    return {"ok": True, "updated_at": order.customer_location_updated_at.isoformat()}
 
 
 @app.post("/api/customer/orders/{order_id}/review")
@@ -609,6 +786,9 @@ def create_order(payload: OrderCreate, db: Session = Depends(get_db)):
         order_no=f"CO{datetime.utcnow():%Y%m%d%H%M%S}{randint(1000, 9999)}",
         review_token=secrets.token_urlsafe(24),
         distance_km=distance,
+        customer_location_updated_at=(
+            datetime.utcnow() if payload.latitude is not None and payload.longitude is not None else None
+        ),
         status="pending",
     )
     db.add(order)

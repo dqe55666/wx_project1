@@ -6,6 +6,7 @@
     "pages/guide/guide",
 
     "pages/index/index",
+<<<<<<< HEAD
     "pages/visit/list",
     "pages/message/list",
     "pages/mall/index",
@@ -43,7 +44,14 @@
     "pages/mine/refund",
     "pages/mine/setting",
 
+=======
+    "pages/booking/booking",
+    "pages/mine/mine",
+    "pages/knowledge/knowledge",
+    "pages/bottle/bottle",
+>>>>>>> 356664a594e3c96cd7bbca97cde122c4c2859d3d
     "pages/orders/orders",
+    "pages/tracking/tracking",
     "pages/logs/logs"
   ],
   "window": {
@@ -81,7 +89,7 @@
   },
   "permission": {
     "scope.userLocation": {
-      "desc": "用于计算您与医院单位的距离"
+      "desc": "用于显示您与陪护人员的实时位置"
     }
   },
   "requiredPrivateInfos": [

@@ -17,6 +17,8 @@
         <view class="detail">医院：{{item.hospital_name}}</view>
         <view wx:if="{{item.employee_name}}" class="detail">服务人员：{{item.employee_name}}</view>
 
+        <button wx:if="{{item.status === 'accepted' || item.status === 'in_progress'}}" class="tracking-btn" data-id="{{item.id}}" bindtap="openTracking">查看实时位置</button>
+
         <view wx:if="{{item.review}}" class="review-result">
           <text class="review-score">{{item.review.rating}} / 5 分</text>
           <text>{{item.review.content}}</text>

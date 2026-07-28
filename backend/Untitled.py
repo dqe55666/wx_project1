@@ -18,5 +18,3 @@ class Circle:
 calulator = Circle()
 radius = float(input("Enter the radius of the circle: "))
 calulator.calculate(radius)
-
-    

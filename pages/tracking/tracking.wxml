@@ -1,0 +1,38 @@
+<view class="page">
+  <map
+    class="location-map"
+    latitude="{{mapLatitude}}"
+    longitude="{{mapLongitude}}"
+    scale="{{mapScale}}"
+    markers="{{markers}}"
+    show-location
+    enable-3D="false"
+    show-compass
+  />
+
+  <view class="info-panel">
+    <view class="panel-heading">
+      <view>
+        <text class="title">位置共享中</text>
+        <text class="order-no">订单 {{orderNo}}</text>
+      </view>
+      <button class="refresh-button" loading="{{refreshing}}" disabled="{{refreshing}}" bindtap="refreshLocations">刷新</button>
+    </view>
+
+    <view class="location-row">
+      <view class="dot customer-dot"></view>
+      <view>
+        <text class="location-name">我的位置</text>
+        <text class="location-detail">{{customerLocationText}}</text>
+      </view>
+    </view>
+    <view class="location-row">
+      <view class="dot staff-dot"></view>
+      <view>
+        <text class="location-name">{{staffName}}</text>
+        <text class="location-detail">{{staffLocationText}}</text>
+      </view>
+    </view>
+    <text class="update-text">{{updateText}}</text>
+  </view>
+</view>
