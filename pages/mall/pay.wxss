@@ -1,0 +1,67 @@
+@import "/assets/common.wxss";
+
+.amount {
+  background: #ffffff;
+  border-radius: 20rpx;
+  padding: 60rpx 0;
+  margin-bottom: 20rpx;
+  text-align: center;
+}
+
+.amt-label {
+  display: block;
+  color: #999;
+  font-size: 26rpx;
+  margin-bottom: 16rpx;
+}
+
+.amt-value {
+  display: block;
+  color: #e91e63;
+  font-size: 64rpx;
+  font-weight: 700;
+}
+
+.pay-type {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  padding: 24rpx 0;
+  border-bottom: 1rpx solid #f5f5f5;
+}
+
+.pay-type:last-child { border-bottom: 0; }
+
+.pay-type.active .pt-name { color: #e91e63; font-weight: 600; }
+
+.pt-icon { font-size: 36rpx; }
+
+.pt-name {
+  flex: 1;
+  color: #2d1b2e;
+  font-size: 28rpx;
+}
+
+.radio {
+  width: 36rpx;
+  height: 36rpx;
+  border: 2rpx solid #ccc;
+  border-radius: 50%;
+  position: relative;
+}
+
+.radio.checked {
+  border-color: #e91e63;
+}
+
+.radio.checked::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 20rpx;
+  height: 20rpx;
+  background: #e91e63;
+  border-radius: 50%;
+}

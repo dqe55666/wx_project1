@@ -1,0 +1,65 @@
+@import "/assets/common.wxss";
+
+.cover {
+  width: 100%;
+  height: 600rpx;
+  background: linear-gradient(135deg, #fce4ec, #f8bbd0);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 240rpx;
+}
+
+.info {
+  background: #ffffff;
+  padding: 24rpx 28rpx;
+  margin-bottom: 16rpx;
+}
+
+.row { display: flex; align-items: center; justify-content: space-between; }
+
+.price {
+  color: #e91e63;
+  font-size: 40rpx;
+  font-weight: 700;
+}
+
+.sales { color: #999; font-size: 24rpx; }
+
+.g-name {
+  display: block;
+  color: #2d1b2e;
+  font-size: 32rpx;
+  font-weight: 600;
+  margin: 16rpx 0 8rpx;
+  line-height: 1.4;
+}
+
+.g-desc {
+  display: block;
+  color: #999;
+  font-size: 26rpx;
+  line-height: 1.6;
+}
+
+.footer {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  gap: 16rpx;
+  padding: 16rpx 24rpx;
+  padding-bottom: calc(16rpx + env(safe-area-inset-bottom));
+  background: #ffffff;
+  border-top: 1rpx solid #f0f0f0;
+  z-index: 10;
+}
+
+.footer .action {
+  flex: 1;
+  margin-top: 0;
+  height: 80rpx;
+  line-height: 80rpx;
+  font-size: 28rpx;
+}

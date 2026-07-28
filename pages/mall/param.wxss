@@ -1,0 +1,28 @@
+@import "/assets/common.wxss";
+
+.qty {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  margin-top: 16rpx;
+}
+
+.qty-btn {
+  width: 64rpx;
+  height: 64rpx;
+  background: #fce4ec;
+  color: #e91e63;
+  font-size: 32rpx;
+  border-radius: 12rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.qty-val {
+  min-width: 80rpx;
+  text-align: center;
+  color: #2d1b2e;
+  font-size: 30rpx;
+  font-weight: 600;
+}

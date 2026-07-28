@@ -1,0 +1,18 @@
+<view class="page">
+  <view class="hero orange">
+    <text class="h-title">服务类型</text>
+    <text class="h-sub">根据需求选择适合的服务</text>
+  </view>
+
+  <view class="card" wx:for="{{types}}" wx:key="id"
+        bindtap="pick" data-i="{{index}}"
+        style="border-color: {{selected === index ? '#e91e63' : '#f8bbd0'}};">
+    <view class="row">
+      <text class="k" style="color:#2d1b2e; font-weight:600;">{{item.name}}</text>
+      <text class="v" style="color:#e91e63; font-weight:700;">¥{{item.price}}</text>
+    </view>
+    <text class="c-desc">{{item.desc}}</text>
+  </view>
+
+  <view class="action" bindtap="confirm">确认类型</view>
+</view>

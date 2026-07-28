@@ -1,0 +1,54 @@
+<view class="page">
+  <view class="header">
+    <view class="header-bg"></view>
+    <view class="user">
+      <view class="avatar">👤</view>
+      <view class="user-info">
+        <text class="name">{{user.name}}</text>
+        <text class="level">{{user.level}}  ·  {{user.phone}}</text>
+      </view>
+      <view class="edit-btn">编辑</view>
+    </view>
+  </view>
+
+  <view class="order-card">
+    <view class="order-head">
+      <text class="order-title">我的订单</text>
+      <text class="order-all" bindtap="goOrder" data-type="all">全部订单 ›</text>
+    </view>
+    <view class="order-grid">
+      <view class="order-item" bindtap="goOrder" data-type="paying">
+        <view class="order-icon">💳</view>
+        <text>待支付</text>
+      </view>
+      <view class="order-item" bindtap="goOrder" data-type="doing">
+        <view class="order-icon">🩺</view>
+        <text>进行中</text>
+      </view>
+      <view class="order-item" bindtap="goOrder" data-type="evaluate">
+        <view class="order-icon">⭐</view>
+        <text>待评价</text>
+      </view>
+      <view class="order-item" bindtap="goOrder" data-type="refund">
+        <view class="order-icon">↩️</view>
+        <text>退款</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="menu-card">
+    <view
+      wx:for="{{menus}}"
+      wx:key="id"
+      class="menu-item"
+      data-id="{{item.id}}"
+      bindtap="goMenu"
+    >
+      <view class="menu-icon">{{item.icon}}</view>
+      <text class="menu-name">{{item.name}}</text>
+      <text class="menu-arrow">›</text>
+    </view>
+  </view>
+
+  <view style="height: 40rpx;"></view>
+</view>

@@ -1,13 +1,83 @@
 {
   "pages": [
+    "pages/login/login",
+    "pages/register/register",
+    "pages/forget/forget",
+    "pages/guide/guide",
+
     "pages/index/index",
+    "pages/visit/list",
+    "pages/message/list",
+    "pages/mall/index",
+    "pages/mine/index",
+
+    "pages/visit/create",
+    "pages/visit/info",
+    "pages/visit/accompany",
+    "pages/visit/finish",
+    "pages/visit/overtime",
+    "pages/visit/evaluate",
+    "pages/visit/detail",
+    "pages/visit/reserve",
+    "pages/visit/reserve-time",
+    "pages/visit/reserve-type",
+
+    "pages/message/chat",
+    "pages/message/setting",
+    "pages/message/history",
+    "pages/message/companion",
+
+    "pages/mall/detail",
+    "pages/mall/param",
+    "pages/mall/confirm",
+    "pages/mall/address",
+    "pages/mall/address-add",
+    "pages/mall/checkout",
+    "pages/mall/pay",
+    "pages/mall/pay-success",
+
+    "pages/mine/apply",
+    "pages/mine/orders",
+    "pages/mine/mall-orders",
+    "pages/mine/evaluate",
+    "pages/mine/refund",
+    "pages/mine/setting",
+
     "pages/orders/orders",
     "pages/logs/logs"
   ],
   "window": {
     "navigationBarTextStyle": "black",
     "navigationBarTitleText": "护理上门预约",
-    "navigationBarBackgroundColor": "#ffffff"
+    "navigationBarBackgroundColor": "#fff5f8"
+  },
+  "tabBar": {
+    "color": "#bd548f",
+    "selectedColor": "#e91e63",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "white",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "主页"
+      },
+      {
+        "pagePath": "pages/visit/list",
+        "text": "陪诊中"
+      },
+      {
+        "pagePath": "pages/message/list",
+        "text": "消息"
+      },
+      {
+        "pagePath": "pages/mall/index",
+        "text": "商城"
+      },
+      {
+        "pagePath": "pages/mine/index",
+        "text": "我的"
+      }
+    ]
   },
   "permission": {
     "scope.userLocation": {

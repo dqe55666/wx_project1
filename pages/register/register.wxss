@@ -1,0 +1,11 @@
+@import "../login/login.wxss";
+
+.link-row-center {
+  text-align: center;
+  margin: 24rpx 0 12rpx;
+}
+
+.link-secondary {
+  color: #e91e63;
+  font-size: 26rpx;
+}

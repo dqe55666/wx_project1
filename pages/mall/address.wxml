@@ -1,0 +1,25 @@
+<view class="page">
+  <view class="card" wx:for="{{list}}" wx:key="id"
+        data-i="{{index}}" bindtap="select">
+    <view class="row">
+      <text class="k" style="color:#2d1b2e; font-weight:600;">
+        {{item.name}}  {{item.phone}}
+        <text class="tag solid" style="margin-left:12rpx; font-size:22rpx; padding:2rpx 14rpx;">{{item.tag}}</text>
+      </text>
+      <text class="li-arrow" catchtap="edit">编辑</text>
+    </view>
+    <text class="c-desc">{{item.region}} {{item.detail}}</text>
+    <view class="row" style="margin-top:12rpx;">
+      <view class="check {{selected === index ? 'checked' : ''}}">
+        <text wx:if="{{selected === index}}">✓</text>
+      </view>
+      <text class="k" style="font-size:24rpx;">设为默认</text>
+    </view>
+  </view>
+
+  <view style="height: 160rpx;"></view>
+
+  <view class="footer">
+    <view class="action" bindtap="add">+ 新增收货地址</view>
+  </view>
+</view>

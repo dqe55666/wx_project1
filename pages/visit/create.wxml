@@ -1,0 +1,36 @@
+<view class="page">
+  <view class="hero">
+    <text class="h-title">立即下单</text>
+    <text class="h-sub">填写信息后选择陪诊师，确认下单</text>
+  </view>
+
+  <view class="card">
+    <view class="row" bindtap="goInfo">
+      <text class="k">就诊医院</text>
+      <text class="v">{{hospital}} ›</text>
+    </view>
+    <view class="row" bindtap="goAccompany">
+      <text class="k">服务项目</text>
+      <text class="v">{{service}} ›</text>
+    </view>
+    <view class="row" bindtap="goReserveType">
+      <text class="k">服务类型</text>
+      <text class="v">请选择 ›</text>
+    </view>
+    <view class="row" bindtap="goReserveTime">
+      <text class="k">预约时间</text>
+      <text class="v">{{time}} ›</text>
+    </view>
+    <view class="row">
+      <text class="k">患者姓名</text>
+      <input class="v-input" placeholder="请输入姓名" />
+    </view>
+    <view class="row">
+      <text class="k">联系电话</text>
+      <input class="v-input" type="number" placeholder="请输入手机号" />
+    </view>
+  </view>
+
+  <view class="tip">下单后陪诊师会主动与您联系</view>
+  <view class="action" bindtap="submit">下一步：选择服务类型</view>
+</view>

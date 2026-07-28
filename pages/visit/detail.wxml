@@ -1,0 +1,39 @@
+<view class="page">
+  <view class="hero">
+    <view style="display:flex; align-items:center; justify-content:space-between;">
+      <text class="h-title">陪诊详情</text>
+      <text class="tag solid">{{order.type}}</text>
+    </view>
+    <text class="h-sub">订单号 {{order.no}}</text>
+  </view>
+
+  <view class="card">
+    <text class="c-title">就诊信息</text>
+    <view class="row"><text class="k">就诊医院</text><text class="v">{{order.hospital}}</text></view>
+    <view class="row"><text class="k">地址</text><text class="v">{{order.address}}</text></view>
+    <view class="row"><text class="k">科室</text><text class="v">{{order.dept}}</text></view>
+    <view class="row"><text class="k">预约时间</text><text class="v">{{order.time}}</text></view>
+  </view>
+
+  <view class="card">
+    <text class="c-title">陪诊师</text>
+    <view class="list-item">
+      <view class="li-avatar">👩‍⚕️</view>
+      <view class="li-main">
+        <text class="li-title">{{order.doctor}}</text>
+        <text class="li-sub">{{order.phone}}</text>
+      </view>
+      <text class="li-arrow" bindtap="callPhone">📞</text>
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="row"><text class="k">订单金额</text><text class="v" style="color:#e91e63; font-weight:700; font-size:32rpx;">¥{{order.price}}</text></view>
+    <view class="row"><text class="k">订单状态</text><text class="v" style="color:#ff8a00;">{{order.status}}</text></view>
+  </view>
+
+  <view class="action-row">
+    <view class="action secondary" bindtap="chat">联系陪诊师</view>
+    <view class="action" bindtap="callPhone">拨打电话</view>
+  </view>
+</view>

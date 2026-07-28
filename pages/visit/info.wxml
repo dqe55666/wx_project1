@@ -1,0 +1,24 @@
+<view class="page">
+  <view class="hero">
+    <text class="h-title">就诊信息</text>
+    <text class="h-sub">核对就诊信息后提交订单</text>
+  </view>
+
+  <view class="card">
+    <view class="row"><text class="k">就诊医院</text><text class="v">{{hospital}}</text></view>
+    <view class="row"><text class="k">科室</text><text class="v">{{dept}}</text></view>
+    <view class="row"><text class="k">主诊医生</text><text class="v">{{doctor}}</text></view>
+    <view class="row"><text class="k">就诊日期</text><text class="v">{{date}}</text></view>
+    <view class="row"><text class="k">就诊时间</text><text class="v">{{time}}</text></view>
+  </view>
+
+  <view class="card">
+    <view class="c-title">病情描述</view>
+    <text class="c-desc">{{symptom}}</text>
+    <view class="c-title" style="margin-top: 24rpx;">备注</view>
+    <text class="c-desc">{{note}}</text>
+  </view>
+
+  <view class="tip">请仔细核对就诊信息，提交后不可修改</view>
+  <view class="action">确认提交</view>
+</view>

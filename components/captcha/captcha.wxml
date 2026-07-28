@@ -1,0 +1,45 @@
+<view class="captcha-box status-{{status}}">
+  <view class="captcha-header">
+    <text class="captcha-title">人机验证</text>
+    <text class="captcha-tips">{{tipsText}}</text>
+  </view>
+
+  <view class="captcha-stage">
+    <view class="captcha-bg">
+      <view class="bg-deco deco-1"></view>
+      <view class="bg-deco deco-2"></view>
+      <view class="bg-deco deco-3"></view>
+      <text class="bg-hint">背景图占位</text>
+    </view>
+
+    <!-- 拼图缺口（固定在右侧目标位置） -->
+    <view class="captcha-slot" style="left: {{slotLeft}}rpx;">
+      <view class="slot-shape"></view>
+    </view>
+
+    <!-- 拼图块（跟随滑块） -->
+    <view class="captcha-piece" style="left: {{slotLeft - (maxX - sliderX)}}rpx; top: 50%;">
+      <view class="piece-shape"></view>
+    </view>
+  </view>
+
+  <view class="captcha-track" id="track" style="width: {{trackWidth}}rpx;">
+    <view class="track-bg"></view>
+    <view class="track-fill" style="width: {{sliderX + 80}}rpx;"></view>
+    <text class="track-hint">{{status === 'success' ? '验证完成' : '按住滑块向右拖动'}}</text>
+
+    <view
+      class="thumb-wrap"
+      style="transform: translate3d({{sliderX}}rpx, 0, 0);"
+      bindtouchstart="onTouchStart"
+      bindtouchmove="onTouchMove"
+      bindtouchend="onTouchEnd"
+    >
+      <view class="thumb-inner {{status === 'success' ? 'is-success' : ''}} {{status === 'fail' ? 'is-fail' : ''}}">
+        <text wx:if="{{status === 'success'}}">✓</text>
+        <text wx:elif="{{status === 'fail'}}">✕</text>
+        <text wx:else>››</text>
+      </view>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,101 @@
+<view class="page">
+  <!-- 顶部城市与搜索 -->
+  <view class="topbar">
+    <view class="city" bindtap="pickCity">
+      <text>{{city}}</text>
+      <text class="caret">▾</text>
+    </view>
+    <view class="search-icon" bindtap="goSearch">🔍</view>
+  </view>
+
+  <view class="quick-actions">
+    <view class="qa-item" bindtap="goCreate">
+      <view class="qa-icon" style="background:linear-gradient(135deg,#ffe4ec,#f8bbd0);">🩺</view>
+      <text class="qa-name">新建陪诊</text>
+    </view>
+    <view class="qa-item" bindtap="goAccompany">
+      <view class="qa-icon" style="background:linear-gradient(135deg,#fff3e0,#ffe0b2);">👩‍⚕️</view>
+      <text class="qa-name">陪诊师</text>
+    </view>
+    <view class="qa-item" bindtap="goReserveType">
+      <view class="qa-icon" style="background:linear-gradient(135deg,#e1f5fe,#81d4fa);">🧾</view>
+      <text class="qa-name">服务类型</text>
+    </view>
+    <view class="qa-item" bindtap="goOrders">
+      <view class="qa-icon" style="background:linear-gradient(135deg,#fce4ec,#f48fb1);">📑</view>
+      <text class="qa-name">我的订单</text>
+    </view>
+  </view>
+
+  <view class="tabs">
+    <view
+      wx:for="{{tabs}}"
+      wx:key="*this"
+      class="tab {{currentTab === index ? 'active' : ''}}"
+      data-index="{{index}}"
+      bindtap="switchTab"
+    >
+      <text>{{item}}</text>
+      <view wx:if="{{currentTab === index}}" class="tab-bar"></view>
+    </view>
+  </view>
+
+  <view class="card-list">
+    <block wx:for="{{list}}" wx:key="id">
+      <view
+        wx:if="{{(currentTab === 0 && item.status === 'ongoing') || (currentTab === 1 && item.status === 'done')}}"
+        class="card"
+        data-id="{{item.id}}"
+        bindtap="goDetail"
+      >
+        <view class="card-head">
+          <text class="order-no">订单编号  {{item.orderNo}}</text>
+          <view class="tags">
+            <text class="tag {{item.type === 'vip' ? 'tag-vip' : 'tag-normal'}}">
+              {{item.typeName}}<text class="bolt">⚡</text>
+            </text>
+          </view>
+        </view>
+
+        <view class="row">
+          <text class="row-key">就诊医院</text>
+          <text class="row-val bold">{{item.hospital}}</text>
+        </view>
+        <view class="row">
+          <text class="row-key">地址</text>
+          <text class="row-val">{{item.address}}</text>
+        </view>
+        <view class="row">
+          <text class="row-key">科室</text>
+          <text class="row-val">{{item.dept}}</text>
+        </view>
+        <view class="row">
+          <text class="row-key">预约时间</text>
+          <text class="row-val">{{item.time}}</text>
+        </view>
+        <view class="row">
+          <text class="row-key">陪诊师</text>
+          <text class="row-val">{{item.doctor}}</text>
+        </view>
+        <view class="row">
+          <text class="row-key">陪诊师电话</text>
+          <text class="row-val">{{item.phone}}</text>
+        </view>
+        <view class="row no-border">
+          <text class="row-key">订单编号</text>
+          <text class="row-val">{{item.orderNo}}</text>
+        </view>
+
+        <view class="card-foot" wx:if="{{item.status === 'ongoing'}}">
+          <view class="btn ghost" catchtap="finishVisit">结束陪诊<text class="bolt">⚡</text></view>
+          <view class="btn solid" catchtap="overtime">加时<text class="bolt">⚡</text></view>
+        </view>
+        <view class="card-foot" wx:elif="{{item.status === 'done'}}">
+          <view class="btn full" catchtap="evaluate">评价<text class="bolt">⚡</text></view>
+        </view>
+      </view>
+    </block>
+
+    <view wx:if="{{list.length === 0}}" class="empty">暂无陪诊记录</view>
+  </view>
+</view>

@@ -1,0 +1,70 @@
+<view class="page">
+  <view class="logo-wrap">
+    <view class="logo">
+      <text class="logo-icon">♥</text>
+    </view>
+    <text class="page-title">登录</text>
+  </view>
+
+  <view class="form">
+    <view class="input-box">
+      <text class="input-icon">📱</text>
+      <input
+        class="input"
+        type="number"
+        maxlength="11"
+        placeholder="请输入手机号"
+        placeholder-class="ph"
+        value="{{phone}}"
+        bindinput="onPhoneInput"
+      />
+    </view>
+
+    <view class="input-box">
+      <text class="input-icon">🔒</text>
+      <input
+        class="input"
+        password="{{!showPassword}}"
+        placeholder="请输入密码"
+        placeholder-class="ph"
+        value="{{password}}"
+        bindinput="onPasswordInput"
+      />
+      <view class="eye" bindtap="togglePassword">
+        <text wx:if="{{showPassword}}">👁</text>
+        <text wx:else>👁‍🗨</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="link-row">
+    <text class="link" bindtap="goForget">忘记密码</text>
+    <text class="link" bindtap="goRegister">注册账号</text>
+  </view>
+
+  <button
+    class="primary-btn"
+    loading="{{submitting}}"
+    disabled="{{submitting}}"
+    bindtap="onSubmit"
+  >登录</button>
+
+  <view class="captcha-wrap">
+    <captcha
+      bind:success="onCaptchaSuccess"
+      bind:fail="onCaptchaFail"
+    />
+  </view>
+
+  <view class="agreement">
+    <view class="checkbox {{agreed ? 'checked' : ''}}" bindtap="toggleAgree">
+      <text wx:if="{{agreed}}">✓</text>
+    </view>
+    <text class="agreement-text">
+      我已阅读并同意
+      <text class="link-inline">《用户协议》</text>
+      和
+      <text class="link-inline">《服务协议》</text>
+    </text>
+  </view>
+</view>

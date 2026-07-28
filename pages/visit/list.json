@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "陪诊中",
+  "navigationBarBackgroundColor": "#ffffff",
+  "navigationBarTextStyle": "black",
+  "enablePullDownRefresh": true,
+  "usingComponents": {}
+}

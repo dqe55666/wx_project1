@@ -1,0 +1,30 @@
+<view class="page">
+  <view class="hero blue">
+    <text class="h-title">{{state}}</text>
+    <text class="h-sub">退款单号 {{no}}</text>
+  </view>
+
+  <view class="card">
+    <text class="c-title">退款进度</text>
+    <view class="step {{progress >= 1 ? 'active' : ''}}">
+      <view class="dot"></view>
+      <text>提交退款申请</text>
+    </view>
+    <view class="step {{progress >= 2 ? 'active' : ''}}">
+      <view class="dot"></view>
+      <text>商家处理中</text>
+    </view>
+    <view class="step {{progress >= 3 ? 'active' : ''}}">
+      <view class="dot"></view>
+      <text>退款到账</text>
+    </view>
+  </view>
+
+  <view class="card">
+    <text class="c-title">退款信息</text>
+    <view class="row"><text class="k">退款商品</text><text class="v">医用护理床</text></view>
+    <view class="row"><text class="k">退款金额</text><text class="v" style="color:#e91e63; font-weight:700;">¥1880.00</text></view>
+    <view class="row"><text class="k">退款原因</text><text class="v">商品质量问题</text></view>
+    <view class="row"><text class="k">退款说明</text><text class="v">收到时已有破损</text></view>
+  </view>
+</view>

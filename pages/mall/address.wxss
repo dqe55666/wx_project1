@@ -1,0 +1,39 @@
+@import "/assets/common.wxss";
+
+.check {
+  width: 32rpx;
+  height: 32rpx;
+  border: 2rpx solid #bd548f;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-size: 22rpx;
+  background: #ffffff;
+  flex-shrink: 0;
+}
+
+.check.checked {
+  background: #e91e63;
+  border-color: #e91e63;
+}
+
+.footer {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 16rpx 24rpx;
+  padding-bottom: calc(16rpx + env(safe-area-inset-bottom));
+  background: #ffffff;
+  border-top: 1rpx solid #f0f0f0;
+  z-index: 10;
+}
+
+.footer .action {
+  margin-top: 0;
+  height: 80rpx;
+  line-height: 80rpx;
+  font-size: 28rpx;
+}

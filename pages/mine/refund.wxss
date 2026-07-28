@@ -1,0 +1,39 @@
+@import "/assets/common.wxss";
+
+.step {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  padding: 16rpx 0;
+  color: #999;
+  font-size: 28rpx;
+  position: relative;
+}
+
+.step::before {
+  content: '';
+  position: absolute;
+  left: 14rpx;
+  top: 32rpx;
+  bottom: -16rpx;
+  width: 2rpx;
+  background: #eee;
+}
+
+.step:last-child::before { display: none; }
+
+.step.active { color: #2d1b2e; font-weight: 600; }
+
+.dot {
+  width: 28rpx;
+  height: 28rpx;
+  border-radius: 50%;
+  background: #eee;
+  position: relative;
+  z-index: 1;
+}
+
+.step.active .dot {
+  background: linear-gradient(135deg, #ff5a8a, #e91e63);
+  box-shadow: 0 0 0 6rpx rgba(233, 30, 99, 0.15);
+}

@@ -1,0 +1,28 @@
+<view class="page">
+  <view class="hero green">
+    <text class="h-title">下单成功</text>
+    <text class="h-sub">请尽快完成支付</text>
+  </view>
+
+  <view class="card">
+    <view class="row"><text class="k">订单号</text><text class="v" style="font-family: monospace;">{{orderNo}}</text></view>
+    <view class="row"><text class="k">下单时间</text><text class="v">{{currentTime}}</text></view>
+    <view class="row"><text class="k" style="font-weight:600; color:#2d1b2e;">应付金额</text>
+      <text class="v" style="color:#e91e63; font-weight:700; font-size:32rpx;">¥{{amount}}</text>
+    </view>
+  </view>
+
+  <view class="card">
+    <text class="c-title">商品清单</text>
+    <view class="list-item" wx:for="{{items}}" wx:key="id">
+      <view class="li-main">
+        <text class="li-title">{{item.name}}</text>
+        <text class="li-sub">{{item.spec}}  ×{{item.count}}</text>
+      </view>
+      <text class="v" style="color:#e91e63;">¥{{item.price * item.count}}</text>
+    </view>
+  </view>
+
+  <view class="action" bindtap="goPay">立即支付</view>
+  <view class="tip">订单 30 分钟内未支付将自动取消</view>
+</view>

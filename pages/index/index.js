@@ -148,6 +148,22 @@ Page({
     wx.navigateTo({ url: '/pages/orders/orders' })
   },
 
+  goCreateVisit() {
+    wx.navigateTo({ url: '/pages/visit/create' })
+  },
+
+  goVisitList() {
+    wx.switchTab({ url: '/pages/visit/list', fail: () => wx.navigateTo({ url: '/pages/visit/list' }) })
+  },
+
+  goMall() {
+    wx.switchTab({ url: '/pages/mall/index', fail: () => wx.navigateTo({ url: '/pages/mall/index' }) })
+  },
+
+  goMessage() {
+    wx.switchTab({ url: '/pages/message/list', fail: () => wx.navigateTo({ url: '/pages/message/list' }) })
+  },
+
   onServiceChange(e) {
     this.setData({ selectedServiceIndex: Number(e.detail.value) })
   },

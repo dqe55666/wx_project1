@@ -1,0 +1,199 @@
+.captcha-box {
+  background: #ffffff;
+  border: 2rpx solid #f8bbd0;
+  border-radius: 16rpx;
+  padding: 24rpx;
+  box-shadow: 0 2rpx 8rpx rgba(233, 30, 99, 0.05);
+  box-sizing: border-box;
+}
+
+.captcha-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16rpx;
+}
+
+.captcha-title {
+  color: #e91e63;
+  font-size: 28rpx;
+  font-weight: 600;
+}
+
+.captcha-tips {
+  color: #bd548f;
+  font-size: 22rpx;
+}
+
+.status-fail .captcha-tips { color: #f44336; }
+.status-success .captcha-tips { color: #4caf50; }
+
+/* 拼图舞台 */
+.captcha-stage {
+  position: relative;
+  width: 100%;
+  height: 220rpx;
+  background: linear-gradient(135deg, #fce4ec, #f8bbd0);
+  border-radius: 12rpx;
+  overflow: hidden;
+  margin-bottom: 20rpx;
+}
+
+.captcha-bg { position: absolute; inset: 0; }
+.bg-deco { position: absolute; border-radius: 50%; background: rgba(255, 255, 255, 0.5); }
+.deco-1 { width: 80rpx; height: 80rpx; top: 20rpx; left: 30rpx; }
+.deco-2 { width: 50rpx; height: 50rpx; top: 120rpx; left: 120rpx; background: rgba(255, 255, 255, 0.3); }
+.deco-3 { width: 60rpx; height: 60rpx; top: 40rpx; right: 60rpx; background: rgba(255, 255, 255, 0.4); }
+.bg-hint {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(233, 30, 99, 0.35);
+  font-size: 24rpx;
+  letter-spacing: 4rpx;
+}
+
+.captcha-slot,
+.captcha-piece {
+  position: absolute;
+  width: 80rpx;
+  height: 80rpx;
+  transform: translateY(-50%);
+}
+
+.slot-shape,
+.piece-shape {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #e91e63, #f48fb1);
+  border: 4rpx solid #ffffff;
+  border-radius: 8rpx;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.15);
+  position: relative;
+}
+
+.slot-shape {
+  background: transparent;
+  border: 4rpx dashed #ffffff;
+  box-shadow: none;
+}
+
+.captcha-piece .piece-shape::before,
+.captcha-slot .slot-shape::before {
+  content: '';
+  position: absolute;
+  top: -16rpx;
+  left: 28rpx;
+  width: 24rpx;
+  height: 24rpx;
+  background: inherit;
+  border: 4rpx solid #ffffff;
+  border-radius: 50%;
+}
+
+.captcha-piece .piece-shape::after,
+.captcha-slot .slot-shape::after {
+  content: '';
+  position: absolute;
+  bottom: -16rpx;
+  left: 28rpx;
+  width: 24rpx;
+  height: 24rpx;
+  background: inherit;
+  border: 4rpx solid #ffffff;
+  border-radius: 50%;
+}
+
+.captcha-slot .slot-shape::before,
+.captcha-slot .slot-shape::after {
+  background: #f8bbd0;
+}
+
+/* 滑轨 */
+.captcha-track {
+  position: relative;
+  height: 80rpx;
+  margin: 0 auto;
+}
+
+.track-bg {
+  position: absolute;
+  inset: 0;
+  background: #fce4ec;
+  border-radius: 40rpx;
+  border: 2rpx solid #f8bbd0;
+}
+
+.track-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: linear-gradient(90deg, #f48fb1, #e91e63);
+  border-radius: 40rpx;
+  transition: width 0.1s linear;
+}
+
+.status-success .track-fill {
+  background: linear-gradient(90deg, #66bb6a, #4caf50);
+}
+
+.track-hint {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  transform: translateY(-50%);
+  text-align: center;
+  color: #bd548f;
+  font-size: 24rpx;
+  z-index: 1;
+  pointer-events: none;
+  letter-spacing: 2rpx;
+}
+
+.status-success .track-hint { color: #ffffff; }
+
+.thumb-wrap {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 80rpx;
+  height: 80rpx;
+  z-index: 2;
+}
+
+.thumb-inner {
+  width: 80rpx;
+  height: 80rpx;
+  background: #ffffff;
+  border: 2rpx solid #e91e63;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #e91e63;
+  font-size: 32rpx;
+  font-weight: 700;
+  box-shadow: 0 2rpx 8rpx rgba(233, 30, 99, 0.2);
+  user-select: none;
+}
+
+.thumb-inner.is-success {
+  background: #e91e63;
+  color: #ffffff;
+}
+
+.thumb-inner.is-fail {
+  border-color: #f44336;
+  color: #f44336;
+  animation: shake 0.4s ease;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-6rpx); }
+  75% { transform: translateX(6rpx); }
+}

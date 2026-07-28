@@ -1,0 +1,24 @@
+<view class="page">
+  <view class="hero orange">
+    <text class="h-title">服务加时</text>
+    <text class="h-sub">延长陪诊时间，确保服务到位</text>
+  </view>
+
+  <view class="card">
+    <text class="c-title">选择加时时长</text>
+    <view class="tags" style="gap:16rpx; margin-top:16rpx;">
+      <view class="tag {{hours === 1 ? 'solid' : ''}}" data-h="1" bindtap="changeHours">1 小时 ¥100</view>
+      <view class="tag {{hours === 2 ? 'solid' : ''}}" data-h="2" bindtap="changeHours">2 小时 ¥200</view>
+      <view class="tag {{hours === 3 ? 'solid' : ''}}" data-h="3" bindtap="changeHours">3 小时 ¥300</view>
+      <view class="tag {{hours === 4 ? 'solid' : ''}}" data-h="4" bindtap="changeHours">4 小时 ¥400</view>
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="row"><text class="k">加时小时数</text><text class="v">{{hours}} 小时</text></view>
+    <view class="row"><text class="k">单价</text><text class="v">¥100 / 小时</text></view>
+    <view class="row"><text class="k" style="font-weight:600; color:#2d1b2e;">合计</text><text class="v" style="color:#e91e63; font-weight:700; font-size:32rpx;">¥{{price}}</text></view>
+  </view>
+
+  <view class="action" bindtap="confirm">立即支付</view>
+</view>

@@ -1,0 +1,113 @@
+@import "/assets/common.wxss";
+
+.address {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  background: #ffffff;
+  border: 2rpx solid #f8bbd0;
+  border-radius: 16rpx;
+  padding: 24rpx 28rpx;
+  margin-bottom: 20rpx;
+}
+
+.addr-icon { font-size: 40rpx; }
+
+.addr-main { flex: 1; min-width: 0; }
+
+.addr-name {
+  display: block;
+  color: #2d1b2e;
+  font-size: 28rpx;
+  font-weight: 600;
+  margin-bottom: 6rpx;
+}
+
+.addr-detail {
+  display: block;
+  color: #999;
+  font-size: 24rpx;
+  line-height: 1.4;
+}
+
+.goods-row {
+  display: flex;
+  gap: 16rpx;
+}
+
+.goods-cover {
+  width: 160rpx;
+  height: 160rpx;
+  background: linear-gradient(135deg, #fce4ec, #f8bbd0);
+  border-radius: 12rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 80rpx;
+  flex-shrink: 0;
+}
+
+.goods-main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+
+.goods-name {
+  color: #2d1b2e;
+  font-size: 26rpx;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.goods-spec {
+  color: #999;
+  font-size: 24rpx;
+  margin-top: 6rpx;
+}
+
+.goods-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: auto;
+}
+
+.goods-price {
+  color: #e91e63;
+  font-size: 28rpx;
+  font-weight: 700;
+}
+
+.goods-count { color: #999; font-size: 24rpx; }
+
+.footer {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  padding: 16rpx 24rpx;
+  padding-bottom: calc(16rpx + env(safe-area-inset-bottom));
+  background: #ffffff;
+  border-top: 1rpx solid #f0f0f0;
+  z-index: 10;
+}
+
+.total {
+  flex: 1;
+  color: #2d1b2e;
+  font-size: 26rpx;
+}
+
+.total-price {
+  color: #e91e63;
+  font-size: 36rpx;
+  font-weight: 700;
+}
+
+.footer .action {
+  margin-top: 0;
+  height: 80rpx;
+  line-height: 80rpx;
+  font-size: 28rpx;
+  width: 240rpx;
+}

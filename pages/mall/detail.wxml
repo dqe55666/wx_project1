@@ -1,0 +1,36 @@
+<view class="page">
+  <view class="cover">🛏️</view>
+
+  <view class="info">
+    <view class="row">
+      <text class="price">¥{{price}}</text>
+      <text class="sales">已售 {{sales}}</text>
+    </view>
+    <text class="g-name">{{name}}</text>
+    <text class="g-desc">{{desc}}</text>
+  </view>
+
+  <view class="card" bindtap="goParam">
+    <view class="row">
+      <text class="k">已选</text>
+      <text class="v">标准款 / 单摇 ›</text>
+    </view>
+    <view class="row">
+      <text class="k">送至</text>
+      <text class="v" bindtap="goAddress">请选择地址 ›</text>
+    </view>
+  </view>
+
+  <view class="card">
+    <text class="c-title">商品详情</text>
+    <text class="c-desc">产品参数：规格 2000×900mm，承重 200kg，配有床垫、餐桌板、输液架。</text>
+    <text class="c-desc" style="margin-top:12rpx;">售后服务：1 年质保，7 天无理由退换（不影响二次销售）。</text>
+  </view>
+
+  <view style="height: 200rpx;"></view>
+
+  <view class="footer">
+    <view class="action secondary" bindtap="addToCart">加入购物车</view>
+    <view class="action" bindtap="goCart">立即购买</view>
+  </view>
+</view>

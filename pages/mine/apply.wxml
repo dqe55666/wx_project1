@@ -1,0 +1,21 @@
+<view class="page">
+  <view class="hero purple">
+    <text class="h-title">陪诊师入驻</text>
+    <text class="h-sub">加入我们，为更多人提供专业陪诊</text>
+  </view>
+
+  <view class="card tight">
+    <view class="row"><text class="k">姓名</text><input class="v-input" data-f="name" value="{{form.name}}" bindinput="onInput" placeholder="请输入真实姓名" /></view>
+    <view class="row"><text class="k">手机号</text><input class="v-input" data-f="phone" type="number" value="{{form.phone}}" bindinput="onInput" placeholder="请输入手机号" /></view>
+    <view class="row"><text class="k">身份证</text><input class="v-input" data-f="idcard" value="{{form.idcard}}" bindinput="onInput" placeholder="请输入身份证号" /></view>
+    <view class="row"><text class="k">所在城市</text><input class="v-input" data-f="city" value="{{form.city}}" bindinput="onInput" placeholder="如 张家界市" /></view>
+  </view>
+
+  <view class="card">
+    <text class="c-title">个人简介</text>
+    <textarea class="textarea" data-f="intro" value="{{form.intro}}" bindinput="onInput" placeholder="请介绍您的工作经验、擅长领域等"></textarea>
+  </view>
+
+  <view class="action" bindtap="submit">提交申请</view>
+  <view class="tip">提交后我们将在 1-3 个工作日联系您</view>
+</view>

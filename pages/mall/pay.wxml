@@ -1,0 +1,19 @@
+<view class="page">
+  <view class="amount">
+    <text class="amt-label">支付金额</text>
+    <text class="amt-value">¥{{amount}}</text>
+  </view>
+
+  <view class="card">
+    <text class="c-title">选择支付方式</text>
+    <view class="pay-type {{payType === item.id ? 'active' : ''}}"
+          wx:for="{{payTypes}}" wx:key="id"
+          data-i="{{item.id}}" bindtap="pickType">
+      <text class="pt-icon">{{item.icon}}</text>
+      <text class="pt-name">{{item.name}}</text>
+      <view class="radio {{payType === item.id ? 'checked' : ''}}"></view>
+    </view>
+  </view>
+
+  <view class="action" bindtap="pay">确认支付 ¥{{amount}}</view>
+</view>

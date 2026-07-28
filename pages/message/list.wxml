@@ -1,0 +1,44 @@
+<view class="page">
+  <view class="quickbar">
+    <view class="quick-item" bindtap="goNotice">
+      <view class="quick-icon icon-pink">🔔</view>
+      <text>通知</text>
+    </view>
+    <view class="quick-item" bindtap="goCalendar">
+      <view class="quick-icon icon-soft">📅</view>
+      <text>日程</text>
+    </view>
+    <view class="quick-item" bindtap="goMall">
+      <view class="quick-icon icon-soft">🛒</view>
+      <text>商城</text>
+    </view>
+    <view class="quick-item" bindtap="goOrders">
+      <view class="quick-icon icon-soft">💼</view>
+      <text>订单</text>
+    </view>
+  </view>
+
+  <view class="list">
+    <view
+      wx:for="{{list}}"
+      wx:key="id"
+      class="item"
+      data-id="{{item.id}}"
+      bindtap="goChat"
+    >
+      <view class="avatar">{{item.avatar}}</view>
+      <view class="meta">
+        <view class="line1">
+          <text class="name">{{item.name}}</text>
+          <text class="time">{{item.time}}</text>
+        </view>
+        <view class="line2">
+          <text class="desc">{{item.desc}}</text>
+          <view wx:if="{{item.unread}}" class="badge">{{item.unread}}</view>
+        </view>
+      </view>
+    </view>
+
+    <view wx:if="{{list.length === 0}}" class="empty">暂无消息</view>
+  </view>
+</view>

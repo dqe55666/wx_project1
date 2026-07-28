@@ -16,6 +16,25 @@
       <text class="location-address">{{currentAddress}}</text>
     </view>
 
+    <view class="quick-grid">
+      <view class="quick-item" bindtap="goCreateVisit">
+        <view class="qi-icon" style="background:linear-gradient(135deg,#ffe4ec,#f8bbd0);">🩺</view>
+        <text class="qi-name">新建陪诊</text>
+      </view>
+      <view class="quick-item" bindtap="goVisitList">
+        <view class="qi-icon" style="background:linear-gradient(135deg,#fff3e0,#ffe0b2);">📋</view>
+        <text class="qi-name">陪诊中</text>
+      </view>
+      <view class="quick-item" bindtap="goMall">
+        <view class="qi-icon" style="background:linear-gradient(135deg,#fce4ec,#f48fb1);">🛍️</view>
+        <text class="qi-name">护理商城</text>
+      </view>
+      <view class="quick-item" bindtap="goMessage">
+        <view class="qi-icon" style="background:linear-gradient(135deg,#e1f5fe,#81d4fa);">💬</view>
+        <text class="qi-name">消息</text>
+      </view>
+    </view>
+
     <view class="panel">
       <view class="section-title">医院单位</view>
       <picker mode="selector" range="{{hospitals}}" range-key="name" value="{{selectedHospitalIndex}}" bindchange="onHospitalChange">

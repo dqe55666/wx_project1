@@ -1,0 +1,58 @@
+<scroll-view class="page" scroll-y>
+  <view class="searchbar">
+    <view class="search-input">
+      <text class="search-icon">🔍</text>
+      <text class="search-text">搜索商品</text>
+    </view>
+  </view>
+
+  <scroll-view class="banners" scroll-x>
+    <view
+      wx:for="{{banners}}"
+      wx:key="id"
+      class="banner"
+      style="background: {{item.color}};"
+    >
+      <text class="banner-title">{{item.title}}</text>
+      <text class="banner-sub">陪诊商城 · 优选好物</text>
+    </view>
+  </scroll-view>
+
+  <view class="categories">
+    <view
+      wx:for="{{categories}}"
+      wx:key="id"
+      class="cat-item"
+      data-id="{{item.id}}"
+      bindtap="goCategory"
+    >
+      <view class="cat-icon">{{item.icon}}</view>
+      <text class="cat-name">{{item.name}}</text>
+    </view>
+  </view>
+
+  <view class="section">
+    <view class="section-head">
+      <text class="section-title">热销推荐</text>
+      <text class="section-more">查看全部 ›</text>
+    </view>
+    <view class="goods">
+      <view
+        wx:for="{{hot}}"
+        wx:key="id"
+        class="goods-item"
+        data-id="{{item.id}}"
+        bindtap="goDetail"
+      >
+        <view class="goods-cover">{{item.cover}}</view>
+        <text class="goods-name">{{item.name}}</text>
+        <view class="goods-bottom">
+          <text class="goods-price">¥{{item.price}}</text>
+          <text class="goods-sales">已售 {{item.sales}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view style="height: 40rpx;"></view>
+</scroll-view>

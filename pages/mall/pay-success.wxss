@@ -1,0 +1,34 @@
+@import "/assets/common.wxss";
+
+.success-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 120rpx 40rpx 80rpx;
+}
+
+.check-circle {
+  width: 160rpx;
+  height: 160rpx;
+  background: linear-gradient(135deg, #66bb6a, #43a047);
+  color: #ffffff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 80rpx;
+  margin-bottom: 32rpx;
+  box-shadow: 0 8rpx 24rpx rgba(102, 187, 106, 0.4);
+}
+
+.s-title {
+  color: #2d1b2e;
+  font-size: 40rpx;
+  font-weight: 700;
+  margin-bottom: 12rpx;
+}
+
+.s-sub {
+  color: #bd548f;
+  font-size: 26rpx;
+}

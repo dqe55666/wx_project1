@@ -1,0 +1,44 @@
+<view class="page">
+  <view class="hero">
+    <text class="h-title">选择参数</text>
+    <text class="h-sub">规格、颜色、数量</text>
+  </view>
+
+  <view class="card">
+    <text class="c-title">规格</text>
+    <view class="tags" style="margin-top:16rpx;">
+      <view wx:for="{{types}}" wx:key="*this"
+            class="tag {{sel.type === index ? 'solid' : ''}}"
+            data-g="type" data-i="{{index}}" bindtap="pick">{{item}}</view>
+    </view>
+  </view>
+
+  <view class="card">
+    <text class="c-title">尺寸</text>
+    <view class="tags" style="margin-top:16rpx;">
+      <view wx:for="{{sizes}}" wx:key="*this"
+            class="tag {{sel.size === index ? 'solid' : ''}}"
+            data-g="size" data-i="{{index}}" bindtap="pick">{{item}}</view>
+    </view>
+  </view>
+
+  <view class="card">
+    <text class="c-title">颜色</text>
+    <view class="tags" style="margin-top:16rpx;">
+      <view wx:for="{{colors}}" wx:key="*this"
+            class="tag {{sel.color === index ? 'solid' : ''}}"
+            data-g="color" data-i="{{index}}" bindtap="pick">{{item}}</view>
+    </view>
+  </view>
+
+  <view class="card">
+    <text class="c-title">数量</text>
+    <view class="qty">
+      <view class="qty-btn" data-step="-1" bindtap="change">－</view>
+      <text class="qty-val">{{count}}</text>
+      <view class="qty-btn" data-step="1" bindtap="change">＋</view>
+    </view>
+  </view>
+
+  <view class="action" bindtap="confirm">确定</view>
+</view>

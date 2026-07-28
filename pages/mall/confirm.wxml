@@ -1,0 +1,45 @@
+<view class="page">
+  <view class="address" bindtap="goAddress">
+    <text class="addr-icon">📍</text>
+    <view class="addr-main">
+      <text class="addr-name">{{address.name}}  {{address.phone}}</text>
+      <text class="addr-detail">{{address.region}} {{address.detail}}</text>
+    </view>
+    <text class="li-arrow">›</text>
+  </view>
+
+  <view class="card">
+    <view class="goods-row">
+      <view class="goods-cover">{{cover}}</view>
+      <view class="goods-main">
+        <text class="goods-name">{{name}}</text>
+        <text class="goods-spec">{{spec}}</text>
+        <view class="goods-bottom">
+          <text class="goods-price">¥{{price}}</text>
+          <text class="goods-count">×{{count}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="row"><text class="k">配送方式</text><text class="v">快递 包邮 ›</text></view>
+    <view class="row"><text class="k">支付方式</text><text class="v">微信支付 ›</text></view>
+    <view class="row"><text class="k">买家留言</text><text class="v">选填 ›</text></view>
+  </view>
+
+  <view class="card">
+    <view class="row"><text class="k">商品金额</text><text class="v">¥{{price * count}}</text></view>
+    <view class="row"><text class="k">运费</text><text class="v">¥0</text></view>
+    <view class="row"><text class="k" style="font-weight:600; color:#2d1b2e;">合计</text>
+      <text class="v" style="color:#e91e63; font-weight:700; font-size:32rpx;">¥{{price * count}}</text>
+    </view>
+  </view>
+
+  <view style="height: 160rpx;"></view>
+
+  <view class="footer">
+    <text class="total">合计：<text class="total-price">¥{{price * count}}</text></text>
+    <view class="action" bindtap="submit">提交订单</view>
+  </view>
+</view>

@@ -1,0 +1,48 @@
+@import "/assets/common.wxss";
+
+.tabs {
+  display: flex;
+  background: #ffffff;
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  border-bottom: 1rpx solid #f0f0f0;
+  margin: -24rpx -28rpx 16rpx;
+}
+
+.tab {
+  flex: 1;
+  text-align: center;
+  padding: 24rpx 0;
+  position: relative;
+  color: #888;
+  font-size: 28rpx;
+}
+
+.tab.active {
+  color: #2d1b2e;
+  font-weight: 700;
+}
+
+.tab-bar {
+  position: absolute;
+  left: 50%;
+  bottom: 8rpx;
+  transform: translateX(-50%);
+  width: 48rpx;
+  height: 6rpx;
+  background: #e91e63;
+  border-radius: 4rpx;
+}
+
+.list {
+  background: transparent;
+}
+
+.card {
+  background: #ffffff;
+  border: 2rpx solid #f8bbd0;
+  border-radius: 20rpx;
+  padding: 24rpx 28rpx;
+  margin-bottom: 20rpx;
+}

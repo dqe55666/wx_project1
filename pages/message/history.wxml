@@ -1,0 +1,16 @@
+<view class="page">
+  <view class="searchbar">
+    <input class="search-input" placeholder="搜索聊天记录" value="{{kw}}" bindinput="onInput" />
+  </view>
+
+  <view class="list">
+    <view wx:for="{{results}}" wx:key="id" class="list-item">
+      <view class="li-main">
+        <text class="li-title">{{item.text}}</text>
+        <text class="li-sub">{{item.time}}</text>
+      </view>
+    </view>
+    <view wx:if="{{kw && results.length === 0}}" class="empty">无相关记录</view>
+    <view wx:elif="{{!kw}}" class="empty">输入关键词搜索聊天记录</view>
+  </view>
+</view>

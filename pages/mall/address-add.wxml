@@ -1,0 +1,43 @@
+<view class="page">
+  <view class="hero">
+    <text class="h-title">添加地址</text>
+    <text class="h-sub">用于商品配送</text>
+  </view>
+
+  <view class="card tight">
+    <view class="row">
+      <text class="k">收货人</text>
+      <input class="v-input" data-f="name" value="{{form.name}}" bindinput="onInput" placeholder="请输入姓名" />
+    </view>
+    <view class="row">
+      <text class="k">手机号</text>
+      <input class="v-input" data-f="phone" type="number" value="{{form.phone}}" bindinput="onInput" placeholder="请输入手机号" />
+    </view>
+    <view class="row">
+      <text class="k">所在地区</text>
+      <text class="v">请选择 ›</text>
+    </view>
+    <view class="row">
+      <text class="k">详细地址</text>
+      <input class="v-input" data-f="detail" value="{{form.detail}}" bindinput="onInput" placeholder="街道、楼栋、门牌号" />
+    </view>
+  </view>
+
+  <view class="card">
+    <text class="c-title">标签</text>
+    <view class="tags" style="margin-top:16rpx;">
+      <view class="tag">家</view>
+      <view class="tag">公司</view>
+      <view class="tag">学校</view>
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="row" bindtap="toggleDefault">
+      <text class="k">设为默认地址</text>
+      <switch checked="{{default}}" color="#e91e63" />
+    </view>
+  </view>
+
+  <view class="action" bindtap="save">保存</view>
+</view>

@@ -1,0 +1,19 @@
+<view class="page">
+  <view class="hero purple">
+    <text class="h-title">预约陪诊师</text>
+    <text class="h-sub">选择您信任的陪诊师</text>
+  </view>
+
+  <view class="card" wx:for="{{list}}" wx:key="id" bindtap="select" data-name="{{item.name}}">
+    <view class="list-item">
+      <view class="li-avatar">{{item.avatar}}</view>
+      <view class="li-main">
+        <text class="li-title">{{item.name}}  ·  {{item.level}}</text>
+        <text class="li-sub">⭐ {{item.score}}  ·  服务 {{item.orders}} 次</text>
+      </view>
+      <text class="v" style="color:#e91e63; font-weight:700;">¥{{item.price}}</text>
+    </view>
+  </view>
+
+  <view class="tip">选择陪诊师后还需确认就诊时间</view>
+</view>

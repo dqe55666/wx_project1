@@ -1,0 +1,36 @@
+<view class="page">
+  <view class="tabs">
+    <view wx:for="{{tabs}}" wx:key="*this"
+          class="tab {{current === index ? 'active' : ''}}"
+          data-i="{{index}}" bindtap="switchTab">
+      <text>{{item}}</text>
+      <view wx:if="{{current === index}}" class="tab-bar"></view>
+    </view>
+  </view>
+
+  <view wx:for="{{list}}" wx:key="id"
+        wx:if="{{current === 0 || item.statusIdx === current}}"
+        class="card"
+        data-id="{{item.id}}"
+        bindtap="goDetail">
+    <view class="row">
+      <text class="k" style="color:#999; font-size:24rpx;">{{item.no}}</text>
+      <text class="v" style="color:#ff8a00; font-size:24rpx;">{{item.status}}</text>
+    </view>
+    <view class="goods-row">
+      <view class="goods-cover">{{item.cover}}</view>
+      <view class="goods-main">
+        <text class="goods-name">{{item.name}}</text>
+        <view class="goods-bottom">
+          <text class="goods-price">¥{{item.price}}</text>
+          <text class="goods-count">×{{item.count}}</text>
+        </view>
+      </view>
+    </view>
+    <view class="action-row" style="margin-top: 24rpx;">
+      <view class="action secondary" style="height:64rpx; line-height:64rpx; font-size:24rpx;" catchtap="goRefund">申请退款</view>
+      <view class="action" style="height:64rpx; line-height:64rpx; font-size:24rpx;" catchtap="goEvaluate">立即评价</view>
+    </view>
+  </view>
+  <view wx:if="{{list.length === 0}}" class="empty">暂无订单</view>
+</view>

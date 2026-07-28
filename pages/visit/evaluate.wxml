@@ -1,0 +1,41 @@
+<view class="page">
+  <view class="hero">
+    <text class="h-title">服务评价</text>
+    <text class="h-sub">您的评价是对陪诊师最大的支持</text>
+  </view>
+
+  <view class="card">
+    <view class="list-item">
+      <view class="li-avatar">👩‍⚕️</view>
+      <view class="li-main">
+        <text class="li-title">张陪护师</text>
+        <text class="li-sub">张家界市人民医院 · 消化内科</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="card">
+    <text class="c-title">综合评分</text>
+    <view class="stars">
+      <view wx:for="{{[1,2,3,4,5]}}" wx:key="*this"
+            class="star {{rating >= item ? 'active' : ''}}"
+            data-r="{{item}}" bindtap="setRating">★</view>
+    </view>
+  </view>
+
+  <view class="card">
+    <text class="c-title">服务标签（可多选）</text>
+    <view class="tags" style="margin-top:16rpx;">
+      <view wx:for="{{tagOptions}}" wx:key="*this"
+            class="tag {{tags.indexOf(item) >= 0 ? 'solid' : ''}}"
+            data-t="{{item}}" bindtap="toggleTag">{{item}}</view>
+    </view>
+  </view>
+
+  <view class="card">
+    <text class="c-title">评价内容</text>
+    <textarea class="textarea" placeholder="请分享本次服务的感受" value="{{content}}" bindinput="onInput"></textarea>
+  </view>
+
+  <view class="action" bindtap="submit">提交评价</view>
+</view>

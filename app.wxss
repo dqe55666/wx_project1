@@ -18,3 +18,16 @@ text {
 button::after {
   border: 0 !important;
 }
+
+/* 统一主题色变量（供组件使用）*/
+page {
+  --color-primary: #e91e63;
+  --color-primary-light: #f48fb1;
+  --color-primary-soft: #fce4ec;
+  --color-primary-bg: #f8bbd0;
+  --color-text: #2d1b2e;
+  --color-text-sub: #bd548f;
+  --color-text-mute: #c9a8b5;
+  --color-border: #f8bbd0;
+  --color-bg: #fff5f8;
+}
