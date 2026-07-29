@@ -1,8 +1,0 @@
-{
-  "navigationBarTitleText": "注册",
-  "navigationBarBackgroundColor": "#fff5f8",
-  "navigationBarTextStyle": "black",
-  "usingComponents": {
-    "captcha": "/components/captcha/captcha"
-  }
-}

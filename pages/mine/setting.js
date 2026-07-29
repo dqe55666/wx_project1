@@ -1,11 +1,9 @@
-const app = getApp()
-
 Page({
   data: { push: true, face: false },
   togglePush() { this.setData({ push: !this.data.push }) },
   toggleFace() { this.setData({ face: !this.data.face }) },
   goAccount() { wx.showToast({ title: '账号信息（壳子）', icon: 'none' }) },
-  goChangePwd() { wx.navigateTo({ url: '/pages/forget/forget' }) },
+  goChangePwd() { wx.showToast({ title: '修改密码（壳子）', icon: 'none' }) },
   goPrivacy() { wx.showToast({ title: '隐私设置（壳子）', icon: 'none' }) },
   goClearCache() {
     wx.showModal({
@@ -22,11 +20,7 @@ Page({
       content: '确定要退出当前账号吗？',
       success: r => {
         if (r.confirm) {
-          app.clearLogin()
-          wx.showToast({ title: '已退出', icon: 'success' })
-          setTimeout(() => {
-            wx.reLaunch({ url: '/pages/login/login' })
-          }, 600)
+          wx.showToast({ title: '已退出（壳子）', icon: 'success' })
         }
       }
     })

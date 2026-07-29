@@ -1,8 +1,0 @@
-{
-  "navigationBarTitleText": "忘记密码",
-  "navigationBarBackgroundColor": "#fff5f8",
-  "navigationBarTextStyle": "black",
-  "usingComponents": {
-    "captcha": "/components/captcha/captcha"
-  }
-}
