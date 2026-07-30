@@ -1,20 +1,66 @@
 <scroll-view class="scrollarea" scroll-y>
   <view class="page">
     <view class="heading">
-      <text class="title">漂瓶</text>
-      <text class="subtitle">放出一句心情，也可以捞起一条温柔留言。</text>
+      <view>
+        <text class="title">漂流瓶</text>
+        <text class="subtitle">每一只瓶子，都会被认真捞起。</text>
+      </view>
+      <text class="refresh" bindtap="loadBottles">刷新</text>
     </view>
 
-    <view class="bottle-panel">
-      <text class="panel-label">捞到的漂瓶</text>
-      <text class="bottle-text">{{bottleText}}</text>
-      <button class="secondary-btn" bindtap="pickBottle">再捞一条</button>
+    <view class="composer">
+      <textarea
+        value="{{message}}"
+        bindinput="onMessageInput"
+        maxlength="500"
+        placeholder="写下此刻想分享的话..."
+        placeholder-class="placeholder"
+      />
+      <view class="composer-footer">
+        <label class="anonymous-option">
+          <switch checked="{{anonymous}}" color="#e91e63" bindchange="onAnonymousChange" />
+          <text>匿名发布</text>
+        </label>
+        <button class="send-btn" loading="{{submitting}}" disabled="{{submitting}}" bindtap="sendBottle">放出</button>
+      </view>
     </view>
 
-    <view class="write-panel">
-      <text class="panel-label">写一只漂瓶</text>
-      <textarea value="{{message}}" bindinput="onMessageInput" maxlength="200" placeholder="写下今天的心情、感谢或鼓励" />
-      <button class="primary-btn" bindtap="sendBottle">放出漂瓶</button>
+    <view class="stream-head">
+      <text>漂流瓶广场</text>
+      <text class="stream-note">最新发布在前</text>
+    </view>
+
+    <view wx:if="{{loading}}" class="state-text">正在捞取漂流瓶...</view>
+    <view wx:elif="{{empty}}" class="state-text">还没有漂流瓶，放出第一只吧。</view>
+    <view wx:else class="waterfall">
+      <view class="waterfall-column">
+        <view wx:for="{{leftBottles}}" wx:key="id" class="bottle-card">
+          <text class="bottle-content">{{item.content}}</text>
+          <view class="bottle-footer">
+            <view wx:if="{{item.is_anonymous}}" class="anonymous-author">匿名漂流者</view>
+            <view wx:else class="author">
+              <image wx:if="{{item.author_avatar}}" class="author-avatar" src="{{item.author_avatar}}" mode="aspectFill" />
+              <view wx:else class="author-avatar author-avatar-text">{{item.avatarLabel}}</view>
+              <text class="author-name">{{item.author_name}}</text>
+            </view>
+            <text class="time">{{item.displayTime}}</text>
+          </view>
+        </view>
+      </view>
+      <view class="waterfall-column">
+        <view wx:for="{{rightBottles}}" wx:key="id" class="bottle-card">
+          <text class="bottle-content">{{item.content}}</text>
+          <view class="bottle-footer">
+            <view wx:if="{{item.is_anonymous}}" class="anonymous-author">匿名漂流者</view>
+            <view wx:else class="author">
+              <image wx:if="{{item.author_avatar}}" class="author-avatar" src="{{item.author_avatar}}" mode="aspectFill" />
+              <view wx:else class="author-avatar author-avatar-text">{{item.avatarLabel}}</view>
+              <text class="author-name">{{item.author_name}}</text>
+            </view>
+            <text class="time">{{item.displayTime}}</text>
+          </view>
+        </view>
+      </view>
     </view>
   </view>
 </scroll-view>

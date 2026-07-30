@@ -37,9 +37,13 @@
     "pages/mine/evaluate",
     "pages/mine/refund",
     "pages/mine/setting",
+    "pages/support/chat",
+    "pages/support/feedback",
 
     "pages/orders/orders",
-    "pages/logs/logs"
+    "pages/tracking/tracking",
+    "pages/logs/logs",
+    "pages/bottle/bottle"
   ],
   "window": {
     "navigationBarTextStyle": "black",
@@ -76,7 +80,7 @@
   },
   "permission": {
     "scope.userLocation": {
-      "desc": "用于计算您与医院单位的距离"
+      "desc": "用于展示进行中订单的实时服务位置和计算医院距离"
     }
   },
   "requiredPrivateInfos": [

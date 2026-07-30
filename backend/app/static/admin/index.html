@@ -25,10 +25,35 @@
         font-size: 22px;
         margin: 0;
       }
-      main {
+      .admin-layout {
+        display: grid;
+        grid-template-columns: 220px minmax(0, 1fr);
+        min-height: calc(100vh - 65px);
+      }
+      .management-nav {
+        background: #fff;
+        border-right: 1px solid #d9e2ec;
+        padding: 18px 12px;
+      }
+      .management-nav button {
+        background: transparent;
+        color: #52616f;
+        display: block;
+        font-weight: 600;
+        margin: 2px 0;
+        text-align: left;
+        width: 100%;
+      }
+      .management-nav button:hover,
+      .management-nav button.active {
+        background: #e6f4f1;
+        color: #0f766e;
+      }
+      .management-main {
+        align-content: start;
         display: grid;
         gap: 20px;
-        grid-template-columns: minmax(320px, 420px) 1fr;
+        grid-template-columns: minmax(300px, 420px) minmax(0, 1fr);
         padding: 24px 28px;
       }
       section {
@@ -36,6 +61,12 @@
         border: 1px solid #d9e2ec;
         border-radius: 8px;
         padding: 18px;
+      }
+      section[data-view] {
+        display: none;
+      }
+      section[data-view].active {
+        display: block;
       }
       h2 {
         font-size: 17px;
@@ -48,14 +79,17 @@
         margin: 12px 0 6px;
       }
       input,
-      select {
+      select,
+      textarea {
         border: 1px solid #bcccdc;
         border-radius: 6px;
         font-size: 14px;
-        height: 38px;
         padding: 0 10px;
         width: 100%;
       }
+      input,
+      select { height: 38px; }
+      textarea { min-height: 76px; padding: 10px; resize: vertical; }
       .row {
         display: grid;
         gap: 12px;
@@ -169,11 +203,39 @@
         line-height: 1.5;
         margin: -8px 0 14px;
       }
+      .checkbox-input {
+        height: auto;
+        margin-right: 8px;
+        vertical-align: middle;
+        width: auto;
+      }
+      .bottle-content {
+        line-height: 1.6;
+        max-width: 420px;
+        white-space: pre-wrap;
+        word-break: break-word;
+      }
       .wide {
         grid-column: 1 / -1;
       }
+      .table-wrap { overflow-x: auto; }
       @media (max-width: 860px) {
-        main {
+        .admin-layout {
+          grid-template-columns: 1fr;
+        }
+        .management-nav {
+          border-bottom: 1px solid #d9e2ec;
+          border-right: 0;
+          display: flex;
+          gap: 6px;
+          overflow-x: auto;
+          padding: 10px 16px;
+        }
+        .management-nav button {
+          flex: 0 0 auto;
+          width: auto;
+        }
+        .management-main {
           grid-template-columns: 1fr;
           padding: 16px;
         }
@@ -184,8 +246,17 @@
     <header>
       <h1>护理预约管理端</h1>
     </header>
-    <main>
-      <section>
+    <div class="admin-layout">
+      <aside class="management-nav" aria-label="管理模块">
+        <button class="active" type="button" data-view-target="units">单位管理</button>
+        <button type="button" data-view-target="customers">用户管理</button>
+        <button type="button" data-view-target="employees">员工管理</button>
+        <button type="button" data-view-target="orders">订单管理</button>
+        <button type="button" data-view-target="products">商品管理</button>
+        <button type="button" data-view-target="bottles">漂流瓶管理</button>
+      </aside>
+      <main class="management-main">
+      <section class="active" data-view="units">
         <h2>医院单位</h2>
         <form id="hospitalForm">
           <input id="hospitalId" type="hidden" />
@@ -231,24 +302,83 @@
         </div>
       </section>
 
-      <section>
+      <section data-view="employees">
         <h2>员工管理</h2>
-        <div class="account-hint">登录账号默认为员工姓名，初始密码为 123456。</div>
+        <div class="account-hint">为员工设置唯一员工 ID，员工使用该 ID 和初始密码 123456 登录工作台。</div>
         <form id="employeeForm">
           <input id="employeeId" type="hidden" />
+          <label for="employeeCode">员工 ID</label>
+          <input id="employeeCode" required placeholder="例如：YG1003" />
           <label for="employeeName">员工姓名</label>
           <input id="employeeName" required placeholder="例如：王护理" />
           <label for="employeePhone">联系电话</label>
           <input id="employeePhone" required placeholder="13800000000" />
           <label for="employeeArea">服务区域</label>
           <input id="employeeArea" placeholder="例如：黄浦区、徐汇区" />
+          <label for="employeeRole">员工角色</label>
+          <select id="employeeRole">
+            <option value="caregiver">陪诊师</option>
+            <option value="customer_service">客服</option>
+          </select>
+          <label for="employeeCommission">员工抽成比例 (%)</label>
+          <input id="employeeCommission" required type="number" min="0" max="100" step="0.01" value="85" />
           <button class="primary" type="submit">添加员工</button>
           <button class="secondary" id="employeeResetBtn" type="button">清空</button>
           <div class="status" id="employeeStatus"></div>
         </form>
       </section>
 
-      <section>
+      <section data-view="products">
+        <h2>商品管理</h2>
+        <div class="account-hint">商品上架后会同步展示在小程序商城；库存为 0 时用户只能查看，不能购买。</div>
+        <form id="productForm">
+          <input id="productId" type="hidden" />
+          <label for="productName">商品名称</label>
+          <input id="productName" required maxlength="120" placeholder="例如：医用护理床" />
+          <div class="row">
+            <div>
+              <label for="productCategory">商品分类</label>
+              <input id="productCategory" maxlength="50" placeholder="例如：康复器械" />
+            </div>
+            <div>
+              <label for="productPrice">售价（元）</label>
+              <input id="productPrice" required type="number" min="0.01" step="0.01" placeholder="0.00" />
+            </div>
+          </div>
+          <div class="row">
+            <div>
+              <label for="productStock">库存</label>
+              <input id="productStock" required type="number" min="0" step="1" value="0" />
+            </div>
+            <div>
+              <label for="productCover">商品图标</label>
+              <input id="productCover" required maxlength="20" value="📦" placeholder="例如：🩺" />
+            </div>
+          </div>
+          <label for="productDescription">商品描述</label>
+          <textarea id="productDescription" maxlength="1000" placeholder="展示在商品详情页"></textarea>
+          <label for="productActive">商品状态</label>
+          <select id="productActive">
+            <option value="true">上架</option>
+            <option value="false">下架</option>
+          </select>
+          <button class="primary" type="submit">保存商品</button>
+          <button class="secondary" id="productResetBtn" type="button">清空</button>
+          <div class="status" id="productStatus"></div>
+        </form>
+      </section>
+
+      <section data-view="bottles">
+        <h2>漂流瓶审核设置</h2>
+        <div class="account-hint">关闭时用户发帖会直接公开；开启后所有新内容须在下方通过审核才会公开显示。</div>
+        <label for="bottleReviewEnabled">
+          <input class="checkbox-input" id="bottleReviewEnabled" type="checkbox" />开启预审核
+        </label>
+        <button class="primary" id="saveBottleSettingsBtn" type="button">保存设置</button>
+        <div class="status" id="bottleSettingsStatus"></div>
+      </section>
+
+      <section class="active" data-view="units">
         <h2>单位列表</h2>
         <table>
           <thead>
@@ -264,15 +394,17 @@
         </table>
       </section>
 
-      <section>
+      <section data-view="employees">
         <h2>员工列表</h2>
         <table>
           <thead>
             <tr>
               <th>姓名</th>
-              <th>登录账号</th>
+              <th>员工 ID</th>
               <th>联系电话</th>
+              <th>角色</th>
               <th>服务区域</th>
+              <th>抽成比例</th>
               <th>状态</th>
               <th>操作</th>
             </tr>
@@ -281,7 +413,27 @@
         </table>
       </section>
 
-      <section class="wide">
+      <section class="wide" data-view="products">
+        <h2>商品列表</h2>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>商品</th>
+                <th>分类</th>
+                <th>售价</th>
+                <th>库存</th>
+                <th>销量</th>
+                <th>状态</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody id="productRows"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="wide" data-view="orders">
         <h2>最近订单</h2>
         <table>
           <thead>
@@ -294,6 +446,8 @@
               <th>距离</th>
               <th>接单员工</th>
               <th>状态</th>
+              <th>订单金额</th>
+              <th>员工结算</th>
               <th>评价</th>
               <th>操作</th>
             </tr>
@@ -302,18 +456,65 @@
         </table>
         <div class="status" id="orderStatus"></div>
       </section>
-    </main>
+      <section class="wide" data-view="customers">
+        <h2>用户管理</h2>
+        <div class="account-hint">用户资料根据护理预约时填写的姓名和手机号汇总，仅用于查看服务记录。</div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>用户姓名</th>
+                <th>手机号</th>
+                <th>预约次数</th>
+                <th>最近预约</th>
+                <th>最近订单号</th>
+              </tr>
+            </thead>
+            <tbody id="customerRows"></tbody>
+          </table>
+        </div>
+        <div class="status" id="customerStatus"></div>
+      </section>
+      <section class="wide" data-view="bottles">
+        <h2>漂流瓶内容</h2>
+        <div class="account-hint">所有内容按发布时间倒序排列。匿名内容不会显示用户昵称或头像。</div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>内容</th>
+                <th>发布者</th>
+                <th>发布时间</th>
+                <th>状态</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody id="bottleRows"></tbody>
+          </table>
+        </div>
+        <div class="status" id="bottleStatus"></div>
+      </section>
+      </main>
+    </div>
 
     <script>
       const form = document.querySelector("#hospitalForm");
       const employeeForm = document.querySelector("#employeeForm");
+      const productForm = document.querySelector("#productForm");
       const statusEl = document.querySelector("#status");
       const employeeStatusEl = document.querySelector("#employeeStatus");
+      const productStatusEl = document.querySelector("#productStatus");
+      const bottleSettingsStatusEl = document.querySelector("#bottleSettingsStatus");
+      const bottleStatusEl = document.querySelector("#bottleStatus");
       const searchStatusEl = document.querySelector("#searchStatus");
       const rowsEl = document.querySelector("#hospitalRows");
       const orderRowsEl = document.querySelector("#orderRows");
       const orderStatusEl = document.querySelector("#orderStatus");
       const employeeRowsEl = document.querySelector("#employeeRows");
+      const productRowsEl = document.querySelector("#productRows");
+      const customerRowsEl = document.querySelector("#customerRows");
+      const customerStatusEl = document.querySelector("#customerStatus");
+      const bottleRowsEl = document.querySelector("#bottleRows");
       const poiRowsEl = document.querySelector("#poiRows");
       let adminEmployees = [];
 
@@ -331,6 +532,10 @@
         })[char]);
       }
 
+      function formatMoney(cents) {
+        return `¥${(Number(cents || 0) / 100).toFixed(2)}`;
+      }
+
       function setStatus(text) {
         statusEl.textContent = text;
       }
@@ -339,8 +544,24 @@
         employeeStatusEl.textContent = text;
       }
 
+      function setProductStatus(text) {
+        productStatusEl.textContent = text;
+      }
+
+      function setBottleSettingsStatus(text) {
+        bottleSettingsStatusEl.textContent = text;
+      }
+
+      function setBottleStatus(text) {
+        bottleStatusEl.textContent = text;
+      }
+
       function setOrderStatus(text) {
         orderStatusEl.textContent = text;
+      }
+
+      function setCustomerStatus(text) {
+        customerStatusEl.textContent = text;
       }
 
       function setSearchStatus(text) {
@@ -356,6 +577,15 @@
       function resetEmployeeForm() {
         employeeForm.reset();
         document.querySelector("#employeeId").value = "";
+        document.querySelector("#employeeRole").value = "caregiver";
+      }
+
+      function resetProductForm() {
+        productForm.reset();
+        document.querySelector("#productId").value = "";
+        document.querySelector("#productStock").value = "0";
+        document.querySelector("#productCover").value = "📦";
+        document.querySelector("#productActive").value = "true";
       }
 
       async function loadHospitals() {
@@ -403,7 +633,7 @@
       async function loadOrders() {
         const res = await fetch("/api/admin/orders");
         const orders = await res.json();
-        const activeEmployees = adminEmployees.filter((employee) => employee.is_active);
+        const activeEmployees = adminEmployees.filter((employee) => employee.is_active && employee.role === "caregiver");
         orderRowsEl.innerHTML = orders.length
           ? orders
               .map(
@@ -412,7 +642,10 @@
                   const employeeOptions = activeEmployees
                     .map((employee) => `<option value="${employee.id}" ${employee.id === item.employee_id ? "selected" : ""}>${employee.name}</option>`)
                     .join("");
-                  const statusText = item.status === "in_progress" ? "工作中" : item.status === "completed" ? "已完成" : item.status === "stopped" ? "已停止" : item.status === "accepted" ? "已接单" : "待接单";
+                  const statusText = item.status_text || item.status;
+                  const settlement = item.staff_earning_cents === null || item.staff_earning_cents === undefined
+                    ? "-"
+                    : `${formatMoney(item.staff_earning_cents)}${item.commission_rate === null ? "" : ` (${item.commission_rate}%)`}`;
                   return `
                   <tr>
                     <td>${item.order_no}</td>
@@ -423,14 +656,16 @@
                     <td>${item.distance_km === null ? "未定位" : `${item.distance_km} km`}</td>
                     <td>${item.employee_name || "待接单"}</td>
                     <td>${statusText}</td>
-                    <td>${item.review ? `${item.review.rating} 分<br />${escapeHtml(item.review.content)}` : "-"}</td>
-                    <td>${canManage ? `<div class="order-actions">${["pending", "accepted"].includes(item.status) ? `<select class="order-select" data-employee-select="${item.id}"><option value="">指定员工</option>${employeeOptions}</select><button class="secondary" type="button" data-order-assign="${item.id}">指定</button>` : ""}<button class="secondary" type="button" data-order-finish="${item.id}">结束</button><button class="danger" type="button" data-order-stop="${item.id}">停止</button></div>` : "-"}</td>
+                    <td>${formatMoney(item.service_price_cents)}</td>
+                    <td>${settlement}</td>
+                    <td>${item.review ? `${item.review.rating} 分<br />${escapeHtml(item.review.content)}<br /><button class="secondary" type="button" data-review-edit="${item.id}" data-review-content="${escapeHtml(item.review.content)}">编辑评价</button>` : "-"}</td>
+                    <td>${canManage ? `<div class="order-actions">${["pending", "accepted"].includes(item.status) ? `<select class="order-select" data-employee-select="${item.id}"><option value="">指定员工</option>${employeeOptions}</select><button class="secondary" type="button" data-order-assign="${item.id}">指定</button>` : ""}<button class="secondary" type="button" data-order-finish="${item.id}">确认完成</button><button class="danger" type="button" data-order-force-stop="${item.id}">强制结束</button></div>` : "-"}</td>
                   </tr>
                 `;
                 }
               )
               .join("")
-          : `<tr><td colspan="10">暂无订单</td></tr>`;
+          : `<tr><td colspan="12">暂无订单</td></tr>`;
         orderRowsEl.querySelectorAll("[data-order-assign]").forEach((btn) => {
           btn.addEventListener("click", () => {
             const select = btn.parentElement.querySelector("select");
@@ -444,11 +679,38 @@
         orderRowsEl.querySelectorAll("[data-order-finish]").forEach((btn) => {
           btn.addEventListener("click", () => updateOrder(btn.dataset.orderFinish, "finish"));
         });
-        orderRowsEl.querySelectorAll("[data-order-stop]").forEach((btn) => {
+        orderRowsEl.querySelectorAll("[data-order-force-stop]").forEach((btn) => {
           btn.addEventListener("click", () => {
-            if (window.confirm("确定停止该订单吗？")) updateOrder(btn.dataset.orderStop, "stop");
+            if (window.confirm("强制结束后订单将停止，员工不结算本单收入。确定继续吗？")) updateOrder(btn.dataset.orderForceStop, "force-stop");
           });
         });
+        orderRowsEl.querySelectorAll("[data-review-edit]").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const content = window.prompt("修改评价内容", btn.dataset.reviewContent || "");
+            if (content === null) return;
+            updateReview(btn.dataset.reviewEdit, content.trim());
+          });
+        });
+      }
+
+      async function loadCustomers() {
+        const res = await fetch("/api/admin/customers");
+        if (!res.ok) {
+          setCustomerStatus("用户资料加载失败");
+          return;
+        }
+        const customers = await res.json();
+        customerRowsEl.innerHTML = customers.length
+          ? customers.map((item) => `
+              <tr>
+                <td>${escapeHtml(item.name)}</td>
+                <td>${escapeHtml(item.phone)}</td>
+                <td>${item.order_count}</td>
+                <td>${String(item.latest_order_at || "-").replace("T", " ")}</td>
+                <td>${escapeHtml(item.latest_order_no)}</td>
+              </tr>`).join("")
+          : '<tr><td colspan="5">暂无用户预约记录</td></tr>';
+        setCustomerStatus("");
       }
 
       async function updateOrder(orderId, action, payload) {
@@ -463,7 +725,26 @@
           loadOrders();
           return;
         }
-        setOrderStatus(action === "assign" ? "已指定接单员工" : action === "finish" ? "订单已手动结束" : "订单已手动停止");
+        setOrderStatus(action === "assign" ? "已指定接单员工" : action === "finish" ? "订单已确认完成并结算" : "订单已强制结束，未结算员工收入");
+        loadOrders();
+      }
+
+      async function updateReview(orderId, content) {
+        if (!content) {
+          setOrderStatus("评价内容不能为空");
+          return;
+        }
+        const res = await fetch(`/api/admin/orders/${orderId}/review`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ content }),
+        });
+        if (!res.ok) {
+          const error = await res.json().catch(() => ({}));
+          setOrderStatus(error.detail || "评价修改失败");
+          return;
+        }
+        setOrderStatus("评价内容已更新");
         loadOrders();
       }
 
@@ -477,9 +758,11 @@
                 (item) => `
                   <tr>
                     <td>${item.name}</td>
-                    <td>${item.username}</td>
+                    <td>${item.employee_code}</td>
                     <td>${item.phone}</td>
+                    <td>${item.role === "customer_service" ? "客服" : "陪诊师"}</td>
                     <td>${item.service_area || "-"}</td>
+                    <td>${item.commission_rate}%</td>
                     <td>${item.is_active ? "启用" : "停用"}</td>
                     <td>
                       <div class="actions">
@@ -491,14 +774,17 @@
                 `
               )
               .join("")
-          : `<tr><td colspan="6">暂无员工</td></tr>`;
+          : `<tr><td colspan="8">暂无员工</td></tr>`;
         employeeRowsEl.querySelectorAll("[data-employee-edit]").forEach((btn) => {
           btn.addEventListener("click", () => {
             const item = employees.find((employee) => employee.id === Number(btn.dataset.employeeEdit));
             document.querySelector("#employeeId").value = item.id;
+            document.querySelector("#employeeCode").value = item.employee_code;
             document.querySelector("#employeeName").value = item.name;
             document.querySelector("#employeePhone").value = item.phone;
             document.querySelector("#employeeArea").value = item.service_area || "";
+            document.querySelector("#employeeRole").value = item.role || "caregiver";
+            document.querySelector("#employeeCommission").value = item.commission_rate;
             setEmployeeStatus("正在编辑员工信息");
           });
         });
@@ -514,6 +800,109 @@
           });
         });
         loadOrders();
+      }
+
+      async function loadProducts() {
+        const res = await fetch("/api/admin/products");
+        if (!res.ok) {
+          setProductStatus("商品列表加载失败");
+          return;
+        }
+        const products = await res.json();
+        productRowsEl.innerHTML = products.length
+          ? products.map((item) => `
+              <tr>
+                <td>${escapeHtml(item.cover)} ${escapeHtml(item.name)}<br /><span class="account-hint">${escapeHtml(item.description || "未填写描述")}</span></td>
+                <td>${escapeHtml(item.category || "未分类")}</td>
+                <td>${formatMoney(item.price_cents)}</td>
+                <td>${item.stock}</td>
+                <td>${item.sales_count}</td>
+                <td>${item.is_active ? (item.stock > 0 ? "上架" : "上架（缺货）") : "下架"}</td>
+                <td><div class="actions"><button class="secondary" type="button" data-product-edit="${item.id}">编辑</button>${item.is_active ? `<button class="danger" type="button" data-product-delete="${item.id}">下架</button>` : ""}</div></td>
+              </tr>`).join("")
+          : '<tr><td colspan="7">暂无商品</td></tr>';
+        productRowsEl.querySelectorAll("[data-product-edit]").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const item = products.find((product) => product.id === Number(btn.dataset.productEdit));
+            document.querySelector("#productId").value = item.id;
+            document.querySelector("#productName").value = item.name;
+            document.querySelector("#productCategory").value = item.category || "";
+            document.querySelector("#productPrice").value = (item.price_cents / 100).toFixed(2);
+            document.querySelector("#productStock").value = item.stock;
+            document.querySelector("#productCover").value = item.cover;
+            document.querySelector("#productDescription").value = item.description || "";
+            document.querySelector("#productActive").value = String(item.is_active);
+            setProductStatus("正在编辑商品");
+          });
+        });
+        productRowsEl.querySelectorAll("[data-product-delete]").forEach((btn) => {
+          btn.addEventListener("click", async () => {
+            if (!window.confirm("下架后商品将不再展示在小程序商城。确定继续吗？")) return;
+            const res = await fetch(`/api/admin/products/${btn.dataset.productDelete}`, { method: "DELETE" });
+            if (!res.ok) {
+              setProductStatus("下架失败");
+              return;
+            }
+            setProductStatus("商品已下架");
+            loadProducts();
+          });
+        });
+      }
+
+      function formatBottleContent(content) {
+        return escapeHtml(content).replace(/\n/g, "<br />");
+      }
+
+      async function loadBottleSettings() {
+        const res = await fetch("/api/admin/bottles/settings");
+        if (!res.ok) {
+          setBottleSettingsStatus("审核设置加载失败");
+          return;
+        }
+        const settings = await res.json();
+        document.querySelector("#bottleReviewEnabled").checked = settings.review_enabled;
+        setBottleSettingsStatus("");
+      }
+
+      async function loadBottles() {
+        const res = await fetch("/api/admin/bottles");
+        if (!res.ok) {
+          setBottleStatus("漂流瓶列表加载失败");
+          return;
+        }
+        const bottles = await res.json();
+        bottleRowsEl.innerHTML = bottles.length
+          ? bottles.map((item) => `
+              <tr>
+                <td class="bottle-content">${formatBottleContent(item.content)}</td>
+                <td>${item.is_anonymous ? "匿名提交" : escapeHtml(item.author_name)}</td>
+                <td>${String(item.created_at || "-").replace("T", " ")}</td>
+                <td>${item.status === "pending" ? "待审核" : "已公开"}</td>
+                <td><div class="actions">${item.status === "pending" ? `<button class="secondary" type="button" data-bottle-publish="${item.id}">通过</button>` : ""}<button class="danger" type="button" data-bottle-delete="${item.id}">删除</button></div></td>
+              </tr>`).join("")
+          : '<tr><td colspan="5">暂无漂流瓶内容</td></tr>';
+        bottleRowsEl.querySelectorAll("[data-bottle-publish]").forEach((button) => {
+          button.addEventListener("click", () => updateBottleStatus(button.dataset.bottlePublish, "publish"));
+        });
+        bottleRowsEl.querySelectorAll("[data-bottle-delete]").forEach((button) => {
+          button.addEventListener("click", () => {
+            if (window.confirm("删除后无法恢复，确定删除这条漂流瓶吗？")) updateBottleStatus(button.dataset.bottleDelete, "delete");
+          });
+        });
+        setBottleStatus("");
+      }
+
+      async function updateBottleStatus(bottleId, action) {
+        const res = await fetch(`/api/admin/bottles/${bottleId}${action === "publish" ? "/publish" : ""}`, {
+          method: action === "publish" ? "POST" : "DELETE",
+        });
+        if (!res.ok) {
+          const error = await res.json().catch(() => ({}));
+          setBottleStatus(error.detail || "操作失败，请刷新后重试");
+          return;
+        }
+        setBottleStatus(action === "publish" ? "内容已公开" : "内容已删除");
+        loadBottles();
       }
 
       function searchNearbyHospitals() {
@@ -618,9 +1007,12 @@
         event.preventDefault();
         const id = value("employeeId");
         const payload = {
+          employee_code: value("employeeCode"),
           name: value("employeeName"),
           phone: value("employeePhone"),
           service_area: value("employeeArea") || null,
+          role: value("employeeRole"),
+          commission_rate: Number(value("employeeCommission")),
           is_active: true,
         };
         const res = await fetch(id ? `/api/admin/employees/${id}` : "/api/admin/employees", {
@@ -638,15 +1030,76 @@
         loadEmployees();
       });
 
+      productForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const id = value("productId");
+        const priceCents = Math.round(Number(value("productPrice")) * 100);
+        const payload = {
+          name: value("productName"),
+          category: value("productCategory") || null,
+          description: value("productDescription") || null,
+          price_cents: priceCents,
+          stock: Number(value("productStock")),
+          cover: value("productCover"),
+          is_active: value("productActive") === "true",
+        };
+        const res = await fetch(id ? `/api/admin/products/${id}` : "/api/admin/products", {
+          method: id ? "PUT" : "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        if (!res.ok) {
+          const error = await res.json().catch(() => ({}));
+          setProductStatus(error.detail || "保存失败，请检查商品信息");
+          return;
+        }
+        resetProductForm();
+        setProductStatus("商品已保存");
+        loadProducts();
+      });
+
       document.querySelector("#resetBtn").addEventListener("click", resetForm);
       document.querySelector("#employeeResetBtn").addEventListener("click", resetEmployeeForm);
+      document.querySelector("#productResetBtn").addEventListener("click", resetProductForm);
+      document.querySelector("#saveBottleSettingsBtn").addEventListener("click", async () => {
+        const res = await fetch("/api/admin/bottles/settings", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ review_enabled: document.querySelector("#bottleReviewEnabled").checked }),
+        });
+        if (!res.ok) {
+          setBottleSettingsStatus("保存失败，请稍后重试");
+          return;
+        }
+        setBottleSettingsStatus("审核设置已保存");
+      });
       document.querySelector("#nearbyBtn").addEventListener("click", searchNearbyHospitals);
       document.querySelector("#keywordBtn").addEventListener("click", () => {
         searchAmapHospitals({ keyword: value("hospitalKeyword") });
       });
+      function setManagementView(view) {
+        document.querySelectorAll("section[data-view]").forEach((section) => {
+          section.classList.toggle("active", section.dataset.view === view);
+        });
+        document.querySelectorAll("[data-view-target]").forEach((button) => {
+          button.classList.toggle("active", button.dataset.viewTarget === view);
+        });
+        if (view === "customers") loadCustomers();
+        if (view === "bottles") {
+          loadBottleSettings();
+          loadBottles();
+        }
+      }
+
+      document.querySelectorAll("[data-view-target]").forEach((button) => {
+        button.addEventListener("click", () => setManagementView(button.dataset.viewTarget));
+      });
       loadHospitals();
       loadEmployees();
+      loadProducts();
       loadOrders();
+      loadBottleSettings();
+      loadBottles();
     </script>
   </body>
 </html>

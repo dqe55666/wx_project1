@@ -1,11 +1,55 @@
+const { fetchCustomerOrders, fetchCustomerOrderMessages, getSavedOrder, formatDateTime } = require('../../utils/api')
+
 Page({
   data: {
-    list: [
-      { id: 'm1', avatar: '👩‍⚕️', name: '张陪护师', desc: '已为您预约好 13:00 准时到达', time: '10:23', unread: 2 },
-      { id: 'm2', avatar: '🧑‍⚕️', name: '李陪护师', desc: '请问您今天方便吗？', time: '昨天', unread: 0 },
-      { id: 'm3', avatar: '🏥', name: '系统通知', desc: '您的订单 PZ58057 已完成', time: '12-01', unread: 1 },
-      { id: 'm4', avatar: '💬', name: '客服小陪', desc: '您好，请问有什么可以帮您？', time: '11-30', unread: 0 }
-    ]
+    list: [],
+    loading: false
+  },
+
+  onShow() {
+    this.loadMessages()
+  },
+
+  async loadMessages() {
+    this.setData({ loading: true })
+    try {
+      const orders = await fetchCustomerOrders()
+      const list = await Promise.all(orders.map(async (order) => {
+        let latest = null
+        const saved = getSavedOrder(order.id)
+        if (saved) {
+          try {
+            const messages = await fetchCustomerOrderMessages(saved)
+            latest = messages[messages.length - 1] || null
+          } catch (err) {
+            latest = null
+          }
+        }
+        return {
+          id: `order-${order.id}`,
+          avatar: order.employee_name ? '护' : '单',
+          name: order.employee_name || '订单通知',
+          desc: latest ? latest.content : `${order.statusText} · ${order.hospital}`,
+          time: latest ? formatDateTime(latest.created_at) : (order.appointmentDisplay || ''),
+          unread: order.canReview ? 1 : 0
+        }
+      }))
+      if (orders.length) {
+        list.unshift({
+          id: 'system',
+          avatar: '知',
+          name: '系统通知',
+          desc: `本机共有 ${orders.length} 条预约记录`,
+          time: '',
+          unread: 0
+        })
+      }
+      this.setData({ list })
+    } catch (err) {
+      wx.showToast({ title: '消息加载失败', icon: 'none' })
+    } finally {
+      this.setData({ loading: false })
+    }
   },
 
   goChat(e) {
@@ -14,12 +58,10 @@ Page({
   },
 
   goNotice() {
-    // 通知：直接打开系统通知会话
     wx.navigateTo({ url: '/pages/message/chat?id=system' })
   },
 
   goCalendar() {
-    // 日程：跳到陪诊中查看时间安排
     wx.switchTab({ url: '/pages/visit/list', fail: () => wx.navigateTo({ url: '/pages/visit/list' }) })
   },
 

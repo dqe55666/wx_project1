@@ -1,4 +1,5 @@
 const app = getApp()
+const { saveCustomerOrder } = require('../../utils/api')
 
 Page({
   data: {
@@ -164,6 +165,10 @@ Page({
     wx.switchTab({ url: '/pages/message/list', fail: () => wx.navigateTo({ url: '/pages/message/list' }) })
   },
 
+  goBottle() {
+    wx.navigateTo({ url: '/pages/bottle/bottle' })
+  },
+
   onServiceChange(e) {
     this.setData({ selectedServiceIndex: Number(e.detail.value) })
   },
@@ -242,11 +247,7 @@ Page({
         method: 'POST',
         data: payload
       })
-      const savedOrders = wx.getStorageSync('customerOrders') || []
-      if (!savedOrders.some((item) => item.id === order.id)) {
-        savedOrders.unshift({ id: order.id, token: order.review_token })
-        wx.setStorageSync('customerOrders', savedOrders)
-      }
+      saveCustomerOrder(order)
       wx.showModal({
         title: '预约已提交',
         content: `订单号：${order.order_no}`,

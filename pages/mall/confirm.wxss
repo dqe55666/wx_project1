@@ -76,6 +76,8 @@
 }
 
 .goods-count { color: #999; font-size: 24rpx; }
+.quantity { align-items: center; display: flex; gap: 16rpx; }
+.quantity-btn { align-items: center; background: #f5f5f7; border-radius: 50%; color: #2d1b2e; display: flex; font-size: 28rpx; height: 44rpx; justify-content: center; width: 44rpx; }
 
 .footer {
   position: fixed;

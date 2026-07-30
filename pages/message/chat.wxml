@@ -7,7 +7,7 @@
     </view>
   </view>
 
-  <scroll-view class="msg-list" scroll-y scroll-into-view="bottom">
+  <scroll-view class="msg-list" scroll-y scroll-into-view="{{scrollIntoView}}">
     <view wx:for="{{msgs}}" wx:key="id" class="msg {{item.from === 'me' ? 'me' : 'other'}}">
       <view class="bubble">{{item.text}}</view>
       <text class="msg-time">{{item.time}}</text>
@@ -16,7 +16,7 @@
   </scroll-view>
 
   <view class="composer">
-    <input class="composer-input" value="{{input}}" bindinput="onInput" placeholder="请输入消息" />
-    <view class="send-btn {{input ? 'active' : ''}}" bindtap="send">发送</view>
+    <input class="composer-input" value="{{input}}" bindinput="onInput" placeholder="请输入消息" disabled="{{sending}}" />
+    <view class="send-btn {{input && !sending ? 'active' : ''}}" bindtap="send">{{sending ? '发送中' : '发送'}}</view>
   </view>
 </view>

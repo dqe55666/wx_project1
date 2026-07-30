@@ -28,8 +28,8 @@
       </view>
     </view>
     <view class="action-row" style="margin-top: 24rpx;">
-      <view class="action secondary" style="height:64rpx; line-height:64rpx; font-size:24rpx;" catchtap="goRefund">申请退款</view>
-      <view class="action" style="height:64rpx; line-height:64rpx; font-size:24rpx;" catchtap="goEvaluate">立即评价</view>
+      <view wx:if="{{item.statusIdx === 1}}" class="action" style="height:64rpx; line-height:64rpx; font-size:24rpx;" data-id="{{item.id}}" catchtap="continuePay">继续支付</view>
+      <text wx:else class="paid-note">订单已支付，等待配送</text>
     </view>
   </view>
   <view wx:if="{{list.length === 0}}" class="empty">暂无订单</view>

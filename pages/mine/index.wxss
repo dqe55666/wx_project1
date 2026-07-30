@@ -43,6 +43,11 @@
   box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.1);
 }
 
+.avatar-image {
+  display: block;
+  object-fit: cover;
+}
+
 .user-info { flex: 1; color: #ffffff; }
 
 .name {
@@ -58,13 +63,20 @@
   opacity: 0.9;
 }
 
-.edit-btn {
+.login-btn {
   background: rgba(255, 255, 255, 0.2);
+  border: 2rpx solid rgba(255, 255, 255, 0.5);
+  border-radius: 6rpx;
   color: #ffffff;
   font-size: 24rpx;
-  padding: 8rpx 20rpx;
-  border-radius: 24rpx;
-  border: 2rpx solid rgba(255, 255, 255, 0.5);
+  height: 60rpx;
+  line-height: 56rpx;
+  margin: 0;
+  padding: 0 18rpx;
+}
+
+.login-btn::after {
+  border: 0;
 }
 
 /* 订单卡片 */

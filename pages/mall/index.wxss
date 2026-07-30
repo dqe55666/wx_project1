@@ -70,6 +70,9 @@
   padding: 12rpx 0;
 }
 
+.cat-item.active .cat-name { color: #e91e63; font-weight: 600; }
+.cat-item.active .cat-icon { background: #fce4ec; border: 2rpx solid #e91e63; }
+
 .cat-icon {
   width: 96rpx;
   height: 96rpx;
@@ -162,3 +165,6 @@
   color: #999;
   font-size: 22rpx;
 }
+
+.sold-out { color: #c2410c; }
+.empty { color: #999; font-size: 28rpx; padding: 80rpx 0; text-align: center; }

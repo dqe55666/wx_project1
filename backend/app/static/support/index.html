@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>客服工作台</title>
+    <style>
+      :root { color: #1f2933; background: #f6f8fa; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+      * { box-sizing: border-box; }
+      body { margin: 0; }
+      button, input, textarea, select { font: inherit; }
+      button { border: 0; border-radius: 6px; cursor: pointer; min-height: 38px; padding: 0 14px; }
+      input, textarea, select { border: 1px solid #cbd5e1; border-radius: 6px; padding: 9px 10px; width: 100%; }
+      textarea { min-height: 72px; resize: vertical; }
+      .login { align-items: center; display: flex; justify-content: center; min-height: 100vh; padding: 24px; }
+      .login-card { background: #fff; border: 1px solid #d9e2ec; border-radius: 8px; padding: 28px; width: min(100%, 390px); }
+      h1 { font-size: 22px; margin: 0; }
+      h2 { font-size: 17px; margin: 0; }
+      label { color: #52616f; display: block; font-size: 13px; margin: 14px 0 6px; }
+      .lead, .muted { color: #64748b; font-size: 14px; line-height: 1.5; }
+      .primary { background: #0f766e; color: #fff; }
+      .danger { background: #fee2e2; color: #991b1b; }
+      .secondary { background: #e6f4f1; color: #0f766e; }
+      .login-card .primary { margin-top: 20px; width: 100%; }
+      .error { color: #b42318; font-size: 13px; min-height: 20px; margin-top: 12px; }
+      #workbench { display: none; }
+      header { background: #fff; border-bottom: 1px solid #d9e2ec; }
+      .header-inner { align-items: center; display: flex; justify-content: space-between; margin: 0 auto; max-width: 1220px; padding: 18px 28px; }
+      .identity { color: #64748b; font-size: 14px; margin-top: 5px; }
+      main { display: grid; gap: 20px; grid-template-columns: minmax(320px, 0.9fr) minmax(420px, 1.4fr); margin: 0 auto; max-width: 1220px; padding: 24px 28px; }
+      section { background: #fff; border: 1px solid #d9e2ec; border-radius: 8px; padding: 18px; }
+      .section-head, .ticket-head, .message-meta { align-items: center; display: flex; justify-content: space-between; }
+      .filter { display: flex; gap: 8px; margin: 16px 0; }
+      .filter button.active { background: #0f766e; color: #fff; }
+      .filter button { background: #eef2f4; color: #52616f; flex: 1; padding: 0 6px; }
+      .ticket-list { display: grid; gap: 10px; max-height: calc(100vh - 270px); overflow: auto; }
+      .ticket { border: 1px solid #d9e2ec; border-radius: 6px; padding: 13px; }
+      .ticket-title { font-weight: 650; line-height: 1.4; }
+      .ticket-body { color: #52616f; font-size: 13px; line-height: 1.5; margin-top: 7px; }
+      .tag { border-radius: 4px; font-size: 12px; padding: 3px 7px; }
+      .open { background: #fff4d6; color: #8a5a00; }
+      .in_progress { background: #e6f4f1; color: #0f766e; }
+      .resolved { background: #e8edf1; color: #52616f; }
+      .ticket-actions { display: flex; gap: 8px; margin-top: 12px; }
+      .ticket-actions button { height: 32px; min-height: 32px; }
+      .empty { color: #64748b; font-size: 14px; padding: 28px 0; text-align: center; }
+      .conversation { display: flex; flex-direction: column; min-height: 500px; }
+      .conversation-title { color: #64748b; font-size: 13px; margin-top: 6px; }
+      .messages { background: #f6f8fa; flex: 1; margin: 16px 0; min-height: 320px; overflow: auto; padding: 16px; }
+      .message { margin-bottom: 14px; max-width: 78%; }
+      .message.customer { margin-right: auto; }
+      .message.customer_service { margin-left: auto; text-align: right; }
+      .bubble { background: #fff; border: 1px solid #d9e2ec; border-radius: 6px; display: inline-block; line-height: 1.55; padding: 10px 12px; text-align: left; white-space: pre-wrap; word-break: break-word; }
+      .customer_service .bubble { background: #e6f4f1; border-color: #b7dfd7; }
+      .message-meta { color: #64748b; font-size: 12px; gap: 10px; margin-top: 4px; }
+      .chat-form { display: grid; gap: 10px; grid-template-columns: minmax(0, 1fr) auto; }
+      .chat-form textarea { min-height: 64px; }
+      .force-stop { border-top: 1px solid #edf2f7; margin-top: 18px; padding-top: 18px; }
+      .force-grid { display: grid; gap: 10px; grid-template-columns: 100px minmax(0, 1fr) auto; margin-top: 10px; }
+      @media (max-width: 820px) { main { grid-template-columns: 1fr; padding: 16px; } .ticket-list { max-height: none; } .force-grid { grid-template-columns: 1fr; } .header-inner { padding: 16px; } }
+    </style>
+  </head>
+  <body>
+    <div class="login" id="loginView">
+      <form class="login-card" id="loginForm">
+        <h1>客服工作台</h1>
+        <p class="lead">使用后台创建的客服员工 ID 登录，在线接收咨询与意见反馈。</p>
+        <label for="employeeCode">客服员工 ID</label>
+        <input id="employeeCode" required placeholder="例如：KF1001" />
+        <label for="password">密码</label>
+        <input id="password" required type="password" placeholder="初始密码为 123456" />
+        <button class="primary" id="loginButton" type="submit">登录</button>
+        <div class="error" id="loginError"></div>
+      </form>
+    </div>
+    <div id="workbench">
+      <header><div class="header-inner"><div><h1>客服工作台</h1><div class="identity" id="identity"></div></div><button class="secondary" id="logoutButton" type="button">退出登录</button></div></header>
+      <main>
+        <section>
+          <div class="section-head"><h2>客户请求</h2><button class="secondary" id="refreshButton" type="button">刷新</button></div>
+          <div class="filter" id="filters"><button class="active" data-status="all" type="button">全部</button><button data-status="open" type="button">待领取</button><button data-status="in_progress" type="button">处理中</button><button data-status="resolved" type="button">已办结</button></div>
+          <div class="ticket-list" id="ticketList"></div>
+          <div class="force-stop"><h2>强制停止订单</h2><div class="muted">停止后将向用户订单消息发送客服处理通知，且不结算该订单收入。</div><div class="force-grid"><input id="forceOrderId" type="number" min="1" placeholder="订单 ID" /><input id="forceReason" maxlength="300" placeholder="处理原因（选填）" /><button class="danger" id="forceStopButton" type="button">强制停止</button></div><div class="error" id="forceStopStatus"></div></div>
+        </section>
+        <section class="conversation">
+          <div><h2 id="conversationHeading">选择一条客户请求</h2><div class="conversation-title" id="conversationMeta">在线咨询和意见反馈会显示在这里。</div></div>
+          <div class="messages" id="messages"><div class="empty">请选择左侧工单以开始处理。</div></div>
+          <form class="chat-form" id="chatForm"><textarea id="chatInput" maxlength="1000" placeholder="输入回复内容" disabled></textarea><div><button class="primary" id="sendButton" type="submit" disabled>发送回复</button><button class="secondary" id="resolveButton" type="button" disabled style="margin-top:8px;">办结工单</button></div></form>
+        </section>
+      </main>
+    </div>
+    <script>
+      const loginView = document.querySelector("#loginView");
+      const workbench = document.querySelector("#workbench");
+      const ticketList = document.querySelector("#ticketList");
+      const messages = document.querySelector("#messages");
+      const chatInput = document.querySelector("#chatInput");
+      const sendButton = document.querySelector("#sendButton");
+      const resolveButton = document.querySelector("#resolveButton");
+      let accessToken = localStorage.getItem("supportAccessToken") || "";
+      let activeStatus = "all";
+      let activeTicket = null;
+      let lastMessageId = 0;
+      let chatTimer = null;
+
+      function escapeHtml(value) { return String(value ?? "").replace(/[&<>'"]/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" })[char]); }
+      function formatDateTime(value) { return value ? value.replace("T", " ").slice(0, 16) : ""; }
+      function categoryText(category) { return category === "feedback" ? "意见反馈" : "在线咨询"; }
+      function statusText(status) { return { open: "待领取", in_progress: "处理中", resolved: "已办结" }[status] || status; }
+      async function request(path, options = {}) {
+        const response = await fetch(path, { ...options, headers: { "Content-Type": "application/json", Authorization: `Bearer ${accessToken}`, ...(options.headers || {}) } });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(data.detail || "请求失败，请稍后重试");
+        return data;
+      }
+      function stopPolling() { if (chatTimer) { clearInterval(chatTimer); chatTimer = null; } }
+      function logout() { stopPolling(); accessToken = ""; localStorage.removeItem("supportAccessToken"); activeTicket = null; workbench.style.display = "none"; loginView.style.display = "flex"; }
+      function setAuthenticated(employee) {
+        if (employee.role !== "customer_service") { logout(); document.querySelector("#loginError").textContent = "该账号不是客服，请前往员工工作台。"; return; }
+        loginView.style.display = "none"; workbench.style.display = "block";
+        document.querySelector("#identity").textContent = `${employee.name} · ${employee.employee_code}${employee.service_area ? ` · ${employee.service_area}` : ""}`;
+        loadTickets();
+      }
+      async function loadTickets() {
+        ticketList.innerHTML = '<div class="empty">客户请求加载中...</div>';
+        try {
+          const tickets = await request(`/api/staff/support/tickets?status=${activeStatus}`);
+          ticketList.innerHTML = tickets.length ? tickets.map((ticket) => `<article class="ticket"><div class="ticket-head"><span class="ticket-title">${escapeHtml(ticket.subject || categoryText(ticket.category))}</span><span class="tag ${ticket.status}">${statusText(ticket.status)}</span></div><div class="ticket-body">${escapeHtml(ticket.customer_name)} · ${categoryText(ticket.category)}<br />${formatDateTime(ticket.updated_at || ticket.created_at)}${ticket.service_employee_name ? ` · ${escapeHtml(ticket.service_employee_name)}` : ""}</div><div class="ticket-actions">${ticket.status === "open" ? `<button class="primary" data-accept="${ticket.id}" type="button">领取并处理</button>` : ""}<button class="secondary" data-open="${ticket.id}" data-status="${ticket.status}" data-title="${escapeHtml(ticket.subject || categoryText(ticket.category))}" type="button">查看会话</button></div></article>`).join("") : '<div class="empty">暂无客户请求</div>';
+          ticketList.querySelectorAll("[data-accept]").forEach((button) => button.addEventListener("click", () => openTicket(Number(button.dataset.accept), "open", "客户请求", true)));
+          ticketList.querySelectorAll("[data-open]").forEach((button) => button.addEventListener("click", () => openTicket(Number(button.dataset.open), button.dataset.status, button.dataset.title, false)));
+        } catch (error) { ticketList.innerHTML = `<div class="empty">${escapeHtml(error.message)}</div>`; }
+      }
+      function renderMessage(message) { const type = message.sender_type === "customer_service" ? "customer_service" : "customer"; return `<div class="message ${type}" data-message-id="${message.id}"><div class="bubble">${escapeHtml(message.content)}</div><div class="message-meta"><span>${escapeHtml(message.sender_name)}</span><span>${formatDateTime(message.created_at)}</span></div></div>`; }
+      async function loadMessages(silent = false) {
+        if (!activeTicket) return;
+        try {
+          const list = await request(`/api/staff/support/tickets/${activeTicket.id}/messages?after_id=${lastMessageId}`);
+          if (!list.length) return;
+          const empty = messages.querySelector(".empty"); if (empty) empty.remove();
+          messages.insertAdjacentHTML("beforeend", list.map(renderMessage).join(""));
+          lastMessageId = Math.max(lastMessageId, ...list.map((item) => item.id)); messages.scrollTop = messages.scrollHeight;
+        } catch (error) { if (!silent) messages.innerHTML = `<div class="empty">${escapeHtml(error.message)}</div>`; }
+      }
+      async function openTicket(ticketId, ticketStatus, title, accept) {
+        try {
+          let ticket = null;
+          if (accept || ticketStatus === "open") ticket = await request(`/api/staff/support/tickets/${ticketId}/accept`, { method: "POST" });
+          activeTicket = ticket || { id: ticketId, status: ticketStatus, subject: title };
+          lastMessageId = 0; messages.innerHTML = '<div class="empty">会话加载中...</div>';
+          document.querySelector("#conversationHeading").textContent = title || "客户请求";
+          document.querySelector("#conversationMeta").textContent = ticketStatus === "resolved" ? "此工单已办结，可查看历史消息。" : "已接入客户会话，可在线回复。";
+          chatInput.disabled = ticketStatus === "resolved"; sendButton.disabled = ticketStatus === "resolved"; resolveButton.disabled = ticketStatus === "resolved";
+          await loadMessages(); stopPolling(); chatTimer = setInterval(() => loadMessages(true), 5000); loadTickets();
+        } catch (error) { alert(error.message); loadTickets(); }
+      }
+      document.querySelector("#loginForm").addEventListener("submit", async (event) => { event.preventDefault(); const error = document.querySelector("#loginError"); error.textContent = ""; try { const result = await request("/api/staff/login", { method: "POST", headers: { Authorization: "" }, body: JSON.stringify({ employee_id: document.querySelector("#employeeCode").value.trim(), password: document.querySelector("#password").value }) }); accessToken = result.access_token; localStorage.setItem("supportAccessToken", accessToken); setAuthenticated(result.employee); } catch (err) { error.textContent = err.message; } });
+      document.querySelector("#chatForm").addEventListener("submit", async (event) => { event.preventDefault(); const content = chatInput.value.trim(); if (!activeTicket || !content) return; sendButton.disabled = true; try { const message = await request(`/api/staff/support/tickets/${activeTicket.id}/messages`, { method: "POST", body: JSON.stringify({ content }) }); chatInput.value = ""; messages.insertAdjacentHTML("beforeend", renderMessage(message)); lastMessageId = Math.max(lastMessageId, message.id); messages.scrollTop = messages.scrollHeight; } catch (error) { alert(error.message); } finally { sendButton.disabled = false; } });
+      resolveButton.addEventListener("click", async () => { if (!activeTicket) return; try { await request(`/api/staff/support/tickets/${activeTicket.id}/resolve`, { method: "POST" }); activeTicket.status = "resolved"; chatInput.disabled = true; sendButton.disabled = true; resolveButton.disabled = true; document.querySelector("#conversationMeta").textContent = "工单已办结，用户仍可继续发消息重新发起请求。"; loadTickets(); } catch (error) { alert(error.message); } });
+      document.querySelector("#forceStopButton").addEventListener("click", async () => { const id = Number(document.querySelector("#forceOrderId").value); const status = document.querySelector("#forceStopStatus"); if (!id) { status.textContent = "请输入有效订单 ID"; return; } if (!window.confirm("确定强制停止该订单吗？订单不会结算员工收入。")) return; try { await request(`/api/staff/orders/${id}/force-stop`, { method: "POST", body: JSON.stringify({ reason: document.querySelector("#forceReason").value.trim() || null }) }); status.textContent = "订单已强制停止，客户已收到通知。"; document.querySelector("#forceOrderId").value = ""; document.querySelector("#forceReason").value = ""; } catch (error) { status.textContent = error.message; } });
+      document.querySelector("#filters").addEventListener("click", (event) => { const button = event.target.closest("[data-status]"); if (!button) return; activeStatus = button.dataset.status; document.querySelectorAll("[data-status]").forEach((item) => item.classList.toggle("active", item === button)); loadTickets(); });
+      document.querySelector("#refreshButton").addEventListener("click", loadTickets);
+      document.querySelector("#logoutButton").addEventListener("click", logout);
+      (async () => { if (!accessToken) return; try { setAuthenticated(await request("/api/staff/me")); } catch (_) { logout(); } })();
+    </script>
+  </body>
+</html>

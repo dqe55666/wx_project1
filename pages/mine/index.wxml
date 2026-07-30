@@ -2,12 +2,13 @@
   <view class="header">
     <view class="header-bg"></view>
     <view class="user">
-      <view class="avatar">👤</view>
+      <image wx:if="{{loggedIn}}" class="avatar avatar-image" src="{{user.avatarUrl}}" mode="aspectFill" />
+      <view wx:else class="avatar">👤</view>
       <view class="user-info">
         <text class="name">{{user.name}}</text>
         <text class="level">{{user.level}}  ·  {{user.phone}}</text>
       </view>
-      <view class="edit-btn">编辑</view>
+      <button class="login-btn" loading="{{authorizing}}" bindtap="authorizeLogin">{{loginButtonText}}</button>
     </view>
   </view>
 
@@ -17,17 +18,17 @@
       <text class="order-all" bindtap="goOrder" data-type="all">全部订单 ›</text>
     </view>
     <view class="order-grid">
-      <view class="order-item" bindtap="goOrder" data-type="paying">
+      <view class="order-item" bindtap="goOrder" data-type="pending">
         <view class="order-icon">💳</view>
-        <text>待支付</text>
+        <text>待接单 {{orderCount.pending}}</text>
       </view>
       <view class="order-item" bindtap="goOrder" data-type="doing">
         <view class="order-icon">🩺</view>
-        <text>进行中</text>
+        <text>进行中 {{orderCount.doing}}</text>
       </view>
       <view class="order-item" bindtap="goOrder" data-type="evaluate">
         <view class="order-icon">⭐</view>
-        <text>待评价</text>
+        <text>待评价 {{orderCount.evaluate}}</text>
       </view>
       <view class="order-item" bindtap="goOrder" data-type="refund">
         <view class="order-icon">↩️</view>

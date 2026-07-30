@@ -33,6 +33,7 @@
 .pay-type:last-child { border-bottom: 0; }
 
 .pay-type.active .pt-name { color: #e91e63; font-weight: 600; }
+.disabled { background: #cbd5e1 !important; color: #64748b !important; }
 
 .pt-icon { font-size: 36rpx; }
 

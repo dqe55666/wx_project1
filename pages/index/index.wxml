@@ -33,6 +33,10 @@
         <view class="qi-icon" style="background:linear-gradient(135deg,#e1f5fe,#81d4fa);">💬</view>
         <text class="qi-name">消息</text>
       </view>
+      <view class="quick-item" bindtap="goBottle">
+        <view class="qi-icon" style="background:#e8f5e9;">🍾</view>
+        <text class="qi-name">漂流瓶</text>
+      </view>
     </view>
 
     <view class="panel">

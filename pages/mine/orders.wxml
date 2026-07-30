@@ -9,16 +9,17 @@
   </view>
 
   <view class="list">
+    <view wx:if="{{loading}}" class="empty">订单加载中</view>
     <view wx:for="{{list}}" wx:key="id"
           wx:if="{{current === 0 || item.statusIdx === current}}"
           class="card" data-id="{{item.id}}" bindtap="goDetail">
       <view class="row">
-        <text class="k" style="color:#2d1b2e; font-weight:600;">{{item.type}}</text>
-        <text class="v" style="color:#ff8a00;">{{item.status}}</text>
+        <text class="k" style="color:#2d1b2e; font-weight:600;">{{item.typeName}}</text>
+        <text class="v" style="color:#ff8a00;">{{item.statusText}}</text>
       </view>
       <text class="c-desc">订单号：{{item.no}}</text>
       <text class="c-desc" style="margin-top:8rpx;">{{item.hospital}}</text>
     </view>
-    <view wx:if="{{list.length === 0}}" class="empty">暂无订单</view>
+    <view wx:if="{{!loading && list.length === 0}}" class="empty">暂无订单</view>
   </view>
 </view>

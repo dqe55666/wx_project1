@@ -13,15 +13,13 @@
   <view class="card">
     <text class="c-title">擅长医院</text>
     <view class="tags" style="margin-top:16rpx;">
-      <text class="tag">张家界市人民医院</text>
-      <text class="tag">张家界市中医院</text>
-      <text class="tag">湘雅二医院</text>
+      <text wx:for="{{hospitals}}" wx:key="*this" class="tag">{{item}}</text>
+      <text wx:if="{{hospitals.length === 0}}" class="c-desc">接单后显示服务医院</text>
     </view>
   </view>
 
   <view class="card">
     <text class="c-title">用户评价</text>
-    <text class="c-desc">"非常专业，态度很好，强烈推荐！" —— 李先生</text>
-    <text class="c-desc" style="margin-top:12rpx;">"全程陪同，省心省力。" —— 王女士</text>
+    <text class="c-desc">评价数据来自服务完成后的客户评价，当前暂无可展示内容。</text>
   </view>
 </view>

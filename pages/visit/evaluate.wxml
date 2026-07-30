@@ -8,8 +8,8 @@
     <view class="list-item">
       <view class="li-avatar">👩‍⚕️</view>
       <view class="li-main">
-        <text class="li-title">张陪护师</text>
-        <text class="li-sub">张家界市人民医院 · 消化内科</text>
+        <text class="li-title">{{order.doctor || '陪诊服务'}}</text>
+        <text class="li-sub">{{order.hospital || '医院待确认'}} · {{order.typeName || '服务项目'}}</text>
       </view>
     </view>
   </view>
@@ -37,5 +37,5 @@
     <textarea class="textarea" placeholder="请分享本次服务的感受" value="{{content}}" bindinput="onInput"></textarea>
   </view>
 
-  <view class="action" bindtap="submit">提交评价</view>
+  <view class="action" bindtap="submit">{{submitting ? '提交中...' : '提交评价'}}</view>
 </view>

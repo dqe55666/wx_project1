@@ -22,8 +22,8 @@
     <view
       wx:for="{{categories}}"
       wx:key="id"
-      class="cat-item"
-      data-id="{{item.id}}"
+      class="cat-item {{activeCategory === item.name ? 'active' : ''}}"
+      data-name="{{item.name}}"
       bindtap="goCategory"
     >
       <view class="cat-icon">{{item.icon}}</view>
@@ -33,8 +33,8 @@
 
   <view class="section">
     <view class="section-head">
-      <text class="section-title">热销推荐</text>
-      <text class="section-more">查看全部 ›</text>
+      <text class="section-title">{{activeCategory === '全部' ? '热销推荐' : activeCategory}}</text>
+      <text class="section-more">{{hot.length}} 件商品</text>
     </view>
     <view class="goods">
       <view
@@ -48,10 +48,11 @@
         <text class="goods-name">{{item.name}}</text>
         <view class="goods-bottom">
           <text class="goods-price">¥{{item.price}}</text>
-          <text class="goods-sales">已售 {{item.sales}}</text>
+          <text class="goods-sales {{item.soldOut ? 'sold-out' : ''}}">{{item.soldOut ? item.stockText : ('已售 ' + item.sales)}}</text>
         </view>
       </view>
     </view>
+    <view wx:if="{{!loading && hot.length === 0}}" class="empty">暂无可售商品</view>
   </view>
 
   <view style="height: 40rpx;"></view>

@@ -1,6 +1,6 @@
 page {
+  background: #fff7f8;
   height: 100vh;
-  background: #f1f9fc;
 }
 
 .scrollarea {
@@ -10,88 +10,199 @@ page {
 .page {
   box-sizing: border-box;
   min-height: 100vh;
-  padding: 34rpx 28rpx calc(44rpx + env(safe-area-inset-bottom));
+  padding: 32rpx 24rpx calc(44rpx + env(safe-area-inset-bottom));
+}
+
+.heading,
+.composer-footer,
+.bottle-footer,
+.author,
+.anonymous-option {
+  align-items: center;
+  display: flex;
 }
 
 .heading {
-  margin-bottom: 24rpx;
+  justify-content: space-between;
+  margin: 0 4rpx 24rpx;
 }
 
 .title {
-  color: #1d3b4f;
+  color: #45222f;
   display: block;
-  font-size: 46rpx;
+  font-size: 44rpx;
   font-weight: 700;
   line-height: 1.25;
 }
 
+.subtitle,
+.stream-note,
+.time {
+  color: #9b6e7b;
+  font-size: 23rpx;
+}
+
 .subtitle {
-  color: #527386;
   display: block;
+  margin-top: 8rpx;
+}
+
+.refresh {
+  color: #c2185b;
   font-size: 26rpx;
-  line-height: 1.5;
-  margin-top: 10rpx;
+  padding: 14rpx 10rpx;
 }
 
-.bottle-panel,
-.write-panel {
+.composer {
   background: #ffffff;
-  border: 1rpx solid #cfe5ee;
+  border: 1rpx solid #f3c9d8;
   border-radius: 8rpx;
-  margin-bottom: 18rpx;
-  padding: 26rpx;
-}
-
-.panel-label {
-  color: #039be5;
-  display: block;
-  font-size: 24rpx;
-  font-weight: 700;
-  line-height: 1.4;
-  margin-bottom: 12rpx;
-}
-
-.bottle-text {
-  color: #1d3b4f;
-  display: block;
-  font-size: 30rpx;
-  line-height: 1.65;
-  margin-bottom: 22rpx;
+  box-shadow: 0 4rpx 18rpx rgba(140, 45, 76, 0.06);
+  padding: 22rpx;
 }
 
 textarea {
-  background: #f7fcff;
-  border: 1rpx solid #cfe5ee;
-  border-radius: 8rpx;
+  background: #fffafb;
+  border: 1rpx solid #f6d8e2;
+  border-radius: 6rpx;
   box-sizing: border-box;
-  color: #1d3b4f;
-  font-size: 27rpx;
-  height: 180rpx;
-  line-height: 1.5;
-  padding: 18rpx;
+  color: #45222f;
+  font-size: 28rpx;
+  height: 164rpx;
+  line-height: 1.6;
+  padding: 16rpx;
   width: 100%;
 }
 
-.primary-btn,
-.secondary-btn {
-  border-radius: 8rpx;
-  font-size: 28rpx;
-  height: 76rpx;
-  line-height: 76rpx;
-  margin-top: 20rpx;
+.placeholder {
+  color: #c9a4af;
 }
 
-.primary-btn {
-  background: #039be5;
+.composer-footer {
+  justify-content: space-between;
+  margin-top: 18rpx;
+}
+
+.anonymous-option {
+  color: #77515d;
+  font-size: 25rpx;
+  gap: 10rpx;
+}
+
+.anonymous-option switch {
+  transform: scale(0.78);
+  transform-origin: left center;
+}
+
+.send-btn {
+  background: #e91e63;
+  border-radius: 6rpx;
   color: #ffffff;
+  font-size: 27rpx;
+  height: 70rpx;
+  line-height: 70rpx;
+  margin: 0;
+  padding: 0 38rpx;
 }
 
-.secondary-btn {
-  background: #e1f5fe;
-  color: #0277bd;
-}
-
-.primary-btn::after,
-.secondary-btn::after {
+.send-btn::after {
   border: 0;
+}
+
+.stream-head {
+  align-items: baseline;
+  color: #45222f;
+  display: flex;
+  font-size: 30rpx;
+  font-weight: 700;
+  justify-content: space-between;
+  margin: 34rpx 4rpx 18rpx;
+}
+
+.waterfall {
+  align-items: flex-start;
+  display: flex;
+  gap: 18rpx;
+}
+
+.waterfall-column {
+  flex: 1;
+  min-width: 0;
+}
+
+.bottle-card {
+  background: #ffffff;
+  border: 1rpx solid #f4d9e2;
+  border-radius: 8rpx;
+  box-shadow: 0 3rpx 12rpx rgba(101, 38, 58, 0.05);
+  box-sizing: border-box;
+  margin-bottom: 18rpx;
+  padding: 22rpx 20rpx 18rpx;
+  width: 100%;
+}
+
+.bottle-content {
+  color: #45222f;
+  display: block;
+  font-size: 27rpx;
+  line-height: 1.65;
+  overflow-wrap: anywhere;
+}
+
+.bottle-footer {
+  border-top: 1rpx solid #f8e8ee;
+  justify-content: space-between;
+  margin-top: 20rpx;
+  padding-top: 14rpx;
+}
+
+.author {
+  max-width: 58%;
+  min-width: 0;
+}
+
+.author-avatar {
+  background: #f9d9e6;
+  border-radius: 50%;
+  flex: 0 0 auto;
+  height: 38rpx;
+  width: 38rpx;
+}
+
+.author-avatar-text {
+  align-items: center;
+  color: #a42355;
+  display: flex;
+  font-size: 20rpx;
+  justify-content: center;
+}
+
+.author-name,
+.anonymous-author {
+  color: #77515d;
+  font-size: 22rpx;
+}
+
+.author-name {
+  margin-left: 8rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.anonymous-author {
+  font-style: italic;
+}
+
+.time {
+  flex: 0 0 auto;
+  font-size: 19rpx;
+  margin-left: 8rpx;
+}
+
+.state-text {
+  color: #9b6e7b;
+  font-size: 26rpx;
+  padding: 80rpx 0;
+  text-align: center;
 }

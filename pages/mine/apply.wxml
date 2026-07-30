@@ -8,7 +8,7 @@
     <view class="row"><text class="k">姓名</text><input class="v-input" data-f="name" value="{{form.name}}" bindinput="onInput" placeholder="请输入真实姓名" /></view>
     <view class="row"><text class="k">手机号</text><input class="v-input" data-f="phone" type="number" value="{{form.phone}}" bindinput="onInput" placeholder="请输入手机号" /></view>
     <view class="row"><text class="k">身份证</text><input class="v-input" data-f="idcard" value="{{form.idcard}}" bindinput="onInput" placeholder="请输入身份证号" /></view>
-    <view class="row"><text class="k">所在城市</text><input class="v-input" data-f="city" value="{{form.city}}" bindinput="onInput" placeholder="如 张家界市" /></view>
+    <view class="row"><text class="k">所在城市</text><input class="v-input" data-f="city" value="{{form.city}}" bindinput="onInput" placeholder="如 上海市" /></view>
   </view>
 
   <view class="card">

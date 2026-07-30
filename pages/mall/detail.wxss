@@ -25,6 +25,9 @@
 }
 
 .sales { color: #999; font-size: 24rpx; }
+.out-stock { color: #c2410c; }
+.disabled { background: #cbd5e1 !important; color: #64748b !important; }
+.empty { color: #999; font-size: 28rpx; padding: 160rpx 0; text-align: center; }
 
 .g-name {
   display: block;

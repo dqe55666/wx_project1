@@ -19,6 +19,7 @@
   </view>
 
   <view class="list">
+    <view wx:if="{{loading}}" class="empty">消息加载中</view>
     <view
       wx:for="{{list}}"
       wx:key="id"
@@ -39,6 +40,6 @@
       </view>
     </view>
 
-    <view wx:if="{{list.length === 0}}" class="empty">暂无消息</view>
+    <view wx:if="{{!loading && list.length === 0}}" class="empty">暂无消息</view>
   </view>
 </view>

@@ -1,3 +1,5 @@
+const { request } = require('../../utils/api')
+
 Page({
   data: {
     banners: [
@@ -6,20 +8,38 @@ Page({
     ],
     categories: [
       { id: 1, icon: '🩺', name: '护理用品' },
-      { id: 2, icon: '💊', name: '营养保健' },
-      { id: 3, icon: '🧴', name: '康复器械' },
-      { id: 4, icon: '🩹', name: '日常防护' },
-      { id: 5, icon: '👕', name: '护理服' },
-      { id: 6, icon: '🎁', name: '礼品卡' },
-      { id: 7, icon: '📦', name: '套餐' },
-      { id: 8, icon: '🔍', name: '全部' }
+      { id: 2, icon: '🦯', name: '康复器械' },
+      { id: 3, icon: '🩹', name: '日常防护' },
+      { id: 4, icon: '🔍', name: '全部' }
     ],
-    hot: [
-      { id: 101, name: '医用护理床', price: 1880, sales: 326, cover: '🛏️' },
-      { id: 102, name: '血压计（家用手腕式）', price: 268, sales: 1280, cover: '🩺' },
-      { id: 103, name: '成人纸尿裤 L码', price: 89, sales: 956, cover: '🧻' },
-      { id: 104, name: '助行器 可折叠', price: 198, sales: 412, cover: '🦯' }
-    ]
+    hot: [],
+    activeCategory: '全部',
+    loading: true
+  },
+
+  onShow() {
+    this.loadProducts()
+  },
+
+  async loadProducts() {
+    this.setData({ loading: true })
+    const category = this.data.activeCategory === '全部' ? '' : this.data.activeCategory
+    try {
+      const products = await request(`/api/products${category ? `?category=${encodeURIComponent(category)}` : ''}`)
+      this.setData({
+        hot: products.map((item) => ({
+          ...item,
+          price: (item.price_cents / 100).toFixed(2),
+          sales: item.sales_count,
+          stockText: item.stock > 0 ? `库存 ${item.stock}` : '暂时缺货',
+          soldOut: item.stock < 1
+        })),
+        loading: false
+      })
+    } catch (err) {
+      this.setData({ hot: [], loading: false })
+      wx.showToast({ title: '商品加载失败，请稍后重试', icon: 'none' })
+    }
   },
 
   goDetail(e) {
@@ -28,6 +48,6 @@ Page({
   },
 
   goCategory(e) {
-    wx.showToast({ title: '分类（壳子）', icon: 'none' })
+    this.setData({ activeCategory: e.currentTarget.dataset.name }, () => this.loadProducts())
   }
 })

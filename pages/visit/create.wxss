@@ -1,1 +1,76 @@
 @import "/assets/common.wxss";
+
+page { background: #fff5f8; }
+
+.scrollarea { height: 100vh; }
+
+.location-strip {
+  align-items: center;
+  background: #ffffff;
+  border: 1rpx solid #f8bbd0;
+  border-radius: 8rpx;
+  display: flex;
+  gap: 14rpx;
+  margin-bottom: 20rpx;
+  padding: 18rpx 20rpx;
+}
+
+.location-label {
+  color: #e91e63;
+  font-size: 25rpx;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.location-address {
+  color: #76516b;
+  flex: 1;
+  font-size: 23rpx;
+  line-height: 1.4;
+  min-width: 0;
+}
+
+.location-button {
+  background: #fce4ec;
+  border-radius: 6rpx;
+  color: #c2185b;
+  font-size: 23rpx;
+  height: 56rpx;
+  line-height: 56rpx;
+  margin: 0;
+  padding: 0 16rpx;
+}
+
+.location-button::after, .submit-button::after { border: 0; }
+
+.picker-value { max-width: 440rpx; text-align: right; }
+.muted { color: #999; }
+
+.selection-hint {
+  color: #9c6d85;
+  font-size: 23rpx;
+  line-height: 1.4;
+  margin: -12rpx 0 8rpx;
+}
+
+.address-row { align-items: flex-start; }
+.address-row .v-input { min-height: 60rpx; }
+
+.note-card { margin-top: 20rpx; }
+
+.textarea {
+  margin-top: 4rpx;
+  min-height: 150rpx;
+}
+
+.submit-button {
+  background: #e91e63;
+  border-radius: 8rpx;
+  box-shadow: 0 6rpx 18rpx rgba(233, 30, 99, 0.25);
+  color: #ffffff;
+  font-size: 30rpx;
+  font-weight: 600;
+  height: 92rpx;
+  line-height: 92rpx;
+  margin-top: 30rpx;
+}

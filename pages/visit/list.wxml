@@ -41,9 +41,11 @@
   </view>
 
   <view class="card-list">
+    <view wx:if="{{loading}}" class="empty">陪诊记录加载中</view>
+
     <block wx:for="{{list}}" wx:key="id">
       <view
-        wx:if="{{(currentTab === 0 && item.status === 'ongoing') || (currentTab === 1 && item.status === 'done')}}"
+        wx:if="{{(currentTab === 0 && item.visitStatus === 'ongoing') || (currentTab === 1 && item.visitStatus === 'done')}}"
         class="card"
         data-id="{{item.id}}"
         bindtap="goDetail"
@@ -79,23 +81,23 @@
         </view>
         <view class="row">
           <text class="row-key">陪诊师电话</text>
-          <text class="row-val">{{item.phone}}</text>
+          <text class="row-val">{{item.phone || '待接单后显示'}}</text>
         </view>
         <view class="row no-border">
           <text class="row-key">订单编号</text>
           <text class="row-val">{{item.orderNo}}</text>
         </view>
 
-        <view class="card-foot" wx:if="{{item.status === 'ongoing'}}">
-          <view class="btn ghost" catchtap="finishVisit">结束陪诊<text class="bolt">⚡</text></view>
-          <view class="btn solid" catchtap="overtime">加时<text class="bolt">⚡</text></view>
+        <view class="card-foot" wx:if="{{item.visitStatus === 'ongoing'}}">
+          <view class="btn ghost" data-id="{{item.id}}" catchtap="finishVisit">结束陪诊<text class="bolt">⚡</text></view>
+          <view class="btn solid" data-id="{{item.id}}" catchtap="overtime">加时<text class="bolt">⚡</text></view>
         </view>
-        <view class="card-foot" wx:elif="{{item.status === 'done'}}">
-          <view class="btn full" catchtap="evaluate">评价<text class="bolt">⚡</text></view>
+        <view class="card-foot" wx:elif="{{item.visitStatus === 'done' && item.canReview}}">
+          <view class="btn full" data-id="{{item.id}}" catchtap="evaluate">评价<text class="bolt">⚡</text></view>
         </view>
       </view>
     </block>
 
-    <view wx:if="{{list.length === 0}}" class="empty">暂无陪诊记录</view>
+    <view wx:if="{{!loading && list.length === 0}}" class="empty">暂无陪诊记录</view>
   </view>
 </view>

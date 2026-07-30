@@ -2,7 +2,7 @@
   <view class="hero">
     <view style="display:flex; align-items:center; justify-content:space-between;">
       <text class="h-title">陪诊详情</text>
-      <text class="tag solid">{{order.type}}</text>
+      <text class="tag solid">{{order.typeName}}</text>
     </view>
     <text class="h-sub">订单号 {{order.no}}</text>
   </view>
@@ -15,21 +15,49 @@
     <view class="row"><text class="k">预约时间</text><text class="v">{{order.time}}</text></view>
   </view>
 
+  <view wx:if="{{tracking.visible}}" class="card tracking-card">
+    <view class="tracking-heading">
+      <text class="c-title">实时位置</text>
+      <text class="tracking-hint">每 15 秒更新</text>
+    </view>
+    <map
+      class="tracking-map"
+      latitude="{{tracking.mapLatitude}}"
+      longitude="{{tracking.mapLongitude}}"
+      scale="{{tracking.mapScale}}"
+      markers="{{tracking.markers}}"
+      show-location
+      show-compass
+      enable-3D="false"
+    />
+    <view class="tracking-row"><text class="tracking-dot customer-dot"></text><text>我的位置：{{tracking.customerLocationText}}</text></view>
+    <view class="tracking-row"><text class="tracking-dot staff-dot"></text><text>{{tracking.staffName}}：{{tracking.staffLocationText}}</text></view>
+  </view>
+
+  <view wx:if="{{order.earlyFinish}}" class="card early-finish-card">
+    <text class="c-title">提前结束服务协商</text>
+    <text class="early-finish-text">陪诊师申请提前结束。本次已服务 {{order.earlyFinish.served_minutes}} 分钟，预约时长 {{order.earlyFinish.scheduled_minutes}} 分钟。</text>
+    <view class="early-finish-actions">
+      <button class="continue-service" loading="{{respondingEarlyFinish}}" disabled="{{respondingEarlyFinish}}" data-approved="" bindtap="respondEarlyFinish">继续服务</button>
+      <button class="approve-finish" loading="{{respondingEarlyFinish}}" disabled="{{respondingEarlyFinish}}" data-approved="true" bindtap="respondEarlyFinish">同意提前结束</button>
+    </view>
+  </view>
+
   <view class="card">
     <text class="c-title">陪诊师</text>
     <view class="list-item">
       <view class="li-avatar">👩‍⚕️</view>
       <view class="li-main">
         <text class="li-title">{{order.doctor}}</text>
-        <text class="li-sub">{{order.phone}}</text>
+        <text class="li-sub">{{order.phone || '待接单后显示电话'}}</text>
       </view>
       <text class="li-arrow" bindtap="callPhone">📞</text>
     </view>
   </view>
 
   <view class="card">
-    <view class="row"><text class="k">订单金额</text><text class="v" style="color:#e91e63; font-weight:700; font-size:32rpx;">¥{{order.price}}</text></view>
-    <view class="row"><text class="k">订单状态</text><text class="v" style="color:#ff8a00;">{{order.status}}</text></view>
+    <view class="row"><text class="k">订单金额</text><text class="v" style="color:#e91e63; font-weight:700; font-size:32rpx;">{{order.displayPrice || '待确认'}}</text></view>
+    <view class="row"><text class="k">订单状态</text><text class="v" style="color:#ff8a00;">{{order.statusText}}</text></view>
   </view>
 
   <view class="action-row">

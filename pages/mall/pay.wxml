@@ -15,5 +15,5 @@
     </view>
   </view>
 
-  <view class="action" bindtap="pay">确认支付 ¥{{amount}}</view>
+  <view class="action {{paying ? 'disabled' : ''}}" bindtap="pay">{{paying ? '支付处理中...' : ('确认支付 ¥' + amount)}}</view>
 </view>

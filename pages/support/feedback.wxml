@@ -1,0 +1,13 @@
+<view class="page">
+  <view class="intro">
+    <text class="title">意见反馈</text>
+    <text class="subtitle">你的每一条建议都会由客服跟进处理。</text>
+  </view>
+  <view class="form">
+    <text class="label">主题（选填）</text>
+    <input value="{{subject}}" bindinput="onSubjectInput" maxlength="120" placeholder="例如：预约流程建议" />
+    <text class="label">反馈内容</text>
+    <textarea value="{{content}}" bindinput="onContentInput" maxlength="1000" placeholder="请描述问题、建议或需要协助的事项" />
+  </view>
+  <button class="submit" loading="{{submitting}}" disabled="{{submitting}}" bindtap="submit">提交反馈</button>
+</view>

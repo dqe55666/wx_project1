@@ -1,11 +1,11 @@
 Page({
   data: {
-    hospital: '张家界市人民医院',
-    dept: '消化内科',
-    doctor: '张三',
-    date: '2023-12-01',
-    time: '13:00-16:30',
-    symptom: '胃部不适 2 周',
-    note: '无药物过敏史'
+    hospital: '请在预约页选择医院',
+    dept: '请补充就诊科室',
+    doctor: '请补充就诊医生',
+    date: '',
+    time: '',
+    symptom: '请填写就诊需求',
+    note: '无'
   }
 })

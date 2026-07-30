@@ -6,17 +6,36 @@ App({
     logs.unshift(Date.now())
     wx.setStorageSync('logs', logs)
 
-    // 静默登录换取 code（壳子阶段不依赖后端）
+    const savedUserInfo = wx.getStorageSync('userInfo')
+    if (savedUserInfo && savedUserInfo.nickName && savedUserInfo.avatarUrl) {
+      this.globalData.userInfo = savedUserInfo
+    }
+
+    // 简易登录阶段仅保留登录 code，用户资料由用户主动授权后写入本地。
     wx.login({
       success: res => {
-        // 发送 res.code 到后台换取 openId, sessionKey, unionId
-        console.info('[app] wx.login code', res.code)
+        this.globalData.loginCode = res.code
       }
     })
   },
 
+  setUserInfo(userInfo) {
+    const profile = {
+      nickName: userInfo.nickName,
+      avatarUrl: userInfo.avatarUrl
+    }
+    this.globalData.userInfo = profile
+    wx.setStorageSync('userInfo', profile)
+  },
+
+  clearUserInfo() {
+    this.globalData.userInfo = null
+    wx.removeStorageSync('userInfo')
+  },
+
   globalData: {
     userInfo: null,
+    loginCode: '',
     apiBaseUrl: 'http://127.0.0.1:8000'
   }
 })

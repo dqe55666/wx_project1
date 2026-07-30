@@ -1,0 +1,19 @@
+<view class="page">
+  <view class="notice">
+    <text class="notice-title">在线客服</text>
+    <text class="notice-text">客服会尽快接入并在线回复。</text>
+  </view>
+  <scroll-view class="message-list" scroll-y scroll-into-view="{{scrollIntoView}}">
+    <view wx:if="{{loading}}" class="state">会话加载中...</view>
+    <view wx:elif="{{messages.length === 0}}" class="state">请描述遇到的问题，客服会在此回复。</view>
+    <view wx:for="{{messages}}" wx:key="id" class="message {{item.from}}">
+      <view class="bubble">{{item.content}}</view>
+      <text class="time">{{item.displayTime}}</text>
+    </view>
+    <view id="bottom"></view>
+  </scroll-view>
+  <view class="composer">
+    <input class="input" value="{{input}}" bindinput="onInput" placeholder="请输入咨询内容" disabled="{{sending}}" />
+    <button class="send" loading="{{sending}}" disabled="{{sending}}" bindtap="send">发送</button>
+  </view>
+</view>

@@ -1,4 +1,4 @@
-<view class="page">
+<view class="page" wx:if="{{product}}">
   <view class="address" bindtap="goAddress">
     <text class="addr-icon">📍</text>
     <view class="addr-main">
@@ -10,13 +10,13 @@
 
   <view class="card">
     <view class="goods-row">
-      <view class="goods-cover">{{cover}}</view>
+      <view class="goods-cover">{{product.cover}}</view>
       <view class="goods-main">
-        <text class="goods-name">{{name}}</text>
-        <text class="goods-spec">{{spec}}</text>
+        <text class="goods-name">{{product.name}}</text>
+        <text class="goods-spec">{{product.category || '未分类'}} · 库存 {{product.stock}}</text>
         <view class="goods-bottom">
-          <text class="goods-price">¥{{price}}</text>
-          <text class="goods-count">×{{count}}</text>
+          <text class="goods-price">¥{{product.price}}</text>
+          <view class="quantity"><text class="quantity-btn" bindtap="decrease">−</text><text class="goods-count">{{count}}</text><text class="quantity-btn" bindtap="increase">＋</text></view>
         </view>
       </view>
     </view>
@@ -29,17 +29,18 @@
   </view>
 
   <view class="card">
-    <view class="row"><text class="k">商品金额</text><text class="v">¥{{price * count}}</text></view>
+    <view class="row"><text class="k">商品金额</text><text class="v">¥{{product.price * count}}</text></view>
     <view class="row"><text class="k">运费</text><text class="v">¥0</text></view>
     <view class="row"><text class="k" style="font-weight:600; color:#2d1b2e;">合计</text>
-      <text class="v" style="color:#e91e63; font-weight:700; font-size:32rpx;">¥{{price * count}}</text>
+      <text class="v" style="color:#e91e63; font-weight:700; font-size:32rpx;">¥{{product.price * count}}</text>
     </view>
   </view>
 
   <view style="height: 160rpx;"></view>
 
   <view class="footer">
-    <text class="total">合计：<text class="total-price">¥{{price * count}}</text></text>
+    <text class="total">合计：<text class="total-price">¥{{product.price * count}}</text></text>
     <view class="action" bindtap="submit">提交订单</view>
   </view>
 </view>
+<view wx:else class="empty">商品加载中</view>

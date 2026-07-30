@@ -1,16 +1,40 @@
+const { fetchMallOrder, getSavedMallOrder } = require('../../utils/api')
+
 Page({
   data: {
-    orderNo: 'SO' + Date.now(),
-    amount: 1880,
-    items: [
-      { id: 1, name: '医用护理床', spec: '标准款 / 单摇', price: 1880, count: 1 }
-    ]
+    order: null,
+    loading: true
   },
-  onLoad() {
-    const d = new Date()
-    const pad = n => n < 10 ? '0' + n : '' + n
-    const currentTime = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`
-    this.setData({ currentTime })
+  onLoad(options) {
+    this.orderId = Number(options.id)
+    this.token = options.token || (getSavedMallOrder(this.orderId) || {}).token
+    this.loadOrder()
   },
-  goPay() { wx.navigateTo({ url: '/pages/mall/pay' }) }
+  async loadOrder() {
+    if (!this.orderId || !this.token) {
+      wx.showToast({ title: '订单凭据无效', icon: 'none' })
+      return
+    }
+    try {
+      const order = await fetchMallOrder({ id: this.orderId, token: this.token })
+      this.setData({
+        order: {
+          ...order,
+          amount: (order.amount_cents / 100).toFixed(2),
+          unitPrice: (order.unit_price_cents / 100).toFixed(2),
+          createdAt: order.created_at.replace('T', ' ').slice(0, 16),
+          isPaid: order.status === 'paid'
+        },
+        loading: false
+      })
+    } catch (err) {
+      this.setData({ loading: false })
+      wx.showToast({ title: '订单不存在或已失效', icon: 'none' })
+    }
+  },
+  goPay() {
+    const order = this.data.order
+    if (!order || order.isPaid) return
+    wx.navigateTo({ url: `/pages/mall/pay?id=${order.id}&token=${encodeURIComponent(this.token)}` })
+  }
 })

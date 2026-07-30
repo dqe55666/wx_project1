@@ -46,7 +46,7 @@ Page({
         return {
           ...order,
           appointmentDisplay: order.appointment_time.replace('T', ' ').slice(0, 16),
-          statusText: this.statusText(order.status),
+          statusText: order.status_text || this.statusText(order.status, order.completion_type),
           canReview: order.status === 'completed' && !order.review
         }
       } catch (err) {
@@ -59,7 +59,9 @@ Page({
     })
   },
 
-  statusText(status) {
+  statusText(status, completionType) {
+    if (completionType === 'negotiated_early') return '经协商提前结束'
+    if (completionType === 'system_confirmed') return '由系统确认，订单结束'
     return {
       pending: '待接单',
       accepted: '已接单',
