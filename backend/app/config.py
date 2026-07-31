@@ -16,6 +16,10 @@ class Settings(BaseSettings):
     amap_private_key: str = ""
     staff_token_secret: str = "change-this-in-production"
     staff_token_expire_seconds: int = 28800
+    admin_username: str = "admin"
+    admin_password: str = "123456"
+    admin_token_secret: str = "change-admin-secret-in-production"
+    admin_token_expire_seconds: int = 28800
 
     model_config = SettingsConfigDict(
         env_file=BACKEND_DIR / ".env",

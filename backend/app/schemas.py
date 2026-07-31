@@ -120,6 +120,11 @@ class StaffLogin(BaseModel):
     password: str = Field(min_length=6, max_length=128)
 
 
+class AdminLogin(BaseModel):
+    username: str = Field(min_length=1, max_length=50)
+    password: str = Field(min_length=1, max_length=128)
+
+
 class EarlyFinishResponse(BaseModel):
     approved: bool
 

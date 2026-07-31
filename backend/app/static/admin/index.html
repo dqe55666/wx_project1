@@ -16,6 +16,16 @@
       body {
         margin: 0;
       }
+      .login-panel {
+        background: #ffffff;
+        border: 1px solid #d9e2ec;
+        border-radius: 8px;
+        margin: 12vh auto;
+        max-width: 380px;
+        padding: 24px;
+      }
+      .login-panel h2 { margin: 0 0 8px; }
+      .login-panel .status { margin-top: 12px; }
       header {
         background: #ffffff;
         border-bottom: 1px solid #d9e2ec;
@@ -30,6 +40,7 @@
         grid-template-columns: 220px minmax(0, 1fr);
         min-height: calc(100vh - 65px);
       }
+      #adminLayout { display: none; }
       .management-nav {
         background: #fff;
         border-right: 1px solid #d9e2ec;
@@ -246,7 +257,19 @@
     <header>
       <h1>护理预约管理端</h1>
     </header>
-    <div class="admin-layout">
+    <section class="login-panel" id="loginPanel">
+      <h2>管理员登录</h2>
+      <div class="account-hint">请输入管理员账号和密码后继续。</div>
+      <form id="loginForm">
+        <label for="adminUsername">账号</label>
+        <input id="adminUsername" name="username" autocomplete="username" value="admin" required />
+        <label for="adminPassword">密码</label>
+        <input id="adminPassword" name="password" type="password" autocomplete="current-password" required />
+        <button class="primary" type="submit">登录</button>
+      </form>
+      <div class="status" id="loginStatus"></div>
+    </section>
+    <div class="admin-layout" id="adminLayout">
       <aside class="management-nav" aria-label="管理模块">
         <button class="active" type="button" data-view-target="units">单位管理</button>
         <button type="button" data-view-target="customers">用户管理</button>
@@ -498,6 +521,61 @@
     </div>
 
     <script>
+      const loginPanel = document.querySelector("#loginPanel");
+      const adminLayout = document.querySelector("#adminLayout");
+      const loginForm = document.querySelector("#loginForm");
+      const loginStatus = document.querySelector("#loginStatus");
+      let adminToken = sessionStorage.getItem("adminToken") || "";
+
+      async function adminFetch(url, options = {}) {
+        const headers = { ...(options.headers || {}) };
+        if (adminToken) headers.Authorization = `Bearer ${adminToken}`;
+        const response = await fetch(url, { ...options, headers });
+        if (response.status === 401) {
+          adminToken = "";
+          sessionStorage.removeItem("adminToken");
+          loginPanel.style.display = "block";
+          adminLayout.style.display = "none";
+          loginStatus.textContent = "登录已过期，请重新登录";
+        }
+        return response;
+      }
+
+      function showAdmin() {
+        loginPanel.style.display = "none";
+        adminLayout.style.display = "grid";
+      }
+
+      async function loginAdmin(event) {
+        event.preventDefault();
+        loginStatus.textContent = "正在登录...";
+        const payload = {
+          username: document.querySelector("#adminUsername").value.trim(),
+          password: document.querySelector("#adminPassword").value,
+        };
+        const response = await fetch("/api/admin/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        if (!response.ok) {
+          loginStatus.textContent = "账号或密码错误";
+          return;
+        }
+        const result = await response.json();
+        adminToken = result.access_token;
+        sessionStorage.setItem("adminToken", adminToken);
+        showAdmin();
+        loadHospitals();
+        loadEmployees();
+        loadProducts();
+        loadOrders();
+        loadBottleSettings();
+        loadBottles();
+      }
+
+      loginForm.addEventListener("submit", loginAdmin);
+
       const form = document.querySelector("#hospitalForm");
       const employeeForm = document.querySelector("#employeeForm");
       const productForm = document.querySelector("#productForm");
@@ -623,7 +701,7 @@
         });
         rowsEl.querySelectorAll("[data-delete]").forEach((btn) => {
           btn.addEventListener("click", async () => {
-            await fetch(`/api/admin/hospitals/${btn.dataset.delete}`, { method: "DELETE" });
+            await adminFetch(`/api/admin/hospitals/${btn.dataset.delete}`, { method: "DELETE" });
             setStatus("单位已停用");
             loadHospitals();
           });
@@ -631,7 +709,7 @@
       }
 
       async function loadOrders() {
-        const res = await fetch("/api/admin/orders");
+        const res = await adminFetch("/api/admin/orders");
         const orders = await res.json();
         const activeEmployees = adminEmployees.filter((employee) => employee.is_active && employee.role === "caregiver");
         orderRowsEl.innerHTML = orders.length
@@ -694,7 +772,7 @@
       }
 
       async function loadCustomers() {
-        const res = await fetch("/api/admin/customers");
+        const res = await adminFetch("/api/admin/customers");
         if (!res.ok) {
           setCustomerStatus("用户资料加载失败");
           return;
@@ -714,7 +792,7 @@
       }
 
       async function updateOrder(orderId, action, payload) {
-        const res = await fetch(`/api/admin/orders/${orderId}/${action}`, {
+        const res = await adminFetch(`/api/admin/orders/${orderId}/${action}`, {
           method: "POST",
           headers: payload ? { "Content-Type": "application/json" } : undefined,
           body: payload ? JSON.stringify(payload) : undefined,
@@ -734,7 +812,7 @@
           setOrderStatus("评价内容不能为空");
           return;
         }
-        const res = await fetch(`/api/admin/orders/${orderId}/review`, {
+        const res = await adminFetch(`/api/admin/orders/${orderId}/review`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ content }),
@@ -749,7 +827,7 @@
       }
 
       async function loadEmployees() {
-        const res = await fetch("/api/admin/employees");
+        const res = await adminFetch("/api/admin/employees");
         const employees = await res.json();
         adminEmployees = employees;
         employeeRowsEl.innerHTML = employees.length
@@ -790,7 +868,7 @@
         });
         employeeRowsEl.querySelectorAll("[data-employee-delete]").forEach((btn) => {
           btn.addEventListener("click", async () => {
-            const res = await fetch(`/api/admin/employees/${btn.dataset.employeeDelete}`, { method: "DELETE" });
+            const res = await adminFetch(`/api/admin/employees/${btn.dataset.employeeDelete}`, { method: "DELETE" });
             if (!res.ok) {
               setEmployeeStatus("停用失败");
               return;
@@ -803,7 +881,7 @@
       }
 
       async function loadProducts() {
-        const res = await fetch("/api/admin/products");
+        const res = await adminFetch("/api/admin/products");
         if (!res.ok) {
           setProductStatus("商品列表加载失败");
           return;
@@ -838,7 +916,7 @@
         productRowsEl.querySelectorAll("[data-product-delete]").forEach((btn) => {
           btn.addEventListener("click", async () => {
             if (!window.confirm("下架后商品将不再展示在小程序商城。确定继续吗？")) return;
-            const res = await fetch(`/api/admin/products/${btn.dataset.productDelete}`, { method: "DELETE" });
+            const res = await adminFetch(`/api/admin/products/${btn.dataset.productDelete}`, { method: "DELETE" });
             if (!res.ok) {
               setProductStatus("下架失败");
               return;
@@ -854,7 +932,7 @@
       }
 
       async function loadBottleSettings() {
-        const res = await fetch("/api/admin/bottles/settings");
+        const res = await adminFetch("/api/admin/bottles/settings");
         if (!res.ok) {
           setBottleSettingsStatus("审核设置加载失败");
           return;
@@ -865,7 +943,7 @@
       }
 
       async function loadBottles() {
-        const res = await fetch("/api/admin/bottles");
+        const res = await adminFetch("/api/admin/bottles");
         if (!res.ok) {
           setBottleStatus("漂流瓶列表加载失败");
           return;
@@ -877,12 +955,15 @@
                 <td class="bottle-content">${formatBottleContent(item.content)}</td>
                 <td>${item.is_anonymous ? "匿名提交" : escapeHtml(item.author_name)}</td>
                 <td>${String(item.created_at || "-").replace("T", " ")}</td>
-                <td>${item.status === "pending" ? "待审核" : "已公开"}</td>
-                <td><div class="actions">${item.status === "pending" ? `<button class="secondary" type="button" data-bottle-publish="${item.id}">通过</button>` : ""}<button class="danger" type="button" data-bottle-delete="${item.id}">删除</button></div></td>
+                <td>${item.status === "pending" ? "待审核" : item.status === "hidden" ? "已隐藏" : "已公开"}</td>
+                <td><div class="actions">${item.status === "pending" || item.status === "hidden" ? `<button class="secondary" type="button" data-bottle-publish="${item.id}">${item.status === "hidden" ? "恢复显示" : "通过"}</button>` : ""}${item.status === "published" ? `<button class="secondary" type="button" data-bottle-hide="${item.id}">隐藏</button>` : ""}<button class="danger" type="button" data-bottle-delete="${item.id}">删除</button></div></td>
               </tr>`).join("")
           : '<tr><td colspan="5">暂无漂流瓶内容</td></tr>';
         bottleRowsEl.querySelectorAll("[data-bottle-publish]").forEach((button) => {
           button.addEventListener("click", () => updateBottleStatus(button.dataset.bottlePublish, "publish"));
+        });
+        bottleRowsEl.querySelectorAll("[data-bottle-hide]").forEach((button) => {
+          button.addEventListener("click", () => updateBottleStatus(button.dataset.bottleHide, "hide"));
         });
         bottleRowsEl.querySelectorAll("[data-bottle-delete]").forEach((button) => {
           button.addEventListener("click", () => {
@@ -893,15 +974,19 @@
       }
 
       async function updateBottleStatus(bottleId, action) {
-        const res = await fetch(`/api/admin/bottles/${bottleId}${action === "publish" ? "/publish" : ""}`, {
-          method: action === "publish" ? "POST" : "DELETE",
+        const isDelete = action === "delete";
+        const endpoint = isDelete
+          ? `/api/admin/bottles/${bottleId}`
+          : `/api/admin/bottles/${bottleId}/${action === "publish" ? "publish" : "hide"}`;
+        const res = await adminFetch(endpoint, {
+          method: isDelete ? "DELETE" : "POST",
         });
         if (!res.ok) {
           const error = await res.json().catch(() => ({}));
           setBottleStatus(error.detail || "操作失败，请刷新后重试");
           return;
         }
-        setBottleStatus(action === "publish" ? "内容已公开" : "内容已删除");
+        setBottleStatus(action === "publish" ? "内容已公开" : action === "hide" ? "内容已隐藏" : "内容已删除");
         loadBottles();
       }
 
@@ -989,7 +1074,7 @@
           service_radius_km: Number(value("radius") || 15),
           is_active: true,
         };
-        const res = await fetch(id ? `/api/admin/hospitals/${id}` : "/api/admin/hospitals", {
+        const res = await adminFetch(id ? `/api/admin/hospitals/${id}` : "/api/admin/hospitals", {
           method: id ? "PUT" : "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
@@ -1015,7 +1100,7 @@
           commission_rate: Number(value("employeeCommission")),
           is_active: true,
         };
-        const res = await fetch(id ? `/api/admin/employees/${id}` : "/api/admin/employees", {
+        const res = await adminFetch(id ? `/api/admin/employees/${id}` : "/api/admin/employees", {
           method: id ? "PUT" : "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
@@ -1043,7 +1128,7 @@
           cover: value("productCover"),
           is_active: value("productActive") === "true",
         };
-        const res = await fetch(id ? `/api/admin/products/${id}` : "/api/admin/products", {
+        const res = await adminFetch(id ? `/api/admin/products/${id}` : "/api/admin/products", {
           method: id ? "PUT" : "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
@@ -1062,7 +1147,7 @@
       document.querySelector("#employeeResetBtn").addEventListener("click", resetEmployeeForm);
       document.querySelector("#productResetBtn").addEventListener("click", resetProductForm);
       document.querySelector("#saveBottleSettingsBtn").addEventListener("click", async () => {
-        const res = await fetch("/api/admin/bottles/settings", {
+        const res = await adminFetch("/api/admin/bottles/settings", {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ review_enabled: document.querySelector("#bottleReviewEnabled").checked }),
@@ -1094,12 +1179,15 @@
       document.querySelectorAll("[data-view-target]").forEach((button) => {
         button.addEventListener("click", () => setManagementView(button.dataset.viewTarget));
       });
-      loadHospitals();
-      loadEmployees();
-      loadProducts();
-      loadOrders();
-      loadBottleSettings();
-      loadBottles();
+      if (adminToken) {
+        showAdmin();
+        loadHospitals();
+        loadEmployees();
+        loadProducts();
+        loadOrders();
+        loadBottleSettings();
+        loadBottles();
+      }
     </script>
   </body>
 </html>

@@ -6,7 +6,7 @@ from datetime import datetime
 from pathlib import Path
 from random import randint
 
-from fastapi import Depends, FastAPI, HTTPException, Query, Response, status
+from fastapi import Depends, FastAPI, HTTPException, Query, Request, Response, status
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
@@ -21,6 +21,7 @@ from .geo import haversine_km
 from .models import (
     BottleSettings,
     CareOrder,
+    Customer,
     DriftBottle,
     Employee,
     EmployeeIncomeRecord,
@@ -59,6 +60,7 @@ from .schemas import (
     ReviewUpdate,
     ServiceItemOut,
     StaffLogin,
+    AdminLogin,
     SupportTicketCreate,
 )
 
@@ -78,6 +80,45 @@ static_dir = Path(__file__).parent / "static"
 app.mount("/admin", StaticFiles(directory=static_dir / "admin", html=True), name="admin")
 app.mount("/staff", StaticFiles(directory=static_dir / "staff", html=True), name="staff")
 app.mount("/support", StaticFiles(directory=static_dir / "support", html=True), name="support")
+
+
+def create_admin_token() -> str:
+    expires_at = int(time.time()) + settings.admin_token_expire_seconds
+    payload = f"{settings.admin_username}.{expires_at}"
+    signature = hmac.new(
+        settings.admin_token_secret.encode(), payload.encode(), hashlib.sha256
+    ).hexdigest()
+    return f"{payload}.{signature}"
+
+
+def verify_admin_token(token: str) -> bool:
+    try:
+        username, expires_at_text, signature = token.split(".")
+        payload = f"{username}.{expires_at_text}"
+        expected = hmac.new(
+            settings.admin_token_secret.encode(), payload.encode(), hashlib.sha256
+        ).hexdigest()
+        return (
+            hmac.compare_digest(signature, expected)
+            and hmac.compare_digest(username, settings.admin_username)
+            and int(expires_at_text) >= time.time()
+        )
+    except (TypeError, ValueError):
+        return False
+
+
+@app.middleware("http")
+async def admin_authentication(request: Request, call_next):
+    """Protect every admin API, including mutating and read-only operations."""
+    path = request.url.path
+    if path.startswith("/api/admin") and path != "/api/admin/login":
+        if request.method == "OPTIONS":
+            return await call_next(request)
+        authorization = request.headers.get("authorization", "")
+        scheme, _, token = authorization.partition(" ")
+        if scheme.lower() != "bearer" or not verify_admin_token(token):
+            return JSONResponse(status_code=401, content={"detail": "请先登录管理员账号"})
+    return await call_next(request)
 
 
 @app.on_event("startup")
@@ -212,8 +253,31 @@ def seed_data(db: Session):
     for order in db.query(CareOrder).all():
         if not order.review_token:
             order.review_token = secrets.token_urlsafe(24)
+        customer = db.query(Customer).filter(Customer.phone == order.patient_phone).first()
+        if not customer:
+            customer = Customer(name=order.patient_name, phone=order.patient_phone)
+            db.add(customer)
+            db.flush()
+        elif customer.name != order.patient_name:
+            customer.name = order.patient_name
+        if order.customer_id != customer.id:
+            order.customer_id = customer.id
     backfill_income_records(db)
     db.commit()
+
+
+@app.post("/api/admin/login")
+def admin_login(payload: AdminLogin):
+    if not (
+        hmac.compare_digest(payload.username, settings.admin_username)
+        and hmac.compare_digest(payload.password, settings.admin_password)
+    ):
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="账号或密码错误")
+    return {
+        "access_token": create_admin_token(),
+        "token_type": "bearer",
+        "username": settings.admin_username,
+    }
 
 
 def hash_password(password: str, salt: str | None = None) -> str:
@@ -348,7 +412,7 @@ def update_admin_bottle_settings(
 
 @app.get("/api/admin/bottles", response_model=list[BottleOut])
 def list_admin_bottles(
-    review_status: str | None = Query(default=None, pattern="^(pending|published)$"),
+    review_status: str | None = Query(default=None, pattern="^(pending|published|hidden)$"),
     limit: int = Query(default=500, ge=1, le=1000),
     db: Session = Depends(get_db),
 ):
@@ -365,6 +429,18 @@ def publish_bottle(bottle_id: int, db: Session = Depends(get_db)):
     if not bottle:
         raise HTTPException(status_code=404, detail="漂流瓶不存在")
     bottle.status = "published"
+    db.commit()
+    db.refresh(bottle)
+    return bottle_to_dict(bottle)
+
+
+@app.post("/api/admin/bottles/{bottle_id}/hide", response_model=BottleOut)
+def hide_bottle(bottle_id: int, db: Session = Depends(get_db)):
+    """Hide one post without deleting its MySQL record or audit history."""
+    bottle = db.get(DriftBottle, bottle_id)
+    if not bottle:
+        raise HTTPException(status_code=404, detail="漂流瓶不存在")
+    bottle.status = "hidden"
     db.commit()
     db.refresh(bottle)
     return bottle_to_dict(bottle)
@@ -1093,27 +1169,33 @@ def list_orders(limit: int = Query(default=50, ge=1, le=200), db: Session = Depe
 
 @app.get("/api/admin/customers")
 def list_customers(db: Session = Depends(get_db)):
-    """Return customer profiles aggregated from care-order contact details."""
-    customers = {}
-    orders = db.query(CareOrder).order_by(CareOrder.created_at.desc()).all()
-    for order in orders:
-        key = (order.patient_name, order.patient_phone)
-        profile = customers.get(key)
-        if profile is None:
-            profile = {
-                "name": order.patient_name,
-                "phone": order.patient_phone,
-                "order_count": 0,
-                "latest_order_at": order.created_at,
-                "latest_order_no": order.order_no,
-            }
-            customers[key] = profile
-        profile["order_count"] += 1
-    return sorted(
-        customers.values(),
-        key=lambda customer: customer["latest_order_at"],
-        reverse=True,
+    """Return persisted customer accounts and their latest order summary."""
+    rows = (
+        db.query(Customer, func.count(CareOrder.id), func.max(CareOrder.created_at))
+        .outerjoin(CareOrder, CareOrder.customer_id == Customer.id)
+        .group_by(Customer.id)
+        .order_by(Customer.updated_at.desc())
+        .all()
     )
+    result = []
+    for customer, order_count, latest_order_at in rows:
+        latest = (
+            db.query(CareOrder.order_no)
+            .filter(CareOrder.customer_id == customer.id)
+            .order_by(CareOrder.created_at.desc())
+            .first()
+        )
+        result.append(
+            {
+                "id": customer.id,
+                "name": customer.name,
+                "phone": customer.phone,
+                "order_count": order_count,
+                "latest_order_at": latest_order_at,
+                "latest_order_no": latest[0] if latest else None,
+            }
+        )
+    return result
 
 
 def get_orders_for_employee(employee: Employee, order_status: str, db: Session, limit: int):
@@ -1743,8 +1825,18 @@ def create_order(payload: OrderCreate, db: Session = Depends(get_db)):
             float(hospital.longitude),
         )
 
+    customer = db.query(Customer).filter(Customer.phone == payload.patient_phone).first()
+    if customer:
+        customer.name = payload.patient_name
+        customer.updated_at = datetime.utcnow()
+    else:
+        customer = Customer(name=payload.patient_name, phone=payload.patient_phone)
+        db.add(customer)
+        db.flush()
+
     order = CareOrder(
         **payload.model_dump(),
+        customer_id=customer.id,
         order_no=f"CO{datetime.utcnow():%Y%m%d%H%M%S}{randint(1000, 9999)}",
         review_token=secrets.token_urlsafe(24),
         distance_km=distance,

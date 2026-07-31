@@ -46,6 +46,33 @@ def upgrade_schema():
     inspector = inspect(engine)
     table_names = set(inspector.get_table_names())
     statements = []
+    if "customers" not in table_names:
+        if engine.dialect.name == "mysql":
+            statements.append(
+                "CREATE TABLE customers ("
+                "id INTEGER PRIMARY KEY AUTO_INCREMENT, "
+                "name VARCHAR(50) NOT NULL, "
+                "phone VARCHAR(30) NOT NULL UNIQUE, "
+                "created_at DATETIME NULL, "
+                "updated_at DATETIME NULL, "
+                "INDEX ix_customers_phone (phone)"
+                ")"
+            )
+        else:
+            statements.extend(
+                [
+                    "CREATE TABLE customers ("
+                    "id INTEGER PRIMARY KEY, name VARCHAR(50) NOT NULL, "
+                    "phone VARCHAR(30) NOT NULL UNIQUE, created_at DATETIME NULL, "
+                    "updated_at DATETIME NULL"
+                    ")",
+                    "CREATE INDEX ix_customers_phone ON customers (phone)",
+                ]
+            )
+    if "care_orders" in table_names:
+        order_columns = {column["name"] for column in inspect(engine).get_columns("care_orders")}
+        if "customer_id" not in order_columns:
+            statements.append("ALTER TABLE care_orders ADD COLUMN customer_id INTEGER NULL")
     if "care_orders" in table_names:
         order_columns = {column["name"] for column in inspector.get_columns("care_orders")}
         if "employee_id" not in order_columns:

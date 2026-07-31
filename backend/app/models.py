@@ -35,6 +35,22 @@ class ServiceItem(Base):
     orders: Mapped[list["CareOrder"]] = relationship(back_populates="service_item")
 
 
+class Customer(Base):
+    """Persisted customer account/profile keyed by verified contact phone."""
+
+    __tablename__ = "customers"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    name: Mapped[str] = mapped_column(String(50), nullable=False)
+    phone: Mapped[str] = mapped_column(String(30), nullable=False, unique=True, index=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime, default=datetime.utcnow, onupdate=datetime.utcnow
+    )
+
+    orders: Mapped[list["CareOrder"]] = relationship(back_populates="customer")
+
+
 class Product(Base):
     __tablename__ = "products"
 
@@ -97,6 +113,7 @@ class CareOrder(Base):
     review_token: Mapped[str] = mapped_column(String(64), unique=True, index=True)
     hospital_id: Mapped[int] = mapped_column(ForeignKey("hospital_units.id"))
     service_item_id: Mapped[int] = mapped_column(ForeignKey("service_items.id"))
+    customer_id: Mapped[int | None] = mapped_column(ForeignKey("customers.id"), index=True)
     patient_name: Mapped[str] = mapped_column(String(50), nullable=False)
     patient_phone: Mapped[str] = mapped_column(String(30), nullable=False)
     appointment_time: Mapped[datetime] = mapped_column(DateTime, nullable=False)
@@ -125,6 +142,7 @@ class CareOrder(Base):
 
     hospital: Mapped[HospitalUnit] = relationship(back_populates="orders")
     service_item: Mapped[ServiceItem] = relationship(back_populates="orders")
+    customer: Mapped[Customer | None] = relationship(back_populates="orders")
     employee: Mapped[Employee | None] = relationship(back_populates="accepted_orders")
     review: Mapped["OrderReview | None"] = relationship(back_populates="order", uselist=False)
     messages: Mapped[list["OrderMessage"]] = relationship(
