@@ -10,8 +10,8 @@
 .qty-btn {
   width: 64rpx;
   height: 64rpx;
-  background: #fce4ec;
-  color: #e91e63;
+  background: #fff0f6;
+  color: #ff4d8d;
   font-size: 32rpx;
   border-radius: 12rpx;
   display: flex;
@@ -22,7 +22,7 @@
 .qty-val {
   min-width: 80rpx;
   text-align: center;
-  color: #2d1b2e;
+  color: #2b2430;
   font-size: 30rpx;
   font-weight: 600;
 }

@@ -6,10 +6,10 @@
 
   <view class="card" wx:for="{{types}}" wx:key="id"
         bindtap="pick" data-i="{{index}}"
-        style="border-color: {{selected === index ? '#e91e63' : '#f8bbd0'}};">
+        style="border-color: {{selected === index ? '#ff4d8d' : '#ffd9e8'}};">
     <view class="row">
-      <text class="k" style="color:#2d1b2e; font-weight:600;">{{item.name}}</text>
-      <text class="v" style="color:#e91e63; font-weight:700;">¥{{item.price}}</text>
+      <text class="k" style="color:#23202a; font-weight:600;">{{item.name}}</text>
+      <text class="v" style="color:#ff4d8d; font-weight:700;">¥{{item.price}}</text>
     </view>
     <text class="c-desc">{{item.desc}}</text>
   </view>

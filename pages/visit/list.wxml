@@ -1,28 +1,28 @@
 <view class="page">
   <!-- 顶部城市与搜索 -->
   <view class="topbar">
-    <view class="city" bindtap="pickCity">
+    <view class="city" hover-class="tap-dim" hover-stay-time="80" bindtap="pickCity">
       <text>{{city}}</text>
       <text class="caret">▾</text>
     </view>
-    <view class="search-icon" bindtap="goSearch">🔍</view>
+    <view class="search-icon" hover-class="tap-dim" hover-stay-time="80" bindtap="goSearch">🔍</view>
   </view>
 
   <view class="quick-actions">
-    <view class="qa-item" bindtap="goCreate">
-      <view class="qa-icon" style="background:linear-gradient(135deg,#ffe4ec,#f8bbd0);">🩺</view>
+    <view class="qa-item" hover-class="tap-soft" hover-stay-time="80" bindtap="goCreate">
+      <view class="qa-icon" style="background:linear-gradient(145deg,#fff0f6,#ffd9e8);">🩺</view>
       <text class="qa-name">新建陪诊</text>
     </view>
-    <view class="qa-item" bindtap="goAccompany">
-      <view class="qa-icon" style="background:linear-gradient(135deg,#fff3e0,#ffe0b2);">👩‍⚕️</view>
+    <view class="qa-item" hover-class="tap-soft" hover-stay-time="80" bindtap="goAccompany">
+      <view class="qa-icon" style="background:linear-gradient(145deg,#fff7e9,#ffe9c4);">👩‍⚕️</view>
       <text class="qa-name">陪诊师</text>
     </view>
-    <view class="qa-item" bindtap="goReserveType">
-      <view class="qa-icon" style="background:linear-gradient(135deg,#e1f5fe,#81d4fa);">🧾</view>
+    <view class="qa-item" hover-class="tap-soft" hover-stay-time="80" bindtap="goReserveType">
+      <view class="qa-icon" style="background:linear-gradient(145deg,#ecf5ff,#d5e8fe);">🧾</view>
       <text class="qa-name">服务类型</text>
     </view>
-    <view class="qa-item" bindtap="goOrders">
-      <view class="qa-icon" style="background:linear-gradient(135deg,#fce4ec,#f48fb1);">📑</view>
+    <view class="qa-item" hover-class="tap-soft" hover-stay-time="80" bindtap="goOrders">
+      <view class="qa-icon" style="background:linear-gradient(145deg,#f3edff,#e3d7fb);">📑</view>
       <text class="qa-name">我的订单</text>
     </view>
   </view>
@@ -33,7 +33,9 @@
       wx:key="*this"
       class="tab {{currentTab === index ? 'active' : ''}}"
       data-index="{{index}}"
-      bindtap="switchTab"
+      hover-class="tap-dim"
+      hover-stay-time="80"
+      bindtap="onTabChange"
     >
       <text>{{item}}</text>
       <view wx:if="{{currentTab === index}}" class="tab-bar"></view>
@@ -41,13 +43,21 @@
   </view>
 
   <view class="card-list">
-    <view wx:if="{{loading}}" class="empty">陪诊记录加载中</view>
+    <!-- 加载中：骨架屏 -->
+    <view wx:if="{{loading}}" class="skeleton">
+      <view class="sk-card" wx:for="{{[1,2]}}" wx:key="*this">
+        <view class="sk-line sk-w40"></view>
+        <view class="sk-line sk-w85"></view>
+        <view class="sk-line sk-w65"></view>
+      </view>
+    </view>
 
-    <block wx:for="{{list}}" wx:key="id">
+    <block wx:for="{{showList}}" wx:key="id">
       <view
-        wx:if="{{(currentTab === 0 && item.visitStatus === 'ongoing') || (currentTab === 1 && item.visitStatus === 'done')}}"
         class="card"
         data-id="{{item.id}}"
+        hover-class="tap"
+        hover-stay-time="60"
         bindtap="goDetail"
       >
         <view class="card-head">
@@ -79,25 +89,27 @@
           <text class="row-key">陪诊师</text>
           <text class="row-val">{{item.doctor}}</text>
         </view>
-        <view class="row">
+        <view class="row no-border">
           <text class="row-key">陪诊师电话</text>
           <text class="row-val">{{item.phone || '待接单后显示'}}</text>
         </view>
-        <view class="row no-border">
-          <text class="row-key">订单编号</text>
-          <text class="row-val">{{item.orderNo}}</text>
-        </view>
 
         <view class="card-foot" wx:if="{{item.visitStatus === 'ongoing'}}">
-          <view class="btn ghost" data-id="{{item.id}}" catchtap="finishVisit">结束陪诊<text class="bolt">⚡</text></view>
-          <view class="btn solid" data-id="{{item.id}}" catchtap="overtime">加时<text class="bolt">⚡</text></view>
+          <view class="btn ghost" data-id="{{item.id}}" hover-class="tap-dim" hover-stay-time="80" catchtap="finishVisit">结束陪诊<text class="bolt">⚡</text></view>
+          <view class="btn solid" data-id="{{item.id}}" hover-class="tap-dim" hover-stay-time="80" catchtap="overtime">加时<text class="bolt">⚡</text></view>
         </view>
         <view class="card-foot" wx:elif="{{item.visitStatus === 'done' && item.canReview}}">
-          <view class="btn full" data-id="{{item.id}}" catchtap="evaluate">评价<text class="bolt">⚡</text></view>
+          <view class="btn full" data-id="{{item.id}}" hover-class="tap-dim" hover-stay-time="80" catchtap="evaluate">评价<text class="bolt">⚡</text></view>
         </view>
       </view>
     </block>
 
-    <view wx:if="{{!loading && list.length === 0}}" class="empty">暂无陪诊记录</view>
+    <!-- 空态 -->
+    <view wx:if="{{!loading && showList.length === 0}}" class="empty-state">
+      <text class="empty-ic">🗂️</text>
+      <text class="empty-title">暂无陪诊记录</text>
+      <text class="empty-sub">还没有陪诊服务，下单后可以在这里跟进进度</text>
+      <view class="empty-btn" hover-class="tap-dim" hover-stay-time="80" bindtap="goCreate">新建陪诊</view>
+    </view>
   </view>
 </view>

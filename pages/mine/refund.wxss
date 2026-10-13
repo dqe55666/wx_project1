@@ -22,7 +22,7 @@
 
 .step:last-child::before { display: none; }
 
-.step.active { color: #2d1b2e; font-weight: 600; }
+.step.active { color: #2b2430; font-weight: 600; }
 
 .dot {
   width: 28rpx;
@@ -34,6 +34,6 @@
 }
 
 .step.active .dot {
-  background: linear-gradient(135deg, #ff5a8a, #e91e63);
-  box-shadow: 0 0 0 6rpx rgba(233, 30, 99, 0.15);
+  background: linear-gradient(135deg, #ff74ab, #ff4d8d);
+  box-shadow: 0 0 0 6rpx rgba(255, 77, 141, 0.15);
 }

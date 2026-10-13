@@ -17,7 +17,7 @@
 
 .amt-value {
   display: block;
-  color: #e91e63;
+  color: #ff4d8d;
   font-size: 64rpx;
   font-weight: 700;
 }
@@ -32,14 +32,14 @@
 
 .pay-type:last-child { border-bottom: 0; }
 
-.pay-type.active .pt-name { color: #e91e63; font-weight: 600; }
+.pay-type.active .pt-name { color: #ff4d8d; font-weight: 600; }
 .disabled { background: #cbd5e1 !important; color: #64748b !important; }
 
 .pt-icon { font-size: 36rpx; }
 
 .pt-name {
   flex: 1;
-  color: #2d1b2e;
+  color: #2b2430;
   font-size: 28rpx;
 }
 
@@ -52,7 +52,7 @@
 }
 
 .radio.checked {
-  border-color: #e91e63;
+  border-color: #ff4d8d;
 }
 
 .radio.checked::after {
@@ -63,6 +63,6 @@
   transform: translate(-50%, -50%);
   width: 20rpx;
   height: 20rpx;
-  background: #e91e63;
+  background: #ff4d8d;
   border-radius: 50%;
 }

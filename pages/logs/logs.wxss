@@ -1,6 +1,6 @@
 page {
   height: 100vh;
-  background: #fff5f8;
+  background: #f7f7fa;
 }
 
 .scrollarea {
@@ -11,7 +11,7 @@ page {
 .log-item {
   margin-top: 20rpx;
   text-align: center;
-  color: #bd548f;
+  color: #8f8699;
   font-size: 30rpx;
 }
 

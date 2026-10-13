@@ -17,7 +17,7 @@
   <view class="card">
     <view class="row"><text class="k">加时小时数</text><text class="v">{{hours}} 小时</text></view>
     <view class="row"><text class="k">单价</text><text class="v">¥100 / 小时</text></view>
-    <view class="row"><text class="k" style="font-weight:600; color:#2d1b2e;">合计</text><text class="v" style="color:#e91e63; font-weight:700; font-size:32rpx;">¥{{price}}</text></view>
+    <view class="row"><text class="k" style="font-weight:600; color:#23202a;">合计</text><text class="v" style="color:#ff4d8d; font-weight:700; font-size:32rpx;">¥{{price}}</text></view>
   </view>
 
   <view class="action" bindtap="confirm">立即支付</view>

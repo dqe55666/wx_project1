@@ -23,7 +23,7 @@
   <view class="card">
     <text class="c-title">退款信息</text>
     <view class="row"><text class="k">退款商品</text><text class="v">医用护理床</text></view>
-    <view class="row"><text class="k">退款金额</text><text class="v" style="color:#e91e63; font-weight:700;">¥1880.00</text></view>
+    <view class="row"><text class="k">退款金额</text><text class="v" style="color:#ff4d8d; font-weight:700;">¥1880.00</text></view>
     <view class="row"><text class="k">退款原因</text><text class="v">商品质量问题</text></view>
     <view class="row"><text class="k">退款说明</text><text class="v">收到时已有破损</text></view>
   </view>

@@ -20,7 +20,7 @@
 }
 
 .tab.active {
-  color: #2d1b2e;
+  color: #2b2430;
   font-weight: 700;
 }
 
@@ -31,7 +31,7 @@
   transform: translateX(-50%);
   width: 48rpx;
   height: 6rpx;
-  background: #e91e63;
+  background: #ff4d8d;
   border-radius: 4rpx;
 }
 
@@ -41,7 +41,7 @@
 
 .card {
   background: #ffffff;
-  border: 2rpx solid #f8bbd0;
+  border: 2rpx solid #f1eaf5;
   border-radius: 20rpx;
   padding: 24rpx 28rpx;
   margin-bottom: 20rpx;

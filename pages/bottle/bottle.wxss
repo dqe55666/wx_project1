@@ -48,7 +48,7 @@ page {
 }
 
 .refresh {
-  color: #c2185b;
+  color: #e0447e;
   font-size: 26rpx;
   padding: 14rpx 10rpx;
 }
@@ -95,7 +95,7 @@ textarea {
 }
 
 .send-btn {
-  background: #e91e63;
+  background: #ff4d8d;
   border-radius: 6rpx;
   color: #ffffff;
   font-size: 27rpx;

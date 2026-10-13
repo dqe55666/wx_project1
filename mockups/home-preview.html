@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>护理上门预约 · 首页高保真预览</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body {
+    height: 100%;
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  }
+  body {
+    background: #e9e9ef;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 48px;
+    padding: 40px;
+    min-height: 100vh;
+    flex-wrap: wrap;
+  }
+
+  /* ============ 手机外壳 ============ */
+  .phone {
+    position: relative;
+    width: 400px;
+    height: 856px;
+    background: #14121a;
+    border-radius: 54px;
+    padding: 12px;
+    box-shadow: 0 30px 70px rgba(30, 20, 50, 0.35), inset 0 0 0 2px #2b2733;
+    flex: none;
+  }
+  .screen {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    border-radius: 44px;
+    overflow: hidden;
+    background: #ffffff;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* 灵动岛 */
+  .island {
+    position: absolute;
+    top: 14px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 108px;
+    height: 30px;
+    background: #000;
+    border-radius: 18px;
+    z-index: 40;
+  }
+
+  /* ============ 状态栏 ============ */
+  .statusbar {
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 26px 0;
+    position: relative;
+    z-index: 30;
+    color: #fff;
+  }
+  .statusbar .time { font-size: 15px; font-weight: 600; letter-spacing: .3px; }
+  .statusbar .sysicons { display: flex; align-items: center; gap: 5px; }
+  .statusbar svg { display: block; }
+
+  /* ============ 粉色头部 ============ */
+  .header {
+    background: linear-gradient(160deg, #ff5a97 0%, #ff4d8d 45%, #ff6ba3 100%);
+    padding: 4px 16px 58px;
+    position: relative;
+  }
+  .header::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(120% 80% at 85% 0%, rgba(255,255,255,.22), transparent 60%);
+    pointer-events: none;
+  }
+  .topbar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    position: relative;
+    z-index: 2;
+  }
+  .city {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 700;
+    white-space: nowrap;
+    flex: none;
+  }
+  .city .caret { width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 6px solid #fff; margin-top: 2px; }
+  .searchbar {
+    flex: 1;
+    height: 38px;
+    background: #ffffff;
+    border-radius: 19px;
+    display: flex;
+    align-items: center;
+    padding: 0 4px 0 12px;
+    box-shadow: 0 2px 8px rgba(190, 30, 90, .18);
+    overflow: hidden;
+  }
+  .searchbar .ph {
+    flex: 1;
+    color: #b8b8c2;
+    font-size: 13px;
+    margin-left: 6px;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+  .searchbtn {
+    height: 30px;
+    padding: 0 16px;
+    border: none;
+    border-radius: 15px;
+    background: linear-gradient(135deg, #ff4d8d, #f5306f);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 600;
+    flex: none;
+    box-shadow: 0 2px 6px rgba(214, 20, 80, .35);
+  }
+
+  /* ============ 可滚动内容 ============ */
+  .content {
+    flex: 1;
+    overflow-y: auto;
+    background: #ffffff;
+    margin-top: -42px;
+    border-radius: 24px 24px 0 0;
+    position: relative;
+    z-index: 3;
+    padding: 16px 14px 96px;
+    scrollbar-width: none;
+  }
+  .content::-webkit-scrollbar { display: none; }
+
+  /* ============ 服务卡片 ============ */
+  .services {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .svc-col { display: grid; grid-template-rows: 1fr 1fr; gap: 10px; }
+  .svc {
+    position: relative;
+    border-radius: 16px;
+    padding: 12px;
+    overflow: hidden;
+  }
+  .svc .tag {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    color: #fff;
+    padding: 3px 8px;
+    border-radius: 9px;
+    letter-spacing: .2px;
+  }
+  .svc .watermark {
+    position: absolute;
+    right: -6px;
+    bottom: -8px;
+    opacity: .5;
+    pointer-events: none;
+  }
+
+  /* 全天陪诊（左大卡） */
+  .svc-day {
+    background: linear-gradient(165deg, #fff0f6 0%, #ffe0ee 55%, #ffd0e4 100%);
+    display: flex;
+    flex-direction: column;
+  }
+  .svc-day .tag { background: linear-gradient(135deg, #ffab40, #ff8f00); box-shadow: 0 3px 8px rgba(255,143,0,.3); }
+  .svc-day .name { font-size: 23px; font-weight: 800; color: #ec3c7d; margin-top: 22px; letter-spacing: 1px; }
+  .svc-day .sub { font-size: 12px; font-weight: 700; color: #ff8f2e; margin-top: 8px; }
+  .svc-day .go {
+    margin-top: auto;
+    align-self: flex-start;
+    background: #fff;
+    color: #ff4d8d;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 7px 18px;
+    border-radius: 16px;
+    box-shadow: 0 3px 10px rgba(236, 60, 125, .22);
+  }
+
+  /* VIP 陪诊（右上） */
+  .svc-vip { background: linear-gradient(150deg, #fff6e6 0%, #ffe9c2 100%); }
+  .svc-vip .tag { background: linear-gradient(135deg, #ffb74d, #ff9800); box-shadow: 0 3px 8px rgba(255,152,0,.3); }
+  .svc-vip .name { font-size: 18px; font-weight: 800; color: #4a3a2a; margin-top: 14px; display: flex; align-items: center; gap: 6px; }
+  .svc-vip .mini { font-size: 10px; font-weight: 700; color: #fff; background: linear-gradient(135deg, #ffca28, #ffa000); padding: 2px 7px; border-radius: 8px; }
+  .svc-vip .vipbadge {
+    position: absolute;
+    top: 10px; right: 10px;
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(140deg, #ffe082, #f9a825);
+    box-shadow: 0 4px 10px rgba(249,168,37,.4), inset 0 0 0 2px rgba(255,255,255,.55);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 900; color: #8a5a00; letter-spacing: .5px;
+  }
+
+  /* 半天陪诊（右下） */
+  .svc-half { background: linear-gradient(150deg, #eaf4ff 0%, #d3e7fe 100%); }
+  .svc-half .tag { background: linear-gradient(135deg, #64b5f6, #2196f3); box-shadow: 0 3px 8px rgba(33,150,243,.3); }
+  .svc-half .name { font-size: 18px; font-weight: 800; color: #1565c0; margin-top: 14px; display: flex; align-items: center; gap: 6px; }
+  .svc-half .mini { font-size: 10px; font-weight: 700; color: #fff; background: linear-gradient(135deg, #64b5f6, #1e88e5); padding: 2px 7px; border-radius: 8px; }
+
+  /* ============ 快捷入口 ============ */
+  .quick {
+    display: flex;
+    justify-content: space-around;
+    padding: 26px 6px 22px;
+  }
+  .quick-item { display: flex; flex-direction: column; align-items: center; gap: 9px; }
+  .quick-ic {
+    width: 62px; height: 62px;
+    border-radius: 20px;
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+  }
+  .quick-ic::after {
+    content: ""; position: absolute; inset: 0;
+    border-radius: 20px;
+    background: linear-gradient(160deg, rgba(255,255,255,.5), transparent 55%);
+  }
+  .q-order { background: linear-gradient(150deg, #9ee06a, #4caf50); box-shadow: 0 8px 16px rgba(76,175,80,.32); }
+  .q-pkg   { background: linear-gradient(150deg, #ffd95e, #ffb300); box-shadow: 0 8px 16px rgba(255,179,0,.32); }
+  .q-mall  { background: linear-gradient(150deg, #c9a8ff, #8e6bf0); box-shadow: 0 8px 16px rgba(142,107,240,.32); }
+  .quick-item .lb { font-size: 13px; color: #3a3340; font-weight: 600; }
+
+  /* ============ 区块通用 ============ */
+  .section { margin-top: 14px; }
+  .sec-head {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 2px 14px;
+  }
+  .sec-title { display: flex; align-items: center; gap: 7px; font-size: 17px; font-weight: 800; color: #2b2430; }
+  .sec-more { font-size: 12px; color: #a49db0; display: flex; align-items: center; gap: 2px; }
+
+  /* 陪护师 */
+  .nurses { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+  .nurse { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .avatar {
+    width: 100%;
+    aspect-ratio: 1 / 1.12;
+    border-radius: 14px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(40, 20, 60, .14);
+  }
+  .avatar svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .nurse .nm { font-size: 13px; color: #2b2430; font-weight: 700; }
+
+  /* 服务医院 */
+  .hosp-list { display: flex; flex-direction: column; gap: 10px; }
+  .hosp {
+    display: flex; align-items: center; gap: 12px;
+    background: #faf7fb;
+    border: 1px solid #f0eaf4;
+    border-radius: 14px;
+    padding: 12px 14px;
+  }
+  .hosp .hicon {
+    width: 42px; height: 42px; border-radius: 12px; flex: none;
+    background: linear-gradient(145deg, #ffd6e6, #ff9ec4);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .hosp .hinfo { flex: 1; min-width: 0; }
+  .hosp .hname { font-size: 14px; font-weight: 700; color: #2b2430; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .hosp .haddr { font-size: 11px; color: #a49db0; margin-top: 3px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .hosp .hdist { font-size: 12px; font-weight: 700; color: #ff4d8d; flex: none; }
+
+  /* ============ tabBar ============ */
+  .tabbar {
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    height: 78px;
+    background: #ffffff;
+    border-top: 1px solid #f1ecf4;
+    display: flex;
+    align-items: flex-start;
+    padding-top: 9px;
+    z-index: 20;
+  }
+  .tab {
+    flex: 1;
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+    color: #b3adbd;
+    font-size: 11px;
+    position: relative;
+  }
+  .tab.active { color: #ff4d8d; font-weight: 700; }
+  .tab .indicator {
+    position: absolute;
+    top: -9px;
+    width: 42px; height: 3px;
+    border-radius: 0 0 3px 3px;
+    background: #ff4d8d;
+    opacity: 0;
+  }
+  .tab.active .indicator { opacity: 1; }
+
+  /* ============ 右侧说明 ============ */
+  .notes {
+    width: 400px;
+    max-width: 100%;
+    color: #2c2536;
+  }
+  .notes h1 { font-size: 22px; margin-bottom: 6px; color: #1d1727; }
+  .notes .sub { font-size: 13px; color: #837c92; margin-bottom: 22px; }
+  .notes .card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 18px 20px;
+    margin-bottom: 14px;
+    box-shadow: 0 8px 24px rgba(40, 20, 60, .07);
+  }
+  .notes .card h2 { font-size: 14px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+  .notes .card h2 .dot { width: 8px; height: 8px; border-radius: 50%; background: #ff4d8d; }
+  .notes ul { list-style: none; display: flex; flex-direction: column; gap: 9px; }
+  .notes li { font-size: 12.5px; line-height: 1.6; color: #4d4759; padding-left: 16px; position: relative; }
+  .notes li::before { content: ""; position: absolute; left: 0; top: 8px; width: 5px; height: 5px; border-radius: 50%; background: #ffc2da; }
+  .notes li b { color: #ff4d8d; }
+  .notes .pill {
+    display: inline-block; font-size: 11px; font-weight: 700;
+    color: #ff4d8d; background: #ffeaf2; border-radius: 8px;
+    padding: 3px 9px; margin-right: 6px;
+  }
+</style>
+</head>
+<body>
+
+  <!-- ================= 手机 ================= -->
+  <div class="phone">
+    <div class="screen">
+      <div class="island"></div>
+
+      <!-- 状态栏 -->
+      <div class="statusbar">
+        <span class="time">12:00</span>
+        <span class="sysicons">
+          <svg width="17" height="12" viewBox="0 0 17 12" fill="#fff"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="4.5" y="5.5" width="3" height="6.5" rx="1"/><rect x="9" y="3" width="3" height="9" rx="1"/><rect x="13.5" y="0" width="3" height="12" rx="1"/></svg>
+          <svg width="16" height="12" viewBox="0 0 16 12" fill="#fff"><path d="M8 11.4 6.1 9.3a2.9 2.9 0 0 1 3.8 0L8 11.4Zm-3.4-4.1a7 7 0 0 1 6.8 0l1.2-1.6a9.2 9.2 0 0 0-9.2 0l1.2 1.6ZM8 .6A13 13 0 0 0-.2 3.9l1.3 1.6A10.9 10.9 0 0 1 8 2.9c2.6 0 5 .9 6.9 2.6l1.3-1.6A13 13 0 0 0 8 .6Z"/></svg>
+          <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.6" y="0.6" width="21" height="10.8" rx="3" stroke="#fff" stroke-opacity=".55"/><rect x="2.2" y="2.2" width="17.5" height="7.6" rx="1.6" fill="#fff"/><path d="M23 4v4a2.2 2.2 0 0 0 0-4Z" fill="#fff" fill-opacity=".6"/></svg>
+        </span>
+      </div>
+
+      <!-- 粉色头部 -->
+      <div class="header">
+        <div class="topbar">
+          <div class="city">张家界 <span class="caret"></span></div>
+          <div class="searchbar">
+            <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="5" stroke="#b8b8c2" stroke-width="1.8"/><path d="M11 11l4 4" stroke="#b8b8c2" stroke-width="1.8" stroke-linecap="round"/></svg>
+            <span class="ph">请输入搜索内容</span>
+            <button class="searchbtn">搜索</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 内容区 -->
+      <div class="content">
+
+        <!-- 服务卡片 -->
+        <div class="services">
+          <div class="svc svc-day">
+            <span class="tag">最低318元/次</span>
+            <div class="name">全天陪诊</div>
+            <div class="sub">全程包接送</div>
+            <div class="go">立即体验</div>
+            <svg class="watermark" width="92" height="70" viewBox="0 0 92 70" fill="none" stroke="#ff9ec4" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round">
+              <path d="M6 46V26a4 4 0 0 1 4-4h34v24H6Z"/><path d="M44 30h16l12 12v4H44V30Z"/><circle cx="20" cy="50" r="6" fill="#fff"/><circle cx="58" cy="50" r="6" fill="#fff"/><path d="M24 30v10M18 35h12"/>
+            </svg>
+          </div>
+          <div class="svc-col">
+            <div class="svc svc-vip">
+              <span class="tag">最低338元/次</span>
+              <div class="name">VIP陪诊 <span class="mini">包接送</span></div>
+              <div class="vipbadge">VIP</div>
+              <svg class="watermark" width="60" height="60" viewBox="0 0 60 60" fill="none" stroke="#ffc16b" stroke-width="2.2" stroke-linejoin="round"><path d="M30 8l5.5 11.2 12.4 1.8-9 8.7 2.1 12.3L30 36.2 19 42l2.1-12.3-9-8.7 12.4-1.8L30 8Z" fill="#ffe6b0" fill-opacity=".5"/></svg>
+            </div>
+            <div class="svc svc-half">
+              <span class="tag">最低298元/次</span>
+              <div class="name">半天陪诊 <span class="mini">包接送</span></div>
+              <svg class="watermark" width="62" height="56" viewBox="0 0 62 56" fill="none" stroke="#8cc5f5" stroke-width="2.4" stroke-linejoin="round"><path d="M31 48S6 33 6 19.5A11.5 11.5 0 0 1 31 13a11.5 11.5 0 0 1 25 6.5C56 33 31 48 31 48Z" fill="#cfe6fd" fill-opacity=".6"/></svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- 快捷入口 -->
+        <div class="quick">
+          <div class="quick-item">
+            <div class="quick-ic q-order">
+              <svg width="30" height="30" viewBox="0 0 30 30" fill="none" stroke="#fff" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M6 24 L20 10"/><path d="M17 7l6 6"/><path d="M24 4l2 2-2 2-2-2 2-2Z" fill="#fff"/><path d="M9 21l-3 4 4-1"/>
+              </svg>
+            </div>
+            <span class="lb">立即下单</span>
+          </div>
+          <div class="quick-item">
+            <div class="quick-ic q-pkg">
+              <svg width="30" height="30" viewBox="0 0 30 30" fill="none" stroke="#fff" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="5" y="9" width="20" height="15" rx="2.5"/><path d="M5 14h20"/><path d="M11 7a3 3 0 0 1 4-2.4A3 3 0 0 1 19 7"/>
+              </svg>
+            </div>
+            <span class="lb">套餐</span>
+          </div>
+          <div class="quick-item">
+            <div class="quick-ic q-mall">
+              <svg width="30" height="30" viewBox="0 0 30 30" fill="none" stroke="#fff" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M6 10h18l-1.6 14.5a2 2 0 0 1-2 1.8H9.6a2 2 0 0 1-2-1.8L6 10Z"/><path d="M11 10a4 4 0 0 1 8 0"/>
+              </svg>
+            </div>
+            <span class="lb">商城</span>
+          </div>
+        </div>
+
+        <!-- 本期优秀陪护师 -->
+        <div class="section">
+          <div class="sec-head">
+            <div class="sec-title">
+              <svg width="18" height="18" viewBox="0 0 20 20" fill="none"><circle cx="8" cy="6" r="3.2" fill="#ff4d8d"/><path d="M2.4 16.5c0-3 2.5-5.2 5.6-5.2s5.6 2.2 5.6 5.2" stroke="#ff4d8d" stroke-width="1.9" stroke-linecap="round"/><path d="M15 9.5s2.6-1.6 2.6-3.4a2.1 2.1 0 0 0-3.9-1.1A2.1 2.1 0 0 0 9.8 6.1C9.8 7.9 12.4 9.5 12.4 9.5" fill="#ffd0e4"/></svg>
+              本期优秀陪护师
+            </div>
+            <span class="sec-more">查看更多 ›</span>
+          </div>
+          <div class="nurses">
+            <div class="nurse">
+              <div class="avatar">
+                <svg viewBox="0 0 100 112" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="g1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8ea8d8"/><stop offset="1" stop-color="#4a5f96"/></linearGradient></defs><rect width="100" height="112" fill="url(#g1)"/><circle cx="50" cy="44" r="20" fill="#dfe8f7"/><path d="M18 112c0-19 14-32 32-32s32 13 32 32Z" fill="#dfe8f7"/></svg>
+              </div>
+              <span class="nm">张三</span>
+            </div>
+            <div class="nurse">
+              <div class="avatar">
+                <svg viewBox="0 0 100 112" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="g2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#b9a4c9"/><stop offset="1" stop-color="#6d5585"/></linearGradient></defs><rect width="100" height="112" fill="url(#g2)"/><circle cx="50" cy="44" r="20" fill="#eee6f6"/><path d="M18 112c0-19 14-32 32-32s32 13 32 32Z" fill="#eee6f6"/></svg>
+              </div>
+              <span class="nm">李四</span>
+            </div>
+            <div class="nurse">
+              <div class="avatar">
+                <svg viewBox="0 0 100 112" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="g3" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#c9b9a2"/><stop offset="1" stop-color="#8a7358"/></linearGradient></defs><rect width="100" height="112" fill="url(#g3)"/><circle cx="50" cy="44" r="20" fill="#f3ece1"/><path d="M18 112c0-19 14-32 32-32s32 13 32 32Z" fill="#f3ece1"/></svg>
+              </div>
+              <span class="nm">王五</span>
+            </div>
+            <div class="nurse">
+              <div class="avatar">
+                <svg viewBox="0 0 100 112" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="g4" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e0a98f"/><stop offset="1" stop-color="#b06a45"/></linearGradient></defs><rect width="100" height="112" fill="url(#g4)"/><circle cx="50" cy="44" r="20" fill="#faeae0"/><path d="M18 112c0-19 14-32 32-32s32 13 32 32Z" fill="#faeae0"/></svg>
+              </div>
+              <span class="nm">赵六</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 服务医院 -->
+        <div class="section">
+          <div class="sec-head">
+            <div class="sec-title">
+              <svg width="17" height="17" viewBox="0 0 20 20" fill="#ff3b6b"><path d="M10 18S1.5 12.5 1.5 7A4.5 4.5 0 0 1 10 4.2 4.5 4.5 0 0 1 18.5 7c0 5.5-8.5 11-8.5 11Z"/></svg>
+              服务医院
+            </div>
+            <span class="sec-more">全部 ›</span>
+          </div>
+          <div class="hosp-list">
+            <div class="hosp">
+              <div class="hicon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="3" y="6" width="18" height="15" rx="2.5" fill="#fff"/><path d="M12 10v7M8.5 13.5h7" stroke="#ff4d8d" stroke-width="2.2" stroke-linecap="round"/></svg>
+              </div>
+              <div class="hinfo">
+                <div class="hname">张家界市人民医院</div>
+                <div class="haddr">永定区古庸路 192 号 · 距您 2.3km</div>
+              </div>
+              <span class="hdist">2.3km</span>
+            </div>
+            <div class="hosp">
+              <div class="hicon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="3" y="6" width="18" height="15" rx="2.5" fill="#fff"/><path d="M12 10v7M8.5 13.5h7" stroke="#ff4d8d" stroke-width="2.2" stroke-linecap="round"/></svg>
+              </div>
+              <div class="hinfo">
+                <div class="hname">张家界市中医院</div>
+                <div class="haddr">永定区回龙路 33 号 · 距您 4.1km</div>
+              </div>
+              <span class="hdist">4.1km</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- tabBar -->
+      <div class="tabbar">
+        <div class="tab active">
+          <div class="indicator"></div>
+          <svg width="23" height="23" viewBox="0 0 24 24" fill="none"><path d="M3.5 10.5 12 3.5l8.5 7" stroke="#ff4d8d" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/><path d="M5.5 9.8V20h13V9.8" stroke="#ff4d8d" stroke-width="2.1" stroke-linejoin="round"/><path d="M10 20v-5h4v5" stroke="#ff4d8d" stroke-width="2.1" stroke-linejoin="round"/></svg>
+          主页
+        </div>
+        <div class="tab">
+          <div class="indicator"></div>
+          <svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="#b3adbd" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20S3.5 14.6 3.5 8.8A4.5 4.5 0 0 1 12 6a4.5 4.5 0 0 1 8.5 2.8C20.5 14.6 12 20 12 20Z"/><path d="M8.5 11h2l1-2 1.5 4 1-2h1.5"/></svg>
+          陪诊中
+        </div>
+        <div class="tab">
+          <div class="indicator"></div>
+          <svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="#b3adbd" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2.5" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0"/><path d="M12 17.5V21M8.5 21h7"/></svg>
+          语音识别
+        </div>
+        <div class="tab">
+          <div class="indicator"></div>
+          <svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="#b3adbd" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5h16v11H9l-5 3.5v-14.5Z"/><circle cx="9" cy="11" r="1" fill="#b3adbd" stroke="none"/><circle cx="12.5" cy="11" r="1" fill="#b3adbd" stroke="none"/><circle cx="16" cy="11" r="1" fill="#b3adbd" stroke="none"/></svg>
+          消息
+        </div>
+        <div class="tab">
+          <div class="indicator"></div>
+          <svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="#b3adbd" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7.5" r="3.8"/><path d="M4.5 20.5c0-4.1 3.4-6.8 7.5-6.8s7.5 2.7 7.5 6.8"/></svg>
+          我的
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ================= 说明面板 ================= -->
+  <div class="notes">
+    <h1>首页 UI 高保真预览</h1>
+    <p class="sub">护理上门预约小程序 · 按设计稿 1:1 还原（未改动小程序代码）</p>
+
+    <div class="card">
+      <h2><span class="dot"></span>本页还原了什么</h2>
+      <ul>
+        <li><b>粉色渐变头部</b>：城市下拉「张家界」+ 搜索框 + 红色搜索按钮</li>
+        <li><b>三张服务卡</b>：全天陪诊（大卡）/ VIP陪诊 / 半天陪诊，含价格标签、包接送、水印图标</li>
+        <li><b>圆形快捷入口</b>：立即下单 / 套餐 / 商城</li>
+        <li><b>本期优秀陪护师</b>：横向头像列表 + 查看更多</li>
+        <li><b>服务医院</b>：医院列表（带距离）</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2><span class="dot"></span>已按你的选择调整</h2>
+      <ul>
+        <li>tabBar 采用 <span class="pill">主页 / 陪诊中 / 语音识别 / 消息 / 我的</span></li>
+        <li>即 <b>保留「语音识别」tab</b>，设计稿中的「漂流瓶」改为从首页入口进入，不进 tabBar</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2><span class="dot"></span>落地到小程序时需注意</h2>
+      <ul>
+        <li>陪护师头像、服务卡水印图标、tabBar 图标均需新增图片素材（当前 <b>assets 无任何图片</b>）</li>
+        <li>「本期优秀陪护师」需新增公开接口（现只有需管理员令牌的 <b>/api/admin/employees</b>）</li>
+        <li>搜索框后端暂无搜索接口，可先做装饰入口或后续补接口</li>
+        <li>现有首页的表单将迁至 <b>pages/visit/create</b>（已有更完整版本）</li>
+      </ul>
+    </div>
+  </div>
+
+</body>
+</html>

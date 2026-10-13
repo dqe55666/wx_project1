@@ -31,8 +31,8 @@
   <view class="card">
     <view class="row"><text class="k">商品金额</text><text class="v">¥{{product.price * count}}</text></view>
     <view class="row"><text class="k">运费</text><text class="v">¥0</text></view>
-    <view class="row"><text class="k" style="font-weight:600; color:#2d1b2e;">合计</text>
-      <text class="v" style="color:#e91e63; font-weight:700; font-size:32rpx;">¥{{product.price * count}}</text>
+    <view class="row"><text class="k" style="font-weight:600; color:#23202a;">合计</text>
+      <text class="v" style="color:#ff4d8d; font-weight:700; font-size:32rpx;">¥{{product.price * count}}</text>
     </view>
   </view>
 

@@ -7,11 +7,11 @@
   <view class="card">
     <view class="row" bindtap="toggleMute">
       <text class="k">消息免打扰</text>
-      <switch checked="{{mute}}" color="#e91e63" />
+      <switch checked="{{mute}}" color="#ff4d8d" />
     </view>
     <view class="row" bindtap="toggleTop">
       <text class="k">会话置顶</text>
-      <switch checked="{{top}}" color="#e91e63" />
+      <switch checked="{{top}}" color="#ff4d8d" />
     </view>
   </view>
 

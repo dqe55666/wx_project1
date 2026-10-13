@@ -1,9 +1,9 @@
 .captcha-box {
   background: #ffffff;
-  border: 2rpx solid #f8bbd0;
+  border: 2rpx solid #f1eaf5;
   border-radius: 16rpx;
   padding: 24rpx;
-  box-shadow: 0 2rpx 8rpx rgba(233, 30, 99, 0.05);
+  box-shadow: 0 2rpx 8rpx rgba(255, 77, 141, 0.05);
   box-sizing: border-box;
 }
 
@@ -15,13 +15,13 @@
 }
 
 .captcha-title {
-  color: #e91e63;
+  color: #ff4d8d;
   font-size: 28rpx;
   font-weight: 600;
 }
 
 .captcha-tips {
-  color: #bd548f;
+  color: #8f8699;
   font-size: 22rpx;
 }
 
@@ -33,7 +33,7 @@
   position: relative;
   width: 100%;
   height: 220rpx;
-  background: linear-gradient(135deg, #fce4ec, #f8bbd0);
+  background: linear-gradient(135deg, #fff0f6, #f1eaf5);
   border-radius: 12rpx;
   overflow: hidden;
   margin-bottom: 20rpx;
@@ -50,7 +50,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: rgba(233, 30, 99, 0.35);
+  color: rgba(255, 77, 141, 0.35);
   font-size: 24rpx;
   letter-spacing: 4rpx;
 }
@@ -67,7 +67,7 @@
 .piece-shape {
   width: 100%;
   height: 100%;
-  background: linear-gradient(135deg, #e91e63, #f48fb1);
+  background: linear-gradient(135deg, #ff4d8d, #ffb8d5);
   border: 4rpx solid #ffffff;
   border-radius: 8rpx;
   box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.15);
@@ -108,7 +108,7 @@
 
 .captcha-slot .slot-shape::before,
 .captcha-slot .slot-shape::after {
-  background: #f8bbd0;
+  background: #f1eaf5;
 }
 
 /* 滑轨 */
@@ -121,9 +121,9 @@
 .track-bg {
   position: absolute;
   inset: 0;
-  background: #fce4ec;
+  background: #fff0f6;
   border-radius: 40rpx;
-  border: 2rpx solid #f8bbd0;
+  border: 2rpx solid #f1eaf5;
 }
 
 .track-fill {
@@ -131,7 +131,7 @@
   top: 0;
   left: 0;
   height: 100%;
-  background: linear-gradient(90deg, #f48fb1, #e91e63);
+  background: linear-gradient(90deg, #ffb8d5, #ff4d8d);
   border-radius: 40rpx;
   transition: width 0.1s linear;
 }
@@ -147,7 +147,7 @@
   right: 0;
   transform: translateY(-50%);
   text-align: center;
-  color: #bd548f;
+  color: #8f8699;
   font-size: 24rpx;
   z-index: 1;
   pointer-events: none;
@@ -169,20 +169,20 @@
   width: 80rpx;
   height: 80rpx;
   background: #ffffff;
-  border: 2rpx solid #e91e63;
+  border: 2rpx solid #ff4d8d;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #e91e63;
+  color: #ff4d8d;
   font-size: 32rpx;
   font-weight: 700;
-  box-shadow: 0 2rpx 8rpx rgba(233, 30, 99, 0.2);
+  box-shadow: 0 2rpx 8rpx rgba(255, 77, 141, 0.2);
   user-select: none;
 }
 
 .thumb-inner.is-success {
-  background: #e91e63;
+  background: #ff4d8d;
   color: #ffffff;
 }
 

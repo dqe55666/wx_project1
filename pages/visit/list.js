@@ -6,6 +6,7 @@ Page({
     currentTab: 0,
     tabs: ['进行中', '已完成'],
     list: [],
+    showList: [],
     loading: false
   },
 
@@ -22,6 +23,7 @@ Page({
     try {
       const list = await fetchCustomerOrders()
       this.setData({ list })
+      this.applyFilter()
     } catch (err) {
       wx.showToast({ title: '陪诊记录加载失败', icon: 'none' })
     } finally {
@@ -29,17 +31,26 @@ Page({
     }
   },
 
+  // 按当前 tab 预先分好数组：既免掉 wxml 里 wx:if 全量遍历，也让空态判断准确
+  applyFilter() {
+    const tab = this.data.currentTab
+    const showList = (this.data.list || []).filter((item) =>
+      tab === 0 ? item.visitStatus === 'ongoing' : item.visitStatus === 'done'
+    )
+    this.setData({ showList })
+  },
+
   onPullDownRefresh() {
     this.refreshCity()
     this.loadOrders().finally(() => wx.stopPullDownRefresh())
   },
 
-  switchTab(e) {
-    this.setData({ currentTab: e.currentTarget.dataset.index })
+  onTabChange(e) {
+    const currentTab = Number(e.currentTarget.dataset.index) || 0
+    this.setData({ currentTab }, () => this.applyFilter())
   },
 
-  pickCity() {
-    this.refreshCity(true)
+  pickCity() {    this.refreshCity(true)
   },
 
   refreshCity(showLoading = false) {
@@ -64,43 +75,34 @@ Page({
     })
   },
 
-  goSearch() {
-    wx.showToast({ title: '请在我的订单中查看全部预约', icon: 'none' })
+  goSearch() {    wx.showToast({ title: '请在我的订单中查看全部预约', icon: 'none' })
   },
 
-  goDetail(e) {
-    const id = e.currentTarget.dataset.id
+  goDetail(e) {    const id = e.currentTarget.dataset.id
     wx.navigateTo({ url: '/pages/visit/detail?id=' + id })
   },
 
-  goCreate() {
-    wx.navigateTo({ url: '/pages/visit/create' })
+  goCreate() {    wx.navigateTo({ url: '/pages/visit/create' })
   },
 
-  goAccompany() {
-    wx.navigateTo({ url: '/pages/visit/accompany' })
+  goAccompany() {    wx.navigateTo({ url: '/pages/visit/accompany' })
   },
 
-  goReserveType() {
-    wx.navigateTo({ url: '/pages/visit/reserve-type' })
+  goReserveType() {    wx.navigateTo({ url: '/pages/visit/reserve-type' })
   },
 
-  goOrders() {
-    wx.navigateTo({ url: '/pages/mine/orders' })
+  goOrders() {    wx.navigateTo({ url: '/pages/mine/orders' })
   },
 
-  finishVisit(e) {
-    e.stopPropagation && e.stopPropagation()
+  finishVisit(e) {    e.stopPropagation && e.stopPropagation()
     wx.showToast({ title: '服务结束由后台或员工端确认', icon: 'none' })
   },
 
-  overtime(e) {
-    e.stopPropagation && e.stopPropagation()
+  overtime(e) {    e.stopPropagation && e.stopPropagation()
     wx.navigateTo({ url: '/pages/visit/overtime?id=' + e.currentTarget.dataset.id })
   },
 
-  evaluate(e) {
-    e.stopPropagation && e.stopPropagation()
+  evaluate(e) {    e.stopPropagation && e.stopPropagation()
     wx.navigateTo({ url: '/pages/visit/evaluate?id=' + e.currentTarget.dataset.id })
   }
 })

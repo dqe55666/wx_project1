@@ -41,8 +41,7 @@ Page({
     })
   },
 
-  authorizeLogin() {
-    if (!wx.getUserProfile) {
+  authorizeLogin() {    if (!wx.getUserProfile) {
       wx.showToast({ title: '当前微信版本不支持授权', icon: 'none' })
       return
     }
@@ -82,8 +81,7 @@ Page({
     }
   },
 
-  goMenu(e) {
-    const id = e.currentTarget.dataset.id
+  goMenu(e) {    const id = e.currentTarget.dataset.id
     const map = {
       apply: '/pages/mine/apply',
       orders: '/pages/mine/orders',
@@ -100,8 +98,7 @@ Page({
     }
   },
 
-  goOrder(e) {
-    const type = e.currentTarget.dataset.type
+  goOrder(e) {    const type = e.currentTarget.dataset.type
     const map = {
       pending: { url: '/pages/mine/orders?type=pending' },
       doing: { url: '/pages/visit/list' },

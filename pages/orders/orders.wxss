@@ -1,6 +1,6 @@
 page { 
   height: 100vh; 
-  background: #fff5f8; 
+  background: #f7f7fa; 
 }
 
 .scrollarea { 
@@ -18,7 +18,7 @@ page {
 }
 
 .title { 
-  color: #e91e63; 
+  color: #ff4d8d; 
   display: block; 
   font-size: 44rpx; 
   font-weight: 700; 
@@ -26,7 +26,7 @@ page {
 }
 
 .subtitle { 
-  color: #bd548f; 
+  color: #8f8699; 
   display: block; 
   font-size: 26rpx; 
   line-height: 1.5; 
@@ -35,7 +35,7 @@ page {
 
 .order-card { 
   background: #fff; 
-  border: 1rpx solid #f48fb1; 
+  border: 1rpx solid #ffb8d5; 
   border-radius: 8rpx; 
   margin-bottom: 18rpx; 
   padding: 22rpx 24rpx; 
@@ -48,7 +48,7 @@ page {
 }
 
 .order-no { 
-  color: #bd548f; 
+  color: #8f8699; 
   font-size: 23rpx; 
 }
 
@@ -59,12 +59,12 @@ page {
 }
 
 .status.pending { 
-  background: #fce4ec; 
-  color: #e91e63; 
+  background: #fff0f6; 
+  color: #ff4d8d; 
 }
 .status.accepted { 
-  background: #f8bbd0; 
-  color: #e91e63; 
+  background: #f1eaf5; 
+  color: #ff4d8d; 
 }
 .status.in_progress { 
   background: #f3e5f5; 
@@ -80,7 +80,7 @@ page {
 }
 
 .service-name { 
-  color: #880e4f; 
+  color: #b03070; 
   font-size: 32rpx; 
   font-weight: 600; 
   margin: 16rpx 0 12rpx; 
@@ -93,7 +93,7 @@ page {
 }
 
 .review-btn, .submit-review-btn { 
-  background: linear-gradient(135deg, #e91e63, #f8bbd0); 
+  background: linear-gradient(135deg, #ff4d8d, #f1eaf5); 
   border-radius: 6rpx; 
   color: #fff; 
   font-size: 26rpx; 
@@ -124,8 +124,8 @@ page {
 }
 
 .review-result { 
-  background: #fce4ec; 
-  color: #c2185b; 
+  background: #fff0f6; 
+  color: #e0447e; 
   font-size: 25rpx; 
   line-height: 1.5; 
   margin-top: 18rpx; 
@@ -133,20 +133,20 @@ page {
 }
 
 .review-score { 
-  color: #e91e63; 
+  color: #ff4d8d; 
   display: block; 
   font-weight: 600; 
   margin-bottom: 6rpx; 
 }
 
 .review-form { 
-  border-top: 1rpx solid #f8bbd0; 
+  border-top: 1rpx solid #f1eaf5; 
   margin-top: 18rpx; 
   padding-top: 18rpx; 
 }
 
 .form-label { 
-  color: #bd548f; 
+  color: #8f8699; 
   display: block; 
   font-size: 24rpx; 
   margin-bottom: 10rpx; 
@@ -160,7 +160,7 @@ page {
 
 .star { 
   background: transparent; 
-  color: #f48fb1; 
+  color: #ffb8d5; 
   font-size: 46rpx; 
   height: 60rpx; 
   line-height: 60rpx; 
@@ -169,14 +169,14 @@ page {
 }
 
 .star.selected { 
-  color: #e91e63; 
+  color: #ff4d8d; 
 }
 
 textarea { 
   background: #fff8fa; 
-  border: 1rpx solid #f8bbd0; 
+  border: 1rpx solid #f1eaf5; 
   box-sizing: border-box; 
-  color: #880e4f; 
+  color: #b03070; 
   font-size: 27rpx; 
   height: 150rpx; 
   padding: 14rpx; 
@@ -191,9 +191,9 @@ textarea {
 }
 
 .cancel-btn { 
-  background: #f8bbd0; 
+  background: #f1eaf5; 
   border-radius: 6rpx; 
-  color: #e91e63; 
+  color: #ff4d8d; 
   font-size: 26rpx; 
   height: 66rpx; 
   line-height: 66rpx; 
@@ -205,7 +205,7 @@ textarea {
 }
 
 .empty { 
-  color: #bd548f; 
+  color: #8f8699; 
   font-size: 27rpx; 
   padding: 80rpx 0; 
   text-align: center; 

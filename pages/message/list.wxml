@@ -1,26 +1,38 @@
 <view class="page">
   <view class="quickbar">
-    <view class="quick-item" bindtap="goNotice">
+    <view class="quick-item" hover-class="tap-soft" hover-stay-time="80" bindtap="goNotice">
       <view class="quick-icon icon-pink">🔔</view>
       <text>通知</text>
     </view>
-    <view class="quick-item" bindtap="goCalendar">
+    <view class="quick-item" hover-class="tap-soft" hover-stay-time="80" bindtap="goCalendar">
       <view class="quick-icon icon-soft">📅</view>
       <text>日程</text>
     </view>
-    <view class="quick-item" bindtap="goOrders">
+    <view class="quick-item" hover-class="tap-soft" hover-stay-time="80" bindtap="goOrders">
       <view class="quick-icon icon-soft">💼</view>
       <text>订单</text>
     </view>
   </view>
 
   <view class="list">
-    <view wx:if="{{loading}}" class="empty">消息加载中</view>
+    <!-- 加载中：骨架屏 -->
+    <view wx:if="{{loading}}" class="skeleton">
+      <view class="sk-item" wx:for="{{[1,2,3]}}" wx:key="*this">
+        <view class="sk-avatar"></view>
+        <view class="sk-main">
+          <view class="sk-line sk-w55"></view>
+          <view class="sk-line sk-w80"></view>
+        </view>
+      </view>
+    </view>
+
     <view
       wx:for="{{list}}"
       wx:key="id"
       class="item"
       data-id="{{item.id}}"
+      hover-class="tap"
+      hover-stay-time="60"
       bindtap="goChat"
     >
       <view class="avatar">{{item.avatar}}</view>
@@ -36,6 +48,11 @@
       </view>
     </view>
 
-    <view wx:if="{{!loading && list.length === 0}}" class="empty">暂无消息</view>
+    <!-- 空态 -->
+    <view wx:if="{{!loading && list.length === 0}}" class="empty-state">
+      <text class="empty-ic">💬</text>
+      <text class="empty-title">暂无消息</text>
+      <text class="empty-sub">订单进度和陪护师的消息会出现在这里</text>
+    </view>
   </view>
 </view>

@@ -1,7 +1,7 @@
 page {
-  background: #fff5f8;
-  color: #2d1b2e;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: #f7f7fa;
+  color: #2b2430;
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
 }
 
 view, text, input, textarea, button, picker {
@@ -19,15 +19,15 @@ button::after {
   border: 0 !important;
 }
 
-/* 统一主题色变量（供组件使用）*/
+/* 统一主题色变量（医伴心途 · 粉色渐变）*/
 page {
-  --color-primary: #e91e63;
-  --color-primary-light: #f48fb1;
-  --color-primary-soft: #fce4ec;
-  --color-primary-bg: #f8bbd0;
-  --color-text: #2d1b2e;
-  --color-text-sub: #bd548f;
-  --color-text-mute: #c9a8b5;
-  --color-border: #f8bbd0;
-  --color-bg: #fff5f8;
+  --color-primary: #ff4d8d;
+  --color-primary-light: #ff9ec4;
+  --color-primary-soft: #fff0f6;
+  --color-primary-bg: #ffd9e8;
+  --color-text: #2b2430;
+  --color-text-sub: #8f8699;
+  --color-text-mute: #b7b0c2;
+  --color-border: #f1eaf5;
+  --color-bg: #f7f7fa;
 }

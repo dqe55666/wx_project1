@@ -11,7 +11,7 @@
         <text class="li-title">{{item.name}}  ·  {{item.level}}</text>
         <text class="li-sub">⭐ {{item.score}}  ·  服务 {{item.orders}} 次</text>
       </view>
-      <text class="v" style="color:#e91e63; font-weight:700;">¥{{item.price}}</text>
+      <text class="v" style="color:#ff4d8d; font-weight:700;">¥{{item.price}}</text>
     </view>
   </view>
 

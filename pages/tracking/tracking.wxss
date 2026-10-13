@@ -76,7 +76,7 @@ page {
   width: 18rpx;
 }
 
-.customer-dot { background: #e91e63; }
+.customer-dot { background: #ff4d8d; }
 .staff-dot { background: #00897b; }
 
 .location-name {

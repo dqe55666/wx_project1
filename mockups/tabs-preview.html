@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Tab 页面改造预览</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-font-smoothing:antialiased; }
+  body { font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;
+    background:#e9e9ef; padding:36px 20px; min-height:100vh; }
+  .title { text-align:center; font-size:20px; font-weight:800; color:#2b2430; margin-bottom:6px; }
+  .sub { text-align:center; font-size:12.5px; color:#837c92; margin-bottom:28px; }
+  .stage { display:flex; gap:22px; justify-content:center; flex-wrap:wrap; align-items:flex-start; }
+
+  .phone { width:292px; height:608px; background:#14121a; border-radius:40px; padding:9px; flex:none;
+    box-shadow:0 22px 50px rgba(30,20,50,.3), inset 0 0 0 2px #2b2733; }
+  .screen { position:relative; width:100%; height:100%; border-radius:32px; overflow:hidden; background:#f7f7fa;
+    display:flex; flex-direction:column; }
+  .cap { text-align:center; font-size:13px; font-weight:800; color:#ff4d8d; margin-top:12px; }
+  .cap small { display:block; font-weight:500; color:#a49db0; font-size:11px; margin-top:3px; }
+  .col { display:flex; flex-direction:column; }
+
+  .body { flex:1; overflow:hidden; }
+
+  /* 通用 */
+  .card { background:#fff; border:1px solid #f1eaf5; border-radius:14px; box-shadow:0 3px 10px rgba(255,77,141,.06); }
+  .row { display:flex; align-items:center; justify-content:space-between; padding:8px 0; border-bottom:1px solid #f4f0f7; }
+  .row:last-child { border-bottom:0; }
+  .k { color:#7e7689; font-size:13px; } .v { color:#23202a; font-size:13px; } .v.b { font-weight:800; }
+  .btn { flex:1; height:36px; line-height:36px; text-align:center; border-radius:18px; font-size:13.5px; font-weight:800; }
+  .btn.ghost { border:1px solid #ff4d8d; color:#ff4d8d; background:#fff; }
+  .btn.solid { background:linear-gradient(135deg,#ff5f9e,#ff4d8d); color:#fff; }
+
+  /* —— 陪诊中 —— */
+  .v-topbar { display:flex; align-items:center; justify-content:space-between; padding:14px 15px; background:#fff; }
+  .v-city { display:flex; align-items:center; gap:4px; font-size:16px; font-weight:800; color:#23202a; }
+  .v-city .c { color:#ff4d8d; font-size:12px; }
+  .v-search { width:34px; height:34px; border-radius:11px; background:linear-gradient(145deg,#fff0f6,#ffd9e8);
+    display:flex; align-items:center; justify-content:center; font-size:15px; }
+  .v-quick { display:flex; background:#fff; padding:14px 8px 16px; }
+  .v-qa { flex:1; display:flex; flex-direction:column; align-items:center; gap:7px; }
+  .v-qa .i { width:52px; height:52px; border-radius:16px; display:flex; align-items:center; justify-content:center; font-size:23px; }
+  .v-qa .n { font-size:12.5px; font-weight:700; color:#23202a; }
+  .v-tabs { display:flex; background:#fff; border-bottom:1px solid #f4f0f7; padding:0 12px; }
+  .v-tab { flex:1; text-align:center; padding:12px 0; font-size:14.5px; color:#9a94a4; font-weight:600; position:relative; }
+  .v-tab.on { color:#ff4d8d; font-weight:800; }
+  .v-tab.on::after { content:""; position:absolute; left:50%; bottom:5px; transform:translateX(-50%); width:26px; height:4px; background:#ff4d8d; border-radius:3px; }
+  .v-body { padding:12px 14px; }
+  .v-card { background:#fff; border:1px solid #f1eaf5; border-radius:14px; padding:15px 15px 0; box-shadow:0 3px 10px rgba(255,77,141,.06); }
+  .v-head { display:flex; align-items:center; justify-content:space-between; padding-bottom:11px; border-bottom:1px dashed #eee5f2; }
+  .v-no { font-size:14.5px; font-weight:800; color:#23202a; }
+  .v-tag { font-size:11.5px; padding:3px 8px; border-radius:10px; background:linear-gradient(135deg,#ffd54f,#ffb300); color:#fff; font-weight:700; }
+  .v-foot { display:flex; gap:10px; padding:13px 15px 15px; margin:0 -15px; border-top:1px dashed #eee5f2; }
+
+  /* —— 消息 —— */
+  .m-quick { display:flex; background:#fff; padding:15px 12px; gap:10px; }
+  .m-qi { flex:1; display:flex; flex-direction:column; align-items:center; gap:7px; font-size:12.5px; font-weight:700; color:#23202a; }
+  .m-ic { width:54px; height:54px; border-radius:17px; display:flex; align-items:center; justify-content:center; font-size:23px; }
+  .m-pink { background:linear-gradient(145deg,#ff5f9e,#ff4d8d); box-shadow:0 5px 11px rgba(255,77,141,.3); }
+  .m-soft { background:linear-gradient(145deg,#fff0f6,#ffd9e8); }
+  .m-list { padding:12px 14px; display:flex; flex-direction:column; gap:11px; }
+  .m-item { display:flex; align-items:center; gap:12px; background:#fff; border:1px solid #f1eaf5; border-radius:14px; padding:14px 15px; box-shadow:0 3px 10px rgba(255,77,141,.06); }
+  .m-av { width:50px; height:50px; border-radius:15px; flex:none; background:linear-gradient(145deg,#fff0f6,#ffd9e8);
+    color:#ff4d8d; display:flex; align-items:center; justify-content:center; font-size:21px; font-weight:800; }
+  .m-meta { flex:1; min-width:0; }
+  .m-l1 { display:flex; justify-content:space-between; gap:6px; }
+  .m-name { font-size:15.5px; font-weight:800; color:#23202a; }
+  .m-time { font-size:11px; color:#a49db0; }
+  .m-l2 { display:flex; justify-content:space-between; gap:6px; margin-top:4px; align-items:center; }
+  .m-desc { font-size:12.5px; color:#7e7689; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; }
+  .m-badge { min-width:18px; height:18px; border-radius:9px; background:linear-gradient(135deg,#ff5f9e,#ff4d8d); color:#fff;
+    font-size:11px; font-weight:800; line-height:18px; text-align:center; padding:0 5px; }
+
+  /* —— 语音识别 —— */
+  .vc-page { padding:20px 16px; display:flex; flex-direction:column; align-items:center; }
+  .vc-hero { width:100%; background:linear-gradient(160deg,#ff5f9e,#ff4d8d 60%,#ff74ab); border-radius:18px;
+    padding:26px 20px; text-align:center; color:#fff; box-shadow:0 8px 18px rgba(255,77,141,.28); margin-bottom:34px; }
+  .vc-hero .ic { font-size:40px; } .vc-hero .t { display:block; font-size:23px; font-weight:800; margin:6px 0 4px; }
+  .vc-hero .s { display:block; font-size:13px; opacity:.92; }
+  .vc-rec { width:190px; height:190px; border-radius:50%; background:linear-gradient(150deg,#ff5f9e,#ff4d8d);
+    color:#fff; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px;
+    font-size:15px; font-weight:800; box-shadow:0 12px 26px rgba(255,77,141,.34); }
+  .vc-rec .ri { font-size:46px; }
+  .vc-status { font-size:14px; color:#7e7689; font-weight:600; margin-top:20px; }
+
+  /* —— 我的 —— */
+  .me-header { position:relative; padding:0 16px 34px; }
+  .me-bg { position:absolute; inset:0 0 -18px 0; background:linear-gradient(160deg,#ff5f9e,#ff4d8d 55%,#ff74ab); border-radius:0 0 20px 20px; }
+  .me-user { position:relative; z-index:2; display:flex; align-items:center; gap:12px; padding-top:22px; }
+  .me-av { width:60px; height:60px; border-radius:18px; flex:none; background:rgba(255,255,255,.25); border:2px solid rgba(255,255,255,.5);
+    color:#fff; display:flex; align-items:center; justify-content:center; font-size:28px; }
+  .me-info { flex:1; } .me-name { display:block; color:#fff; font-size:19px; font-weight:800; }
+  .me-lv { display:block; color:rgba(255,255,255,.85); font-size:12px; margin-top:4px; }
+  .me-login { flex:none; padding:0 14px; height:32px; line-height:32px; background:#fff; color:#ff4d8d; font-size:12.5px; font-weight:800; border-radius:16px; }
+  .me-order { position:relative; z-index:2; margin:18px 16px 0; background:#fff; border-radius:14px; padding:15px 14px; box-shadow:0 6px 16px rgba(40,20,60,.08); }
+  .me-oh { display:flex; align-items:center; justify-content:space-between; margin-bottom:13px; }
+  .me-ot { font-size:16px; font-weight:800; color:#23202a; } .me-oa { font-size:12.5px; color:#ff4d8d; font-weight:700; }
+  .me-grid { display:flex; }
+  .me-gi { flex:1; display:flex; flex-direction:column; align-items:center; gap:6px; }
+  .me-gi .ic { font-size:26px; } .me-gi text { font-size:11.5px; color:#4d4759; font-weight:600; }
+  .me-menu { margin:16px 16px 0; background:#fff; border-radius:14px; padding:0 14px; box-shadow:0 6px 16px rgba(40,20,60,.06); }
+  .me-mi { display:flex; align-items:center; gap:11px; padding:14px 0; border-bottom:1px solid #f4f0f7; }
+  .me-mi:last-child { border-bottom:0; }
+  .me-mi .ic { font-size:20px; width:26px; text-align:center; }
+  .me-mi .nm { flex:1; font-size:15px; font-weight:600; color:#23202a; }
+  .me-mi .ar { color:#c5becf; font-size:18px; }
+</style>
+</head>
+<body>
+  <div class="title">Tab 主页面改造预览</div>
+  <div class="sub">陪诊中 · 消息 · 语音识别 · 我的 —— 已按首页统一标准（墨刀粉 + 适老字号 + 按下凹陷/变色反馈）</div>
+
+  <div class="stage">
+
+    <!-- 陪诊中 -->
+    <div class="col">
+      <div class="phone"><div class="screen">
+        <div class="v-topbar">
+          <div class="v-city">张家界 <span class="c">▾</span></div>
+          <div class="v-search">🔍</div>
+        </div>
+        <div class="v-quick">
+          <div class="v-qa"><div class="i" style="background:linear-gradient(145deg,#fff0f6,#ffd9e8)">🩺</div><div class="n">新建陪诊</div></div>
+          <div class="v-qa"><div class="i" style="background:linear-gradient(145deg,#fff7e9,#ffe9c4)">👩‍⚕️</div><div class="n">陪诊师</div></div>
+          <div class="v-qa"><div class="i" style="background:linear-gradient(145deg,#ecf5ff,#d5e8fe)">🧾</div><div class="n">服务类型</div></div>
+          <div class="v-qa"><div class="i" style="background:linear-gradient(145deg,#f3edff,#e3d7fb)">📑</div><div class="n">我的订单</div></div>
+        </div>
+        <div class="v-tabs">
+          <div class="v-tab on">进行中</div>
+          <div class="v-tab">已完成</div>
+        </div>
+        <div class="v-body">
+          <div class="v-card">
+            <div class="v-head">
+              <span class="v-no">订单编号 20261015A</span>
+              <span class="v-tag">VIP陪诊 ⚡</span>
+            </div>
+            <div class="row"><span class="k">就诊医院</span><span class="v b">张家界市人民医院</span></div>
+            <div class="row"><span class="k">地址</span><span class="v">永定区古庸路 192 号</span></div>
+            <div class="row"><span class="k">预约时间</span><span class="v">2026-10-15 09:00</span></div>
+            <div class="row"><span class="k">陪诊师</span><span class="v">待接单</span></div>
+            <div class="v-foot">
+              <div class="btn ghost">结束陪诊</div>
+              <div class="btn solid">加时</div>
+            </div>
+          </div>
+        </div>
+      </div></div>
+      <div class="cap">陪诊中<small>订单卡片 · tabs 切换 · 按钮</small></div>
+    </div>
+
+    <!-- 消息 -->
+    <div class="col">
+      <div class="phone"><div class="screen">
+        <div class="m-quick">
+          <div class="m-qi"><div class="m-ic m-pink">🔔</div>通知</div>
+          <div class="m-qi"><div class="m-ic m-soft">📅</div>日程</div>
+          <div class="m-qi"><div class="m-ic m-soft">💼</div>订单</div>
+        </div>
+        <div class="m-list">
+          <div class="m-item">
+            <div class="m-av">知</div>
+            <div class="m-meta">
+              <div class="m-l1"><span class="m-name">系统通知</span><span class="m-time"></span></div>
+              <div class="m-l2"><span class="m-desc">本机共有 3 条预约记录</span></div>
+            </div>
+          </div>
+          <div class="m-item">
+            <div class="m-av">护</div>
+            <div class="m-meta">
+              <div class="m-l1"><span class="m-name">王护士</span><span class="m-time">10-15 09:20</span></div>
+              <div class="m-l2"><span class="m-desc">我已经到楼下了，马上上来</span><span class="m-badge">1</span></div>
+            </div>
+          </div>
+          <div class="m-item">
+            <div class="m-av">单</div>
+            <div class="m-meta">
+              <div class="m-l1"><span class="m-name">订单通知</span><span class="m-time">10-14 18:00</span></div>
+              <div class="m-l2"><span class="m-desc">服务已完成 · 张家界市中医院</span></div>
+            </div>
+          </div>
+        </div>
+      </div></div>
+      <div class="cap">消息<small>消息列表 · 头像 · 未读角标</small></div>
+    </div>
+
+    <!-- 语音识别 -->
+    <div class="col">
+      <div class="phone"><div class="screen">
+        <div class="vc-page">
+          <div class="vc-hero">
+            <div class="ic">🎙️</div>
+            <span class="t">语音识别</span>
+            <span class="s">用语音快速记录护理需求</span>
+          </div>
+          <div class="vc-rec"><span class="ri">🎤</span>开始录音</div>
+          <div class="vc-status">点击按钮开始录音</div>
+        </div>
+      </div></div>
+      <div class="cap">语音识别<small>大号录音圆钮 · 状态提示</small></div>
+    </div>
+
+    <!-- 我的 -->
+    <div class="col">
+      <div class="phone"><div class="screen">
+        <div class="me-header">
+          <div class="me-bg"></div>
+          <div class="me-user">
+            <div class="me-av">👤</div>
+            <div class="me-info">
+              <span class="me-name">未登录</span>
+              <span class="me-lv">游客模式 · 授权后可展示昵称和头像</span>
+            </div>
+            <div class="me-login">微信授权登录</div>
+          </div>
+        </div>
+        <div class="me-order">
+          <div class="me-oh"><span class="me-ot">我的订单</span><span class="me-oa">全部订单 ›</span></div>
+          <div class="me-grid">
+            <div class="me-gi"><div class="ic">💳</div><text>待接单 1</text></div>
+            <div class="me-gi"><div class="ic">🩺</div><text>进行中 0</text></div>
+            <div class="me-gi"><div class="ic">⭐</div><text>待评价 1</text></div>
+            <div class="me-gi"><div class="ic">↩️</div><text>退款</text></div>
+          </div>
+        </div>
+        <div class="me-menu">
+          <div class="me-mi"><span class="ic">👩‍⚕️</span><span class="nm">陪诊师入驻</span><span class="ar">›</span></div>
+          <div class="me-mi"><span class="ic">🛍️</span><span class="nm">商城订单</span><span class="ar">›</span></div>
+          <div class="me-mi"><span class="ic">🎧</span><span class="nm">在线客服</span><span class="ar">›</span></div>
+          <div class="me-mi"><span class="ic">⚙️</span><span class="nm">设置</span><span class="ar">›</span></div>
+        </div>
+      </div></div>
+      <div class="cap">我的<small>渐变头部 · 订单宫格 · 菜单</small></div>
+    </div>
+
+  </div>
+</body>
+</html>

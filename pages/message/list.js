@@ -52,24 +52,19 @@ Page({
     }
   },
 
-  goChat(e) {
-    const id = e.currentTarget.dataset.id
+  goChat(e) {    const id = e.currentTarget.dataset.id
     wx.navigateTo({ url: '/pages/message/chat?id=' + id })
   },
 
-  goNotice() {
-    wx.navigateTo({ url: '/pages/message/chat?id=system' })
+  goNotice() {    wx.navigateTo({ url: '/pages/message/chat?id=system' })
   },
 
-  goCalendar() {
-    wx.switchTab({ url: '/pages/visit/list', fail: () => wx.navigateTo({ url: '/pages/visit/list' }) })
+  goCalendar() {    wx.switchTab({ url: '/pages/visit/list', fail: () => wx.navigateTo({ url: '/pages/visit/list' }) })
   },
 
-  goMall() {
-    wx.switchTab({ url: '/pages/mall/index', fail: () => wx.navigateTo({ url: '/pages/mall/index' }) })
+  goMall() {    wx.switchTab({ url: '/pages/mall/index', fail: () => wx.navigateTo({ url: '/pages/mall/index' }) })
   },
 
-  goOrders() {
-    wx.navigateTo({ url: '/pages/mine/orders' })
+  goOrders() {    wx.navigateTo({ url: '/pages/mine/orders' })
   }
 })

@@ -1,55 +1,68 @@
-const app = getApp()
-const { saveCustomerOrder } = require('../../utils/api')
+const { request } = require('../../utils/api')
 
 Page({
   data: {
+    statusBarHeight: 20,
+    menuSafeRight: 0,
+    cityName: '定位中',
+    keyword: '',
     hospitals: [],
-    services: [],
-    selectedHospitalIndex: 0,
-    selectedServiceIndex: 0,
-    locationReady: false,
     hospitalLoading: false,
     locating: false,
-    submitting: false,
-    form: {
-      patientName: '',
-      patientPhone: '',
-      addressDetail: '',
-      appointmentDate: '',
-      appointmentTime: '09:00',
-      note: ''
-    },
-    currentAddress: '',
-    userLocation: null
+    // 本期优秀陪护师（6 位）——展示顺序 = 数组顺序，调整排序只需改这里的排列
+    nurses: [
+      { id: 1, name: '肖雯遥', avatar: '/assets/images/nurses/肖雯遥.jpg' },
+      { id: 2, name: '王一茜', avatar: '/assets/images/nurses/王一茜.jpg' },
+      { id: 3, name: '彭彦博', avatar: '/assets/images/nurses/彭彦博.jpg' },
+      { id: 4, name: '方嘉倩', avatar: '/assets/images/nurses/方嘉倩.jpg' },
+      { id: 5, name: '胡冰冰', avatar: '/assets/images/nurses/胡冰冰.jpg' },
+      { id: 6, name: '谢远杰', avatar: '/assets/images/nurses/谢远杰.jpg' }
+    ]
   },
 
   onLoad() {
-    this.setData({
-      'form.appointmentDate': this.formatDate(new Date())
-    })
-    this.loadServices()
+    this.setupNavMetrics()
     this.loadHospitals()
     this.refreshLocation()
   },
 
-  request(path, options = {}) {
-    return new Promise((resolve, reject) => {
-      wx.request({
-        url: `${app.globalData.apiBaseUrl}${path}`,
-        method: options.method || 'GET',
-        data: options.data,
-        header: {
-          'content-type': 'application/json'
-        },
-        success: (res) => {
-          if (res.statusCode >= 200 && res.statusCode < 300) {
-            resolve(res.data)
-            return
-          }
-          reject(res.data)
-        },
-        fail: reject
-      })
+  // 计算状态栏高度与右上角胶囊避让宽度（自定义导航栏）
+  setupNavMetrics() {
+    const info = wx.getWindowInfo ? wx.getWindowInfo() : wx.getSystemInfoSync()
+    let menuSafeRight = 0
+    try {
+      const menu = wx.getMenuButtonBoundingClientRect()
+      if (menu && menu.left) {
+        menuSafeRight = Math.round(info.windowWidth - menu.left + 6)
+      }
+    } catch (err) {
+      menuSafeRight = 96
+    }
+    this.setData({
+      statusBarHeight: info.statusBarHeight || 20,
+      menuSafeRight
+    })
+  },
+
+  onCityTap() {
+    this.refreshLocation()
+  },
+
+  refreshLocation() {
+    if (this.data.locating) return
+    this.setData({ locating: true })
+    wx.getLocation({
+      type: 'gcj02',
+      success: (res) => {
+        const userLocation = { latitude: res.latitude, longitude: res.longitude }
+        this.setData({ userLocation })
+        this.loadHospitals(userLocation)
+        this.reverseGeocode(userLocation)
+      },
+      fail: () => {
+        this.setData({ locating: false, cityName: '定位失败' })
+        wx.showToast({ title: '未授权定位', icon: 'none' })
+      }
     })
   },
 
@@ -57,213 +70,75 @@ Page({
     this.setData({ hospitalLoading: true })
     try {
       const query = location ? `?lat=${location.latitude}&lng=${location.longitude}` : ''
-      console.info('[hospitals] request', query || 'without location')
-      const hospitals = await this.request(`/api/hospitals${query}`)
-      console.info('[hospitals] response count', hospitals.length)
-      if (!hospitals.length && this.data.hospitals.length) {
-        wx.showToast({ title: '定位后暂无匹配单位，保留原列表', icon: 'none' })
-        return
-      }
+      const hospitals = await request(`/api/hospitals${query}`)
       this.setData({
         hospitals: hospitals.map((item) => ({
           ...item,
           displayDistance: this.formatDistance(item.distance_km)
-        })),
-        selectedHospitalIndex: 0
+        }))
       })
     } catch (err) {
-      console.error('[hospitals] failed', err)
-      wx.showToast({ title: '医院列表加载失败', icon: 'none' })
+      // 静默失败，页面保留空态
     } finally {
       this.setData({ hospitalLoading: false })
     }
   },
 
-  async loadServices() {
+  async reverseGeocode(location) {
     try {
-      const services = await this.request('/api/services')
+      const result = await request(`/api/location/regeo?lat=${location.latitude}&lng=${location.longitude}`)
+      const address = result.formatted_address || ''
       this.setData({
-        services: services.map((item) => ({
-          ...item,
-          displayPrice: this.formatPrice(item.price_cents)
-        }))
+        cityName: this.extractCity(address) || '当前位置',
+        locating: false
       })
     } catch (err) {
-      wx.showToast({ title: '服务项目加载失败', icon: 'none' })
+      this.setData({ cityName: '当前位置', locating: false })
     }
   },
 
-  refreshLocation() {
-    this.setData({ locating: true })
-    wx.getLocation({
-      type: 'gcj02',
-      success: (res) => {
-        const userLocation = {
-          latitude: res.latitude,
-          longitude: res.longitude
-        }
-        this.setData({
-          userLocation,
-          locationReady: true
-        })
-        this.loadHospitals(userLocation)
-        this.reverseGeocodeLocation(userLocation)
-      },
-      fail: () => {
-        this.setData({
-          locationReady: false,
-          locating: false
-        })
-        wx.showToast({ title: '未授权定位，将不显示距离', icon: 'none' })
-      }
-    })
-  },
-
-  async reverseGeocodeLocation(location) {
-    try {
-      const result = await this.request(`/api/location/regeo?lat=${location.latitude}&lng=${location.longitude}`)
-      const currentAddress = result.formatted_address || `${location.latitude},${location.longitude}`
-      const updates = {
-        currentAddress,
-        locating: false
-      }
-      if (!this.data.form.addressDetail.trim() && result.formatted_address) {
-        updates['form.addressDetail'] = result.formatted_address
-      }
-      this.setData(updates)
-    } catch (err) {
-      console.error('[location] regeo failed', err)
-      this.setData({
-        currentAddress: `${location.latitude},${location.longitude}`,
-        locating: false
-      })
-      wx.showToast({ title: '地址解析失败，已获取坐标', icon: 'none' })
-    }
-  },
-
-  onHospitalChange(e) {
-    this.setData({ selectedHospitalIndex: Number(e.detail.value) })
-  },
-
-  openOrdersPage() {
-    wx.navigateTo({ url: '/pages/orders/orders' })
-  },
-
-  goCreateVisit() {
-    wx.navigateTo({ url: '/pages/visit/create' })
-  },
-
-  goVisitList() {
-    wx.switchTab({ url: '/pages/visit/list', fail: () => wx.navigateTo({ url: '/pages/visit/list' }) })
-  },
-
-  goMall() {
-    wx.switchTab({ url: '/pages/mall/index', fail: () => wx.navigateTo({ url: '/pages/mall/index' }) })
-  },
-
-  goMessage() {
-    wx.switchTab({ url: '/pages/message/list', fail: () => wx.navigateTo({ url: '/pages/message/list' }) })
-  },
-
-  goBottle() {
-    wx.navigateTo({ url: '/pages/bottle/bottle' })
-  },
-
-  onServiceChange(e) {
-    this.setData({ selectedServiceIndex: Number(e.detail.value) })
-  },
-
-  onFieldInput(e) {
-    const field = e.currentTarget.dataset.field
-    this.setData({
-      [`form.${field}`]: e.detail.value
-    })
-  },
-
-  formatPrice(priceCents) {
-    return `¥${(priceCents / 100).toFixed(2)}`
+  extractCity(address) {
+    if (!address) return ''
+    const match = address.match(/(.{2,5}?(?:市|州|地区|盟))/)
+    if (match) return match[1]
+    return address.slice(0, 4)
   },
 
   formatDistance(distance) {
-    if (distance === null || distance === undefined) {
-      return '距离待定位'
-    }
-    return `${distance} km`
+    if (distance === null || distance === undefined) return ''
+    return `${distance}km`
   },
 
-  formatDate(date) {
-    const year = date.getFullYear()
-    const month = `${date.getMonth() + 1}`.padStart(2, '0')
-    const day = `${date.getDate()}`.padStart(2, '0')
-    return `${year}-${month}-${day}`
+  onKeywordInput(e) {
+    this.setData({ keyword: e.detail.value })
   },
 
-  validateOrder() {
-    const { form, hospitals, services } = this.data
-    if (!hospitals.length) return '请选择医院单位'
-    if (!services.length) return '请选择服务项目'
-    if (!form.patientName.trim()) return '请填写患者姓名'
-    if (!/^[0-9+()\- ]{6,30}$/.test(form.patientPhone.trim())) return '请填写正确的联系电话'
-    if (!form.addressDetail.trim()) return '请填写服务地址'
-    if (!form.appointmentDate || !form.appointmentTime) return '请选择预约时间'
-    if (new Date(`${form.appointmentDate}T${form.appointmentTime}:00`).getTime() <= Date.now()) {
-      return '预约时间需晚于当前时间'
-    }
-    return ''
-  },
-
-  async submitOrder() {
-    const message = this.validateOrder()
-    if (message) {
-      wx.showToast({ title: message, icon: 'none' })
+  onSearchTap() {    const keyword = (this.data.keyword || '').trim()
+    if (!keyword) {
+      wx.showToast({ title: '请输入搜索内容', icon: 'none' })
       return
     }
+    wx.showToast({ title: '搜索功能开发中', icon: 'none' })
+  },
 
-    const {
-      form,
-      hospitals,
-      services,
-      selectedHospitalIndex,
-      selectedServiceIndex,
-      userLocation
-    } = this.data
-    const hospital = hospitals[selectedHospitalIndex]
-    const service = services[selectedServiceIndex]
-    const payload = {
-      hospital_id: hospital.id,
-      service_item_id: service.id,
-      patient_name: form.patientName.trim(),
-      patient_phone: form.patientPhone.trim(),
-      appointment_time: `${form.appointmentDate}T${form.appointmentTime}:00+08:00`,
-      address_detail: form.addressDetail.trim(),
-      latitude: userLocation ? userLocation.latitude : null,
-      longitude: userLocation ? userLocation.longitude : null,
-      note: form.note.trim() || null
-    }
+  goCreateVisit() {    wx.navigateTo({ url: '/pages/visit/create' })
+  },
 
-    this.setData({ submitting: true })
-    try {
-      const order = await this.request('/api/orders', {
-        method: 'POST',
-        data: payload
-      })
-      saveCustomerOrder(order)
-      wx.showModal({
-        title: '预约已提交',
-        content: `订单号：${order.order_no}`,
-        showCancel: false,
-        success: () => wx.navigateTo({ url: '/pages/orders/orders' })
-      })
-      this.setData({
-        'form.patientName': '',
-        'form.patientPhone': '',
-        'form.addressDetail': '',
-        'form.note': ''
-      })
-    } catch (err) {
-      wx.showToast({ title: err.detail || '提交失败，请稍后重试', icon: 'none' })
-    } finally {
-      this.setData({ submitting: false })
-    }
+  goPackage() {    wx.showToast({ title: '套餐功能开发中', icon: 'none' })
+  },
+
+  goMall() {    wx.navigateTo({ url: '/pages/mall/index' })
+  },
+
+  goBottle() {    wx.navigateTo({ url: '/pages/bottle/bottle' })
+  },
+
+  goNurses() {    wx.showToast({ title: '陪护师列表开发中', icon: 'none' })
+  },
+
+  openOrdersPage() {    wx.navigateTo({ url: '/pages/orders/orders' })
+  },
+
+  onHospitalTap() {    wx.navigateTo({ url: '/pages/visit/create' })
   }
 })

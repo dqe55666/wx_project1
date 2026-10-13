@@ -2,7 +2,7 @@
   <view class="card" wx:for="{{list}}" wx:key="id"
         data-i="{{index}}" bindtap="select">
     <view class="row">
-      <text class="k" style="color:#2d1b2e; font-weight:600;">
+      <text class="k" style="color:#23202a; font-weight:600;">
         {{item.name}}  {{item.phone}}
         <text class="tag solid" style="margin-left:12rpx; font-size:22rpx; padding:2rpx 14rpx;">{{item.tag}}</text>
       </text>

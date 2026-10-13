@@ -17,7 +17,7 @@
   border-radius: 32rpx;
   padding: 16rpx 24rpx;
   font-size: 28rpx;
-  color: #2d1b2e;
+  color: #2b2430;
   min-height: 44rpx;
 }
 
@@ -39,7 +39,7 @@
 
 .list-item .li-main { flex: 1; min-width: 0; }
 
-.li-title { color: #2d1b2e; font-size: 28rpx; }
+.li-title { color: #2b2430; font-size: 28rpx; }
 .li-sub { color: #999; font-size: 24rpx; margin-top: 4rpx; display: block; }
 
 .empty {

@@ -3,14 +3,42 @@
   "libVersion": "3.16.2",
   "packOptions": {
     "ignore": [
-      { "type": "folder", "value": "backend" },
-      { "type": "folder", "value": ".venv" },
-      { "type": "folder", "value": ".git" },
-      { "type": "folder", "value": ".vs" },
-      { "type": "folder", "value": ".cloudbase" },
-      { "type": "folder", "value": ".trunk" },
-      { "type": "file", "value": "1.py" },
-      { "type": "file", "value": "README.md" }
+      {
+        "type": "folder",
+        "value": "backend"
+      },
+      {
+        "type": "folder",
+        "value": ".venv"
+      },
+      {
+        "type": "folder",
+        "value": ".git"
+      },
+      {
+        "type": "folder",
+        "value": ".vs"
+      },
+      {
+        "type": "folder",
+        "value": ".cloudbase"
+      },
+      {
+        "type": "folder",
+        "value": ".trunk"
+      },
+      {
+        "type": "folder",
+        "value": "mockups"
+      },
+      {
+        "type": "file",
+        "value": "1.py"
+      },
+      {
+        "type": "file",
+        "value": "README.md"
+      }
     ],
     "include": []
   },

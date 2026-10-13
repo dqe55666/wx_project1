@@ -35,7 +35,7 @@
   <view class="card">
     <view class="row" bindtap="toggleDefault">
       <text class="k">设为默认地址</text>
-      <switch checked="{{default}}" color="#e91e63" />
+      <switch checked="{{default}}" color="#ff4d8d" />
     </view>
   </view>
 

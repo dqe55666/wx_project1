@@ -1,103 +1,131 @@
-<scroll-view class="scrollarea" scroll-y type="list">
-  <view class="page">
-    <view class="topbar">
-      <view>
-        <text class="title">护理上门预约</text>
-        <text class="subtitle">选择医院单位与服务项目，提交后等待陪护人员接单</text>
+<view class="page">
+  <!-- 粉色头部 -->
+  <view class="header" style="padding-top:{{statusBarHeight}}px;">
+    <view class="topbar" style="padding-right:{{menuSafeRight}}px;">
+      <view class="city" hover-class="tap-dim" hover-stay-time="80" bindtap="onCityTap">
+        <text class="city-name">{{cityName}}</text>
+        <view class="caret"></view>
       </view>
-      <view class="top-actions">
-        <button class="orders-btn" bindtap="openOrdersPage">我的预约</button>
-        <button class="location-btn" loading="{{locating}}" disabled="{{locating}}" bindtap="refreshLocation">定位</button>
+      <view class="searchbar">
+        <text class="search-ic">🔍</text>
+        <input
+          class="search-input"
+          value="{{keyword}}"
+          bindinput="onKeywordInput"
+          confirm-type="search"
+          bindconfirm="onSearchTap"
+          placeholder="搜索服务"
+          placeholder-class="search-ph"
+        />
+        <view class="search-btn" hover-class="tap-dim" hover-stay-time="80" catchtap="onSearchTap">搜索</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 内容区 -->
+  <view class="content">
+
+    <!-- 服务卡片 -->
+    <view class="services anim" style="animation-delay:0.02s;">
+      <view class="svc svc-day" hover-class="tap" hover-stay-time="80" bindtap="goCreateVisit">
+        <view class="svc-tag day">最低318元/次</view>
+        <text class="svc-name day">全天陪诊</text>
+        <text class="svc-sub">全程包接送</text>
+        <view class="svc-go">立即体验</view>
+        <text class="svc-wm">🚑</text>
+      </view>
+      <view class="svc-col">
+        <view class="svc svc-vip" hover-class="tap" hover-stay-time="80" bindtap="goCreateVisit">
+          <view class="svc-tag vip">最低338元/次</view>
+          <view class="svc-line">
+            <text class="svc-name vip">VIP陪诊</text>
+            <text class="svc-mini vip">包接送</text>
+          </view>
+          <text class="svc-wm sm">👑</text>
+        </view>
+        <view class="svc svc-half" hover-class="tap" hover-stay-time="80" bindtap="goCreateVisit">
+          <view class="svc-tag half">最低298元/次</view>
+          <view class="svc-line">
+            <text class="svc-name half">半天陪诊</text>
+            <text class="svc-mini half">包接送</text>
+          </view>
+          <text class="svc-wm sm">💙</text>
+        </view>
       </view>
     </view>
 
-    <view wx:if="{{currentAddress}}" class="location-strip">
-      <text class="location-label">当前位置</text>
-      <text class="location-address">{{currentAddress}}</text>
-    </view>
-
-    <view class="quick-grid">
-      <view class="quick-item" bindtap="goCreateVisit">
-        <view class="qi-icon" style="background:linear-gradient(135deg,#ffe4ec,#f8bbd0);">🩺</view>
-        <text class="qi-name">新建陪诊</text>
+    <!-- 快捷入口 -->
+    <view class="quick anim" style="animation-delay:0.08s;">
+      <view class="quick-item" hover-class="tap" hover-stay-time="80" bindtap="goCreateVisit">
+        <view class="quick-ic q-order"><text class="qi-emoji">💉</text></view>
+        <text class="qi-name">立即下单</text>
       </view>
-      <view class="quick-item" bindtap="goVisitList">
-        <view class="qi-icon" style="background:linear-gradient(135deg,#fff3e0,#ffe0b2);">📋</view>
-        <text class="qi-name">陪诊中</text>
+      <view class="quick-item" hover-class="tap" hover-stay-time="80" bindtap="goPackage">
+        <view class="quick-ic q-pkg"><text class="qi-emoji">🎁</text></view>
+        <text class="qi-name">套餐</text>
       </view>
-      <view class="quick-item" bindtap="goMessage">
-        <view class="qi-icon" style="background:linear-gradient(135deg,#e1f5fe,#81d4fa);">💬</view>
-        <text class="qi-name">消息</text>
+      <view class="quick-item" hover-class="tap" hover-stay-time="80" bindtap="goMall">
+        <view class="quick-ic q-mall"><text class="qi-emoji">🛍️</text></view>
+        <text class="qi-name">商城</text>
       </view>
-      <view class="quick-item" bindtap="goBottle">
-        <view class="qi-icon" style="background:#e8f5e9;">🍾</view>
+      <view class="quick-item" hover-class="tap" hover-stay-time="80" bindtap="goBottle">
+        <view class="quick-ic q-bottle"><text class="qi-emoji">🍾</text></view>
         <text class="qi-name">漂流瓶</text>
       </view>
     </view>
 
-    <view class="panel">
-      <view class="section-title">医院单位</view>
-      <picker mode="selector" range="{{hospitals}}" range-key="name" value="{{selectedHospitalIndex}}" bindchange="onHospitalChange">
-        <view class="picker-field">
-          <block wx:if="{{hospitals.length}}">
-            <text>{{hospitals[selectedHospitalIndex].name}}</text>
-            <text class="muted">{{hospitals[selectedHospitalIndex].displayDistance}}</text>
-          </block>
-          <text wx:elif="{{hospitalLoading}}" class="muted">医院单位加载中</text>
-          <text wx:else class="muted">暂无可选医院单位</text>
-        </view>
-      </picker>
-      <view wx:if="{{hospitals.length}}" class="hint">{{hospitals[selectedHospitalIndex].address}}</view>
-    </view>
-
-    <view class="panel">
-      <view class="section-title">服务项目</view>
-      <picker mode="selector" range="{{services}}" range-key="name" value="{{selectedServiceIndex}}" bindchange="onServiceChange">
-        <view class="picker-field">
-          <block wx:if="{{services.length}}">
-            <text>{{services[selectedServiceIndex].name}}</text>
-            <text class="muted">{{services[selectedServiceIndex].displayPrice}}</text>
-          </block>
-          <text wx:else class="muted">暂无服务项目</text>
-        </view>
-      </picker>
-      <view wx:if="{{services.length}}" class="hint">{{services[selectedServiceIndex].description}}</view>
-    </view>
-
-    <view class="panel">
-      <view class="section-title">预约信息</view>
-      <view class="field">
-        <text class="label">患者姓名</text>
-        <input value="{{form.patientName}}" data-field="patientName" bindinput="onFieldInput" placeholder="请输入姓名" />
+    <!-- 本期优秀陪护师 -->
+    <view class="section anim" style="animation-delay:0.14s;">
+      <view class="sec-head">
+        <view class="sec-title"><text class="sec-ic">💗</text>本期优秀陪护师</view>
+        <text class="sec-more" hover-class="tap-dim" hover-stay-time="80" bindtap="goNurses">查看更多 ›</text>
       </view>
-      <view class="field">
-        <text class="label">联系电话</text>
-        <input value="{{form.patientPhone}}" data-field="patientPhone" bindinput="onFieldInput" type="number" placeholder="请输入手机号" />
-      </view>
-      <view class="field">
-        <text class="label">服务地址</text>
-        <input value="{{form.addressDetail}}" data-field="addressDetail" bindinput="onFieldInput" placeholder="定位后自动填充，可补充楼栋、病区、门牌号" />
-      </view>
-      <view class="time-row">
-        <view class="time-field">
-          <text class="label">预约日期</text>
-          <picker mode="date" value="{{form.appointmentDate}}" start="{{form.appointmentDate}}" bindchange="onFieldInput" data-field="appointmentDate">
-            <view class="date-value">{{form.appointmentDate}}</view>
-          </picker>
+      <view class="nurses">
+        <view class="nurse" wx:for="{{nurses}}" wx:key="id" hover-class="tap-soft" hover-stay-time="80" bindtap="goNurses">
+          <view class="avatar">
+            <image class="avatar-img" src="{{item.avatar}}" mode="widthFix" />
+          </view>
+          <text class="nurse-name">{{item.name}}</text>
         </view>
-        <view class="time-field">
-          <text class="label">预约时间</text>
-          <picker mode="time" value="{{form.appointmentTime}}" bindchange="onFieldInput" data-field="appointmentTime">
-            <view class="date-value">{{form.appointmentTime}}</view>
-          </picker>
-        </view>
-      </view>
-      <view class="field">
-        <text class="label">备注</text>
-        <textarea value="{{form.note}}" data-field="note" bindinput="onFieldInput" placeholder="护理需求、行动情况等" />
       </view>
     </view>
 
-    <button class="submit-btn" loading="{{submitting}}" disabled="{{submitting}}" bindtap="submitOrder">提交预约</button>
+    <!-- 服务医院 -->
+    <view class="section anim" style="animation-delay:0.2s;">
+      <view class="sec-head">
+        <view class="sec-title"><text class="sec-ic">❤️</text>服务医院</view>
+        <text class="sec-more" hover-class="tap-dim" hover-stay-time="80" bindtap="openOrdersPage">我的预约 ›</text>
+      </view>
+      <view wx:if="{{hospitals.length}}" class="hosp-list">
+        <view class="hosp" wx:for="{{hospitals}}" wx:key="id" hover-class="tap" hover-stay-time="80" bindtap="onHospitalTap" data-index="{{index}}">
+          <view class="hosp-ic">🏥</view>
+          <view class="hosp-main">
+            <text class="hosp-name">{{item.name}}</text>
+            <text class="hosp-addr">{{item.address}}</text>
+          </view>
+          <text class="hosp-dist">{{item.displayDistance}}</text>
+        </view>
+      </view>
+
+      <!-- 加载中：骨架屏 -->
+      <view wx:elif="{{hospitalLoading}}" class="hosp-skeleton">
+        <view class="sk-row" wx:for="{{[1,2,3]}}" wx:key="*this">
+          <view class="sk-ic"></view>
+          <view class="sk-main">
+            <view class="sk-line sk-w70"></view>
+            <view class="sk-line sk-w45"></view>
+          </view>
+        </view>
+      </view>
+
+      <!-- 空态 -->
+      <view wx:else class="empty-state">
+        <text class="empty-ic">🏥</text>
+        <text class="empty-title">附近暂无合作医院</text>
+        <text class="empty-sub">可以重新定位试试，或先下单由陪护师协助安排</text>
+        <view class="empty-btn" hover-class="tap-dim" hover-stay-time="80" bindtap="refreshLocation">重新定位</view>
+      </view>
+    </view>
+
   </view>
-</scroll-view>
+</view>

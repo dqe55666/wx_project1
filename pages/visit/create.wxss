@@ -1,13 +1,13 @@
 @import "/assets/common.wxss";
 
-page { background: #fff5f8; }
+page { background: #f7f7fa; }
 
 .scrollarea { height: 100vh; }
 
 .location-strip {
   align-items: center;
   background: #ffffff;
-  border: 1rpx solid #f8bbd0;
+  border: 1rpx solid #f1eaf5;
   border-radius: 8rpx;
   display: flex;
   gap: 14rpx;
@@ -16,7 +16,7 @@ page { background: #fff5f8; }
 }
 
 .location-label {
-  color: #e91e63;
+  color: #ff4d8d;
   font-size: 25rpx;
   font-weight: 600;
   white-space: nowrap;
@@ -31,9 +31,9 @@ page { background: #fff5f8; }
 }
 
 .location-button {
-  background: #fce4ec;
+  background: #fff0f6;
   border-radius: 6rpx;
-  color: #c2185b;
+  color: #e0447e;
   font-size: 23rpx;
   height: 56rpx;
   line-height: 56rpx;
@@ -64,9 +64,9 @@ page { background: #fff5f8; }
 }
 
 .submit-button {
-  background: #e91e63;
+  background: #ff4d8d;
   border-radius: 8rpx;
-  box-shadow: 0 6rpx 18rpx rgba(233, 30, 99, 0.25);
+  box-shadow: 0 6rpx 18rpx rgba(255, 77, 141, 0.25);
   color: #ffffff;
   font-size: 30rpx;
   font-weight: 600;

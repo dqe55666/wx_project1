@@ -18,7 +18,7 @@
       />
       <view class="composer-footer">
         <label class="anonymous-option">
-          <switch checked="{{anonymous}}" color="#e91e63" bindchange="onAnonymousChange" />
+          <switch checked="{{anonymous}}" color="#ff4d8d" bindchange="onAnonymousChange" />
           <text>匿名发布</text>
         </label>
         <button class="send-btn" loading="{{submitting}}" disabled="{{submitting}}" bindtap="sendBottle">放出</button>

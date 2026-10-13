@@ -22,13 +22,13 @@
 }
 
 .s-title {
-  color: #2d1b2e;
+  color: #2b2430;
   font-size: 40rpx;
   font-weight: 700;
   margin-bottom: 12rpx;
 }
 
 .s-sub {
-  color: #bd548f;
+  color: #8f8699;
   font-size: 26rpx;
 }

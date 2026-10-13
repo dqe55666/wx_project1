@@ -1,7 +1,7 @@
 {
-  "navigationBarTitleText": "主页",
-  "navigationBarBackgroundColor": "#fff5f8",
-  "navigationBarTextStyle": "black",
-  "usingComponents": {
-  }
+  "navigationStyle": "custom",
+  "backgroundColor": "#ffffff",
+  "backgroundColorTop": "#ff5a97",
+  "backgroundTextStyle": "light",
+  "usingComponents": {}
 }

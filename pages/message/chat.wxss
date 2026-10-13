@@ -15,7 +15,7 @@
 }
 
 .t-name {
-  color: #2d1b2e;
+  color: #2b2430;
   font-size: 30rpx;
   font-weight: 700;
 }
@@ -23,7 +23,7 @@
 .t-actions {
   display: flex;
   gap: 20rpx;
-  color: #2d1b2e;
+  color: #2b2430;
   font-size: 32rpx;
 }
 
@@ -52,14 +52,14 @@
 }
 
 .msg.me .bubble {
-  background: linear-gradient(135deg, #ff5a8a, #e91e63);
+  background: linear-gradient(135deg, #ff74ab, #ff4d8d);
   color: #ffffff;
   border-bottom-right-radius: 4rpx;
 }
 
 .msg.other .bubble {
   background: #ffffff;
-  color: #2d1b2e;
+  color: #2b2430;
   border-bottom-left-radius: 4rpx;
 }
 
@@ -85,20 +85,20 @@
   border-radius: 32rpx;
   padding: 16rpx 24rpx;
   font-size: 28rpx;
-  color: #2d1b2e;
+  color: #2b2430;
   min-height: 44rpx;
 }
 
 .send-btn {
   padding: 16rpx 28rpx;
-  background: #fce4ec;
-  color: #bd548f;
+  background: #fff0f6;
+  color: #8f8699;
   border-radius: 32rpx;
   font-size: 28rpx;
   font-weight: 600;
 }
 
 .send-btn.active {
-  background: linear-gradient(135deg, #ff5a8a, #e91e63);
+  background: linear-gradient(135deg, #ff74ab, #ff4d8d);
   color: #ffffff;
 }

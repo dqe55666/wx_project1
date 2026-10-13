@@ -3,7 +3,7 @@ const { request } = require('../../utils/api')
 Page({
   data: {
     banners: [
-      { id: 1, color: 'linear-gradient(135deg, #ff8a80, #e91e63)', title: '限时秒杀' },
+      { id: 1, color: 'linear-gradient(135deg, #ff9ec4, #ff4d8d)', title: '限时秒杀' },
       { id: 2, color: 'linear-gradient(135deg, #ffd54f, #ff8a00)', title: '新人专享' }
     ],
     categories: [

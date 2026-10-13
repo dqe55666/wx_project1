@@ -7,11 +7,11 @@
   <view class="card">
     <view class="row" bindtap="togglePush">
       <text class="k">推送通知</text>
-      <switch checked="{{push}}" color="#e91e63" />
+      <switch checked="{{push}}" color="#ff4d8d" />
     </view>
     <view class="row" bindtap="toggleFace">
       <text class="k">人脸登录</text>
-      <switch checked="{{face}}" color="#e91e63" />
+      <switch checked="{{face}}" color="#ff4d8d" />
     </view>
   </view>
 

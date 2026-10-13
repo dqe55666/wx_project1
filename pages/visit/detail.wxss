@@ -38,7 +38,7 @@
   width: 14rpx;
 }
 
-.customer-dot { background: #e91e63; }
+.customer-dot { background: #ff4d8d; }
 .staff-dot { background: #00897b; }
 
 .early-finish-card {
@@ -75,7 +75,7 @@
 }
 
 .approve-finish {
-  background: #e91e63;
+  background: #ff4d8d;
   color: #ffffff;
 }
 

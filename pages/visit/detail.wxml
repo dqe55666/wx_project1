@@ -56,7 +56,7 @@
   </view>
 
   <view class="card">
-    <view class="row"><text class="k">订单金额</text><text class="v" style="color:#e91e63; font-weight:700; font-size:32rpx;">{{order.displayPrice || '待确认'}}</text></view>
+    <view class="row"><text class="k">订单金额</text><text class="v" style="color:#ff4d8d; font-weight:700; font-size:32rpx;">{{order.displayPrice || '待确认'}}</text></view>
     <view class="row"><text class="k">订单状态</text><text class="v" style="color:#ff8a00;">{{order.statusText}}</text></view>
   </view>
 

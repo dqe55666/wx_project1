@@ -20,7 +20,7 @@
 }
 
 .tab.active {
-  color: #2d1b2e;
+  color: #2b2430;
   font-weight: 700;
 }
 
@@ -31,7 +31,7 @@
   transform: translateX(-50%);
   width: 40rpx;
   height: 4rpx;
-  background: #e91e63;
+  background: #ff4d8d;
   border-radius: 4rpx;
 }
 
@@ -44,7 +44,7 @@
 .goods-cover {
   width: 140rpx;
   height: 140rpx;
-  background: linear-gradient(135deg, #fce4ec, #f8bbd0);
+  background: linear-gradient(135deg, #fff0f6, #f1eaf5);
   border-radius: 12rpx;
   display: flex;
   align-items: center;
@@ -54,13 +54,13 @@
 }
 
 .goods-main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
-.goods-name { color: #2d1b2e; font-size: 26rpx; font-weight: 600; }
+.goods-name { color: #2b2430; font-size: 26rpx; font-weight: 600; }
 .goods-bottom {
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-top: auto;
 }
-.goods-price { color: #e91e63; font-size: 26rpx; font-weight: 700; }
+.goods-price { color: #ff4d8d; font-size: 26rpx; font-weight: 700; }
 .goods-count { color: #999; font-size: 22rpx; }
 .paid-note { color: #17803d; font-size: 24rpx; }

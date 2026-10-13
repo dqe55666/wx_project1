@@ -6,8 +6,8 @@
 
   <view class="card" wx:for="{{services}}" wx:key="id" bindtap="onSelect" data-name="{{item.name}}">
     <view class="row">
-      <text class="k" style="color:#2d1b2e; font-weight:600;">{{item.name}}</text>
-      <text class="v" style="color:#e91e63; font-weight:700;">¥{{item.price}} / {{item.unit}}</text>
+      <text class="k" style="color:#23202a; font-weight:600;">{{item.name}}</text>
+      <text class="v" style="color:#ff4d8d; font-weight:700;">¥{{item.price}} / {{item.unit}}</text>
     </view>
     <text class="c-desc">{{item.desc}}</text>
     <view class="tags" style="margin-top:16rpx;">

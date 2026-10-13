@@ -3,7 +3,7 @@
 .cover {
   width: 100%;
   height: 600rpx;
-  background: linear-gradient(135deg, #fce4ec, #f8bbd0);
+  background: linear-gradient(135deg, #fff0f6, #f1eaf5);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -19,7 +19,7 @@
 .row { display: flex; align-items: center; justify-content: space-between; }
 
 .price {
-  color: #e91e63;
+  color: #ff4d8d;
   font-size: 40rpx;
   font-weight: 700;
 }
@@ -31,7 +31,7 @@
 
 .g-name {
   display: block;
-  color: #2d1b2e;
+  color: #2b2430;
   font-size: 32rpx;
   font-weight: 600;
   margin: 16rpx 0 8rpx;

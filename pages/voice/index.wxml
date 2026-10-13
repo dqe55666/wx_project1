@@ -5,7 +5,7 @@
     <text class="subtitle">用语音快速记录护理需求</text>
   </view>
 
-  <button class="record-button {{recording ? 'recording' : ''}}" bindtap="toggleRecording">
+  <button class="record-button {{recording ? 'recording' : ''}}" hover-class="record-hover" bindtap="toggleRecording">
     <text class="record-icon">{{recording ? '■' : '🎤'}}</text>
     <text>{{recording ? '结束录音' : '开始录音'}}</text>
   </button>
@@ -18,5 +18,12 @@
   <view wx:if="{{result}}" class="result-card">
     <text class="result-label">识别结果</text>
     <text class="result-value">{{result}}</text>
+  </view>
+
+  <!-- 无结果时的引导，避免下半屏空荡 -->
+  <view wx:if="{{!duration && !result}}" class="hint-card">
+    <text class="hint-ic">👆</text>
+    <text class="hint-title">点击上方按钮开始录音</text>
+    <text class="hint-sub">说出护理需求，系统会自动转成文字</text>
   </view>
 </view>
