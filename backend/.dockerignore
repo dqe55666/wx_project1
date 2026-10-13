@@ -1,0 +1,12 @@
+.env
+.venv
+__pycache__
+*.py[cod]
+.DS_Store
+Untitled.py
+Untitled-1
+schema.sql
+image_date/
+Dockerfile
+compose.yaml
+DEPLOY.md

@@ -8,10 +8,6 @@
       <view class="quick-icon icon-soft">📅</view>
       <text>日程</text>
     </view>
-    <view class="quick-item" bindtap="goMall">
-      <view class="quick-icon icon-soft">🛒</view>
-      <text>商城</text>
-    </view>
     <view class="quick-item" bindtap="goOrders">
       <view class="quick-icon icon-soft">💼</view>
       <text>订单</text>

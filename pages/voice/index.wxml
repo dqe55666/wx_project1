@@ -1,0 +1,22 @@
+<view class="page">
+  <view class="hero">
+    <view class="icon">🎙️</view>
+    <text class="title">语音识别</text>
+    <text class="subtitle">用语音快速记录护理需求</text>
+  </view>
+
+  <button class="record-button {{recording ? 'recording' : ''}}" bindtap="toggleRecording">
+    <text class="record-icon">{{recording ? '■' : '🎤'}}</text>
+    <text>{{recording ? '结束录音' : '开始录音'}}</text>
+  </button>
+  <text class="status">{{statusText}}</text>
+
+  <view wx:if="{{duration}}" class="result-card">
+    <text class="result-label">录音时长</text>
+    <text class="result-value">{{duration}} 秒</text>
+  </view>
+  <view wx:if="{{result}}" class="result-card">
+    <text class="result-label">识别结果</text>
+    <text class="result-value">{{result}}</text>
+  </view>
+</view>

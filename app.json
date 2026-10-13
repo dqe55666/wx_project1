@@ -4,6 +4,7 @@
     "pages/visit/list",
     "pages/message/list",
     "pages/mall/index",
+    "pages/voice/index",
     "pages/mine/index",
 
     "pages/visit/create",
@@ -65,12 +66,12 @@
         "text": "陪诊中"
       },
       {
-        "pagePath": "pages/message/list",
-        "text": "消息"
+        "pagePath": "pages/voice/index",
+        "text": "语音识别"
       },
       {
-        "pagePath": "pages/mall/index",
-        "text": "商城"
+        "pagePath": "pages/message/list",
+        "text": "消息"
       },
       {
         "pagePath": "pages/mine/index",
@@ -81,6 +82,9 @@
   "permission": {
     "scope.userLocation": {
       "desc": "用于展示进行中订单的实时服务位置和计算医院距离"
+    },
+    "scope.record": {
+      "desc": "用于语音识别和记录护理需求"
     }
   },
   "requiredPrivateInfos": [

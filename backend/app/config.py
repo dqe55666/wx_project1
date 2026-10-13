@@ -11,6 +11,7 @@ class Settings(BaseSettings):
     database_url: str = (
         "mysql+pymysql://root:password@127.0.0.1:3306/care_booking?charset=utf8mb4"
     )
+    auto_create_database: bool = True
     cors_origins: str = "*"
     amap_key: str = ""
     amap_private_key: str = ""

@@ -24,7 +24,8 @@ def ensure_database_exists():
     server_engine.dispose()
 
 
-ensure_database_exists()
+if settings.auto_create_database:
+    ensure_database_exists()
 engine = create_engine(settings.database_url, pool_pre_ping=True)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 

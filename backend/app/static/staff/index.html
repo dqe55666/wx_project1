@@ -71,6 +71,9 @@
       .action { background: #0f766e; color: #fff; }
       .action:disabled { background: #9aa9ac; cursor: not-allowed; }
       .start { background: #175cd3; color: #fff; }
+      .image-upload { background: #fff; border: 1px solid #175cd3; color: #175cd3; }
+      .image-upload:disabled { color: #9aa9ac; border-color: #9aa9ac; cursor: not-allowed; }
+      .image-upload-input { display: none; }
       .empty { color: #64727d; padding: 72px 0; text-align: center; }
       .profile-layout { display: grid; gap: 18px; grid-template-columns: minmax(280px, 0.8fr) minmax(0, 1.2fr); }
       .profile-panel, .account-panel { background: #fff; border: 1px solid #d9e2ec; border-radius: 8px; padding: 22px; }
@@ -412,10 +415,14 @@
               </div>
               ${order.note ? `<div class="note">备注：${escapeHtml(order.note)}</div>` : ""}
               ${order.early_finish_pending ? `<div class="note">已申请提前结束，等待客户确认。</div>` : ""}
-              <div class="order-foot"><span class="meta">${order.distance_km === null ? "距离待定位" : `${order.distance_km} km`}</span><span>${order.employee_id ? `<button class="message-action" data-chat-id="${order.id}" data-chat-title="${escapeHtml(order.patient_name)} · ${escapeHtml(order.service_name)}" type="button">消息</button>` : ""}${order.status === "pending" ? hasActiveOrder ? `<span class="meta">请先完成当前订单</span>` : `<button class="action" data-action="accept" data-id="${order.id}" type="button">接单</button>` : order.status === "accepted" ? `<button class="start" data-action="start" data-id="${order.id}" type="button">开始工作</button>` : order.status === "in_progress" ? order.early_finish_pending ? `<span class="meta">等待客户协商确认</span>` : `<button class="action" data-action="finish" data-id="${order.id}" type="button">结束工作</button>` : order.status === "completed" ? `<span class="meta">已完成 · 本单收入 ${formatMoney(order.staff_earning_cents)}</span>` : `<span class="meta">订单已停止</span>`}</span></div>
+              <div class="order-foot"><span class="meta">${order.distance_km === null ? "距离待定位" : `${order.distance_km} km`}</span><span>${order.employee_id ? `<button class="message-action" data-chat-id="${order.id}" data-chat-title="${escapeHtml(order.patient_name)} · ${escapeHtml(order.service_name)}" type="button">消息</button>` : ""}${order.status === "pending" ? hasActiveOrder ? `<span class="meta">请先完成当前订单</span>` : `<button class="action" data-action="accept" data-id="${order.id}" type="button">接单</button>` : order.status === "accepted" ? `<button class="start" data-action="start" data-id="${order.id}" type="button">开始工作</button>` : order.status === "in_progress" ? `${order.early_finish_pending ? `<span class="meta">等待客户协商确认</span>` : `<button class="action" data-action="finish" data-id="${order.id}" type="button">结束工作</button>`}<button class="image-upload" data-upload-button="${order.id}" type="button">上传图片</button><input class="image-upload-input" data-upload-input="${order.id}" type="file" accept="image/jpeg,image/png,image/gif,image/webp,image/bmp" />` : order.status === "completed" ? `<span class="meta">已完成 · 本单收入 ${formatMoney(order.staff_earning_cents)}</span>` : `<span class="meta">订单已停止</span>`}</span></div>
             </article>`).join("") : '<div class="empty">暂无相关订单</div>';
           orderList.querySelectorAll("[data-action]").forEach((button) => button.addEventListener("click", () => updateOrder(button)));
           orderList.querySelectorAll("[data-chat-id]").forEach((button) => button.addEventListener("click", () => openChat(button.dataset.chatId, button.dataset.chatTitle)));
+          orderList.querySelectorAll("[data-upload-button]").forEach((button) => button.addEventListener("click", () => {
+            orderList.querySelector(`[data-upload-input="${button.dataset.uploadButton}"]`).click();
+          }));
+          orderList.querySelectorAll("[data-upload-input]").forEach((input) => input.addEventListener("change", () => uploadOrderImage(input)));
           syncLocationSharing();
         } catch (error) {
           orderList.innerHTML = `<div class="empty">${escapeHtml(error.message)}</div>`;
@@ -609,6 +616,36 @@
         } catch (error) {
           alert(error.message);
           await loadOrders();
+        }
+      }
+
+      async function uploadOrderImage(input) {
+        const file = input.files && input.files[0];
+        if (!file) return;
+        const button = orderList.querySelector(`[data-upload-button="${input.dataset.uploadInput}"]`);
+        if (button) {
+          button.disabled = true;
+          button.textContent = "正在上传";
+        }
+        try {
+          const formData = new FormData();
+          formData.append("file", file);
+          const response = await fetch(`/api/staff/orders/${input.dataset.uploadInput}/images`, {
+            method: "POST",
+            headers: accessToken ? { Authorization: `Bearer ${accessToken}` } : {},
+            body: formData,
+          });
+          const data = await response.json().catch(() => ({}));
+          if (!response.ok) throw new Error(data.detail || "图片上传失败，请稍后重试");
+          alert(`图片上传成功，保存路径：${data.path}`);
+        } catch (error) {
+          alert(error.message);
+        } finally {
+          input.value = "";
+          if (button) {
+            button.disabled = false;
+            button.textContent = "上传图片";
+          }
         }
       }
 

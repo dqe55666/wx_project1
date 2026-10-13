@@ -5,13 +5,24 @@ import time
 from datetime import datetime
 from pathlib import Path
 from random import randint
+from string import ascii_letters, digits
 
-from fastapi import Depends, FastAPI, HTTPException, Query, Request, Response, status
-from fastapi.responses import JSONResponse
+from fastapi import (
+    Depends,
+    FastAPI,
+    File,
+    HTTPException,
+    Query,
+    Request,
+    Response,
+    UploadFile,
+    status,
+)
+from fastapi.responses import FileResponse, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from fastapi.staticfiles import StaticFiles
-from sqlalchemy import func, or_
+from sqlalchemy import func, or_, text
 from sqlalchemy.orm import Session
 
 from .amap import reverse_geocode, search_hospitals, static_map
@@ -77,9 +88,28 @@ app.add_middleware(
 )
 
 static_dir = Path(__file__).parent / "static"
+image_dir = Path("./image_date")
+image_dir.mkdir(parents=True, exist_ok=True)
 app.mount("/admin", StaticFiles(directory=static_dir / "admin", html=True), name="admin")
 app.mount("/staff", StaticFiles(directory=static_dir / "staff", html=True), name="staff")
 app.mount("/support", StaticFiles(directory=static_dir / "support", html=True), name="support")
+
+IMAGE_MAX_BYTES = 10 * 1024 * 1024
+
+
+def detect_image_extension(content: bytes) -> str | None:
+    """Return an extension only for recognized image file signatures."""
+    if content.startswith(b"\xff\xd8\xff"):
+        return ".jpg"
+    if content.startswith(b"\x89PNG\r\n\x1a\n"):
+        return ".png"
+    if content.startswith((b"GIF87a", b"GIF89a")):
+        return ".gif"
+    if content.startswith(b"RIFF") and content[8:12] == b"WEBP":
+        return ".webp"
+    if content.startswith(b"BM"):
+        return ".bmp"
+    return None
 
 
 def create_admin_token() -> str:
@@ -458,7 +488,14 @@ def delete_bottle(bottle_id: int, db: Session = Depends(get_db)):
 
 @app.get("/")
 def root():
-    return {"name": settings.app_name, "admin": "/admin/", "health": "/api/health"}
+    return FileResponse(static_dir / "index.html")
+
+
+@app.get("/api/health")
+def health_check(db: Session = Depends(get_db)):
+    """Return success only when the API can reach its database."""
+    db.execute(text("SELECT 1"))
+    return {"status": "ok"}
 
 
 @app.get("/api/hospitals", response_model=list[HospitalOut])
@@ -1338,6 +1375,46 @@ def staff_start_order(
     return order_to_dict(db.get(CareOrder, order_id))
 
 
+@app.post("/api/staff/orders/{order_id}/images")
+async def upload_staff_order_image(
+    order_id: int,
+    file: UploadFile = File(...),
+    employee: Employee = Depends(require_staff),
+    db: Session = Depends(get_db),
+):
+    require_caregiver(employee)
+    order = get_staff_order(order_id, employee, db)
+    if order.status != "in_progress":
+        raise HTTPException(status_code=409, detail="开始工作后才能上传图片")
+
+    content = await file.read(IMAGE_MAX_BYTES + 1)
+    if not content:
+        raise HTTPException(status_code=400, detail="请选择图片")
+    if len(content) > IMAGE_MAX_BYTES:
+        raise HTTPException(status_code=413, detail="图片不能超过 10 MB")
+
+    extension = detect_image_extension(content)
+    if extension is None:
+        raise HTTPException(status_code=415, detail="仅支持 JPG、PNG、GIF、WEBP 或 BMP 图片")
+
+    timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
+    alphabet = ascii_letters + digits
+    for _ in range(10):
+        suffix = "".join(secrets.choice(alphabet) for _ in range(6))
+        filename = f"{timestamp}{suffix}{extension}"
+        destination = image_dir / filename
+        try:
+            with destination.open("xb") as image_file:
+                image_file.write(content)
+            break
+        except FileExistsError:
+            continue
+    else:
+        raise HTTPException(status_code=500, detail="生成图片文件名失败，请重试")
+
+    return {"filename": filename, "path": f"./image_date/{filename}"}
+
+
 @app.post("/api/staff/orders/{order_id}/finish")
 def staff_finish_order(
     order_id: int, employee: Employee = Depends(require_staff), db: Session = Depends(get_db)
@@ -1849,3 +1926,7 @@ def create_order(payload: OrderCreate, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(order)
     return order
+
+
+# Keep this mount last so API and application routes retain priority.
+app.mount("/", StaticFiles(directory=static_dir, html=True), name="website")
