@@ -83,7 +83,9 @@
       <view class="nurses">
         <view class="nurse" wx:for="{{nurses}}" wx:key="id" hover-class="tap-soft" hover-stay-time="80" bindtap="goNurses">
           <view class="avatar">
-            <image class="avatar-img" src="{{item.avatar}}" mode="widthFix" />
+            <view class="avatar-inner">
+              <image class="avatar-img" src="{{item.avatar}}" mode="widthFix" />
+            </view>
           </view>
           <text class="nurse-name">{{item.name}}</text>
         </view>

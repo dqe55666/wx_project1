@@ -25,7 +25,7 @@ view, text, input {
 .topbar {
   display: flex;
   align-items: center;
-  gap: 16rpx;
+  gap: 12rpx;
   padding-top: 22rpx;
 }
 
@@ -33,21 +33,22 @@ view, text, input {
   flex: none;
   display: flex;
   align-items: center;
-  gap: 8rpx;
-  padding: 8rpx 4rpx;
+  gap: 6rpx;
+  padding: 8rpx 2rpx;
 }
 
 .city-name {
   color: #ffffff;
   font-size: 36rpx;
   font-weight: 800;
-  max-width: 170rpx;
+  max-width: 150rpx;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
 }
 
 .caret {
+  flex: none;
   width: 0;
   height: 0;
   border-left: 10rpx solid transparent;
@@ -64,13 +65,13 @@ view, text, input {
   border-radius: 43rpx;
   display: flex;
   align-items: center;
-  padding: 0 8rpx 0 26rpx;
+  padding: 0 8rpx 0 24rpx;
   box-shadow: 0 6rpx 20rpx rgba(190, 30, 90, 0.16);
 }
 
 .search-ic {
-  font-size: 30rpx;
   flex: none;
+  font-size: 28rpx;
 }
 
 .search-input {
@@ -80,7 +81,7 @@ view, text, input {
   line-height: 86rpx;
   font-size: 31rpx;
   color: #23202a;
-  margin-left: 10rpx;
+  margin-left: 6rpx;
 }
 
 .search-ph {
@@ -92,11 +93,11 @@ view, text, input {
   flex: none;
   margin-left: 8rpx;
   height: 68rpx;
-  padding: 0 30rpx;
+  padding: 0 26rpx;
   border-radius: 34rpx;
   background: linear-gradient(135deg, #ff4d8d, #f5306f);
   color: #ffffff;
-  font-size: 31rpx;
+  font-size: 30rpx;
   font-weight: 700;
   line-height: 68rpx;
   box-shadow: 0 4rpx 12rpx rgba(214, 20, 80, 0.32);
@@ -223,7 +224,7 @@ view, text, input {
 
 .svc-name.vip,
 .svc-name.half {
-  font-size: 38rpx;
+  font-size: 36rpx;
   font-weight: 800;
   white-space: nowrap;
 }
@@ -237,7 +238,7 @@ view, text, input {
 }
 
 .svc-mini {
-  font-size: 20rpx;
+  font-size: 28rpx;
   font-weight: 800;
   color: #ffffff;
   padding: 5rpx 12rpx;
@@ -290,23 +291,23 @@ view, text, input {
 }
 
 .q-order {
-  background: linear-gradient(150deg, #a3e56f, #4caf50);
-  box-shadow: 0 8rpx 18rpx rgba(76, 175, 80, 0.2);
+  background: linear-gradient(150deg, #d9f2c8, #b6e59f);
+  box-shadow: 0 8rpx 18rpx rgba(126, 190, 100, 0.16);
 }
 
 .q-pkg {
-  background: linear-gradient(150deg, #ffdd6b, #ffb300);
-  box-shadow: 0 8rpx 18rpx rgba(255, 179, 0, 0.2);
+  background: linear-gradient(150deg, #ffefc2, #ffdf94);
+  box-shadow: 0 8rpx 18rpx rgba(235, 180, 60, 0.16);
 }
 
 .q-mall {
-  background: linear-gradient(150deg, #cdb0ff, #8e6bf0);
-  box-shadow: 0 8rpx 18rpx rgba(142, 107, 240, 0.2);
+  background: linear-gradient(150deg, #e6dbff, #cfbaf8);
+  box-shadow: 0 8rpx 18rpx rgba(150, 120, 220, 0.16);
 }
 
 .q-bottle {
-  background: linear-gradient(150deg, #84e7d4, #26b6a0);
-  box-shadow: 0 8rpx 18rpx rgba(38, 182, 160, 0.18);
+  background: linear-gradient(150deg, #d0f1ea, #ace3d7);
+  box-shadow: 0 8rpx 18rpx rgba(90, 185, 165, 0.15);
 }
 
 .qi-name {
@@ -359,13 +360,13 @@ view, text, input {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 16rpx;
+  gap: 18rpx;
 }
 
 /* 陪护师姓名：适老字号，居中，过长省略 */
 .nurse-name {
   max-width: 100%;
-  font-size: 30rpx;
+  font-size: 32rpx;
   font-weight: 700;
   color: #23202a;
   text-align: center;
@@ -374,22 +375,32 @@ view, text, input {
   text-overflow: ellipsis;
 }
 
+/* 圆形头像 = 细白框 + 柔和投影
+   证件照是竖构图红底，裁成直角方块排在一起像「证件墙」；
+   圆形边界更柔和，红色面积也小两成。红底本身保留不变。 */
 .avatar {
-  width: 100%;
-  height: 204rpx;
-  border-radius: 28rpx;
-  overflow: hidden;
-  /* 图片加载前的兜底底色 */
-  background: linear-gradient(145deg, #f8f3fb, #ece3f3);
+  width: 210rpx;
+  height: 210rpx;
+  border-radius: 50%;
+  padding: 6rpx;
+  background: #ffffff;
   border: 2rpx solid #f1eaf5;
   box-sizing: border-box;
-  box-shadow: 0 4rpx 14rpx rgba(60, 30, 80, 0.06);
+  box-shadow: 0 6rpx 18rpx rgba(60, 30, 80, 0.12);
 }
 
-/* 证件照是竖构图：按宽度撑满、顶部对齐裁切，避免居中裁剪把额头裁掉 */
+.avatar-inner {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+/* 图片已按头部占比裁成正方形，widthFix 即为正圆内容 */
 .avatar-img {
   display: block;
   width: 100%;
+  border-radius: 50%;
 }
 
 /* ---------- 服务医院 ---------- */

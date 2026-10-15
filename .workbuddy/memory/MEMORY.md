@@ -19,13 +19,28 @@
 - 压缩规格：最长边 ≤ 480px + 质量 82 + progressive + **剥离 EXIF**；单张 < 30KB
 - 原图备份在 `mockups/_nurses_originals/`（`mockups` 已被 `packOptions.ignore` 排除，不打包）
 - **WXSS 与内联样式的 `background-image` 不支持本地路径**，只能用 `<image>` 标签
-- 竖构图证件照用 `overflow:hidden` + `mode="widthFix"` 做**顶部对齐裁切**，避免居中裁切切掉额头
+- **陪护师头像最终形态**：文件已裁成 **400×400 正方形**（按头部占比统一定标），页面用圆形展示
+  - 定标算法：`发顶y`=首行非背景像素（稳）；`下巴y`=肤色行剖面从峰值下探首次跌破「脸宽×62%」（**必须画回原图目视复核**）；`脸中心x`=肤色列剖面最长连续段中点
+  - 统一目标：`裁切边长 = 头高 / 0.62`，发顶固定放在裁切框 **16%** 处
+  - 头天生占满画幅时（王一茜/彭彦博），用 **`expand_replicate`（复制最外侧一列/行）延展背景红**，比重算阈值可靠
+  - 脚本 `mockups/_crop_nurses_square.py`（**源图取 `mockups/_nurses_3x4/`，可重复执行**，不会二次裁切）
+  - **红底保持不变**（用户明确要求），延展用的就是原图边缘的红
+  - 展示：`.avatar`(210rpx 圆, 白底, padding 6rpx, `border:2rpx solid #f1eaf5`, 柔阴影) > `.avatar-inner`(`overflow:hidden`+`border-radius:50%` 负责裁圆) > `<image mode="widthFix">`
+  - 曾试过主题渐变环（`mockups/_nurse_variants.py` B/C 方案）——**结论：不加环最干净**，粉环与红底相邻反而更花
+  - **踩过的坑**：不要用「非背景主体的整块 bbox 宽度」当头部宽度——蓬松头发（谢远杰）、深色外套、白衬衫都会污染，导致各图脸大小不一致
 
 ## 工具脚本（都在 `mockups/` 下，不参与打包，可复用）
 - `_compress_nurses.py`：批量压缩陪护师头像（备份 + 缩放 + 剥离 EXIF）
-- `_refresh_preview_nurses.py`：把预览 HTML 的陪护师区替换为真实头像（base64 内联）
+- `_crop_nurses_square.py`：**当前头像由它产出**——按「头高/0.62」统一定标裁 400×400，源图取 `_nurses_3x4/`
+- `_diag_head_mark_vis.py`：把检测到的发顶/下巴/脸中心线**画回原图**目视复核（改裁切算法后必跑）
+- `_diag_head_width.py` / `_diag_face_profile.py` / `_diag_boxes.py`：诊断用（宽度剖面、肤色检测、检测框可视化）
+- `_head_crop_tune.py` / `_head_crop_mock.py`：裁切参数对照
+- `_nurse_variants.py`：头像边框方案对照（白框 / 粉环 / 细环）
+- `_nurse_final_mock.py`：陪护师区块最终效果图（纯 PIL 渲染，无需浏览器）
+- `_refresh_nurse_ring.py`：同步 `index-live-preview.html` 的陪护师区（base64 内联，可重复执行）
+- `_refresh_preview_nurses.py` / `_update_preview.py`：早期预览同步脚本
 - `_alt_bg_nurses.py`：红底 → 主题粉底备选方案（用户已决定不改，仅存档）
-- `_update_preview.py`：同步预览中的姓名与新字号
+- `_circle_check.py`：圆形裁切校验图
 
 ## 环境与校验习惯
 - Python venv（已装 Pillow 12.3）：`C:\Users\hhh\.workbuddy\binaries\python\envs\default`

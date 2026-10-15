@@ -29,11 +29,14 @@ Page({
   // 计算状态栏高度与右上角胶囊避让宽度（自定义导航栏）
   setupNavMetrics() {
     const info = wx.getWindowInfo ? wx.getWindowInfo() : wx.getSystemInfoSync()
+    const rpx2px = (info.windowWidth || 375) / 750
     let menuSafeRight = 0
     try {
       const menu = wx.getMenuButtonBoundingClientRect()
       if (menu && menu.left) {
-        menuSafeRight = Math.round(info.windowWidth - menu.left + 6)
+        // 顶部栏所在容器本身已有 30rpx 右内边距，这里扣掉它，避免避让空间叠加
+        // 导致搜索框被压得放不下文案
+        menuSafeRight = Math.round(info.windowWidth - menu.left + 6 - 30 * rpx2px)
       }
     } catch (err) {
       menuSafeRight = 96
