@@ -1,0 +1,197 @@
+/* ===== 登录屏 =====
+   整页背景 = assets/images/bg/hospital.jpg
+   登录界面主视觉 = assets/images/login/care.jpg
+   注意：WXSS 的 background-image 不支持本地路径，背景必须用 <image> 标签铺 */
+
+.page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #f7f7fa;
+}
+
+/* ---------- 上半屏：整页背景 ---------- */
+.stage {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 340rpx;
+  overflow: hidden;
+}
+
+.stage-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* 底部渐隐到页面底色，让白色登录面板干净地浮上来 */
+.stage-scrim {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    180deg,
+    rgba(247, 247, 250, 0) 46%,
+    rgba(247, 247, 250, 0.55) 72%,
+    rgba(247, 247, 250, 0.92) 90%,
+    #f7f7fa 100%
+  );
+}
+
+/* ---------- 自定义导航 ---------- */
+.nav {
+  position: relative;
+  z-index: 2;
+  padding-left: 24rpx;
+}
+
+.nav-back {
+  width: 88rpx;
+  height: 88rpx;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.82);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4rpx 14rpx rgba(60, 30, 80, 0.1);
+}
+
+.nav-back-ic {
+  width: 20rpx;
+  height: 20rpx;
+  border-left: 4rpx solid #23202a;
+  border-bottom: 4rpx solid #23202a;
+  transform: rotate(45deg);
+  margin-left: 6rpx;
+}
+
+/* ---------- 下半屏：登录面板 ---------- */
+.panel {
+  position: relative;
+  z-index: 2;
+  flex: 0 0 auto;
+  background: #ffffff;
+  border-radius: 44rpx 44rpx 0 0;
+  padding: 30rpx 40rpx calc(30rpx + env(safe-area-inset-bottom));
+  box-shadow: 0 -10rpx 36rpx rgba(60, 30, 80, 0.07);
+}
+
+.panel-art {
+  display: block;
+  width: 100%;
+  border-radius: 32rpx;
+  margin-bottom: 26rpx;
+}
+
+.panel-title {
+  font-size: 44rpx;
+  font-weight: 800;
+  color: #23202a;
+  text-align: center;
+  letter-spacing: 2rpx;
+}
+
+.panel-sub {
+  margin-top: 12rpx;
+  font-size: 30rpx;
+  color: #7e7689;
+  text-align: center;
+}
+
+/* ---------- 授权按钮 ---------- */
+.login-btn {
+  width: 100% !important;
+  margin-top: 40rpx;
+  padding: 0;
+  height: 100rpx;
+  line-height: 100rpx;
+  border-radius: 50rpx;
+  background: linear-gradient(135deg, #ff5f9e, #ff74ab);
+  color: #ffffff;
+  font-size: 34rpx;
+  font-weight: 700;
+  letter-spacing: 1rpx;
+  text-align: center;
+  box-shadow: 0 12rpx 28rpx rgba(255, 77, 141, 0.28);
+}
+
+.btn-hover {
+  transform: scale(0.97);
+  filter: brightness(0.95);
+}
+
+/* ---------- 协议 ---------- */
+.agree {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 22rpx;
+  min-height: 72rpx;
+}
+
+.agree-toggle {
+  display: flex;
+  align-items: center;
+  padding: 12rpx 6rpx 12rpx 0;
+}
+
+.agree-check {
+  width: 36rpx;
+  height: 36rpx;
+  border-radius: 50%;
+  border: 2rpx solid #d9d2e2;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 10rpx;
+  flex: 0 0 auto;
+  box-sizing: border-box;
+}
+
+.agree-check.on {
+  background: #ff4d8d;
+  border-color: #ff4d8d;
+}
+
+.agree-tick {
+  font-size: 22rpx;
+  line-height: 1;
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.agree-txt {
+  font-size: 28rpx;
+  color: #7e7689;
+}
+
+.agree-link {
+  font-size: 28rpx;
+  color: #ff4d8d;
+  padding: 12rpx 0;
+}
+
+/* ---------- 游客 ---------- */
+.guest {
+  margin-top: 6rpx;
+  padding: 22rpx 0 8rpx;
+  text-align: center;
+  font-size: 30rpx;
+  color: #7e7689;
+}
+
+/* ---------- 按下反馈（透明容器用 soft，纯文字用 dim） ---------- */
+.tap-soft {
+  transform: scale(0.94);
+  filter: brightness(0.94);
+}
+
+.tap-dim {
+  opacity: 0.6;
+}

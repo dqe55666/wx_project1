@@ -1,5 +1,21 @@
 const { request } = require('../../utils/api')
 
+// 医院列表的展示信息：后端 hospital_units 表目前只有 name/address/经纬度/电话，
+// 等级、类型、重点科室先在前端按医院名补；拿到各家实景图后把 thumb 换掉即可。
+const HOSPITAL_IMAGE = '/assets/images/bg/hospital.jpg'
+
+const HOSPITAL_META_RULES = [
+  { match: '中医院', level: '二甲', type: '中医医院', departments: '针灸科、康复科、中医内科' },
+  { match: '人民医院', level: '三甲', type: '综合医院', departments: '儿科、呼吸内科、妇产科' },
+  { match: '永定', level: '三甲', type: '综合医院', departments: '儿科、呼吸内科、妇产科' }
+]
+
+const HOSPITAL_META_FALLBACK = {
+  level: '二甲',
+  type: '综合医院',
+  departments: '内科、外科、儿科'
+}
+
 Page({
   data: {
     statusBarHeight: 20,
@@ -24,6 +40,11 @@ Page({
     this.setupNavMetrics()
     this.loadHospitals()
     this.refreshLocation()
+  },
+
+  // 启动登录闸门：未登录时自动进入整屏登录页（每次启动只提示一次）
+  onShow() {
+    getApp().ensureLogin()
   },
 
   // 计算状态栏高度与右上角胶囊避让宽度（自定义导航栏）
@@ -77,6 +98,7 @@ Page({
       this.setData({
         hospitals: hospitals.map((item) => ({
           ...item,
+          ...this.resolveHospitalMeta(item.name),
           displayDistance: this.formatDistance(item.distance_km)
         }))
       })
@@ -107,9 +129,24 @@ Page({
     return address.slice(0, 4)
   },
 
+  // 医院等级 / 类型 / 重点科室 / 缩略图（后端暂无这些字段，先按名称匹配）
+  resolveHospitalMeta(name) {
+    const hit = HOSPITAL_META_RULES.find((rule) => (name || '').indexOf(rule.match) !== -1)
+    const meta = hit || HOSPITAL_META_FALLBACK
+    return {
+      level: meta.level,
+      type: meta.type,
+      departments: meta.departments,
+      thumb: HOSPITAL_IMAGE
+    }
+  },
+
   formatDistance(distance) {
     if (distance === null || distance === undefined) return ''
-    return `${distance}km`
+    const n = Number(distance)
+    if (!isFinite(n)) return ''
+    // 1km 内用米，老人看着更直观
+    return n < 1 ? `${Math.round(n * 1000)}m` : `${n.toFixed(1)}km`
   },
 
   onKeywordInput(e) {

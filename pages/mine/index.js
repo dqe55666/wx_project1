@@ -4,7 +4,6 @@ Page({
   data: {
     user: { name: '未登录', phone: '授权后可展示昵称和头像', level: '游客模式', avatarUrl: '' },
     loggedIn: false,
-    authorizing: false,
     loginButtonText: '微信授权登录',
     orderCount: { pending: 0, doing: 0, evaluate: 0, refund: 0 },
     menus: [
@@ -41,28 +40,9 @@ Page({
     })
   },
 
-  authorizeLogin() {    if (!wx.getUserProfile) {
-      wx.showToast({ title: '当前微信版本不支持授权', icon: 'none' })
-      return
-    }
-    this.setData({ authorizing: true })
-    wx.getUserProfile({
-      desc: '用于展示您的微信昵称和头像',
-      success: (result) => {
-        const profile = result.userInfo || {}
-        if (!profile.nickName || !profile.avatarUrl) {
-          wx.showToast({ title: '未获取到完整用户资料', icon: 'none' })
-          return
-        }
-        getApp().setUserInfo(profile)
-        this.syncUserInfo()
-        wx.showToast({ title: '登录成功', icon: 'success' })
-      },
-      fail: () => {
-        wx.showToast({ title: '已取消微信授权', icon: 'none' })
-      },
-      complete: () => this.setData({ authorizing: false })
-    })
+  // 跳转整屏登录页（pages/login/login），返回后 onShow 会自动刷新用户信息
+  authorizeLogin() {
+    wx.navigateTo({ url: '/pages/login/login' })
   },
 
   async loadOrderCount() {

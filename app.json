@@ -6,6 +6,7 @@
     "pages/mall/index",
     "pages/voice/index",
     "pages/mine/index",
+    "pages/login/login",
 
     "pages/visit/create",
     "pages/visit/info",
@@ -59,23 +60,33 @@
     "list": [
       {
         "pagePath": "pages/index/index",
-        "text": "主页"
+        "text": "主页",
+        "iconPath": "assets/images/tabbar/home.png",
+        "selectedIconPath": "assets/images/tabbar/home-active.png"
       },
       {
         "pagePath": "pages/visit/list",
-        "text": "陪诊中"
+        "text": "陪诊中",
+        "iconPath": "assets/images/tabbar/care.png",
+        "selectedIconPath": "assets/images/tabbar/care-active.png"
       },
       {
         "pagePath": "pages/voice/index",
-        "text": "语音识别"
+        "text": "语音识别",
+        "iconPath": "assets/images/tabbar/voice.png",
+        "selectedIconPath": "assets/images/tabbar/voice-active.png"
       },
       {
         "pagePath": "pages/message/list",
-        "text": "消息"
+        "text": "消息",
+        "iconPath": "assets/images/tabbar/message.png",
+        "selectedIconPath": "assets/images/tabbar/message-active.png"
       },
       {
         "pagePath": "pages/mine/index",
-        "text": "我的"
+        "text": "我的",
+        "iconPath": "assets/images/tabbar/mine.png",
+        "selectedIconPath": "assets/images/tabbar/mine-active.png"
       }
     ]
   },

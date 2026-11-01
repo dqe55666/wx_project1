@@ -404,32 +404,32 @@ view, text, input {
 }
 
 /* ---------- 服务医院 ---------- */
+/* ---------- 服务医院（平铺列表 + 分隔线，配医院缩略图） ---------- */
 .hosp-list {
   display: flex;
   flex-direction: column;
-  gap: 22rpx;
 }
 
 .hosp {
   display: flex;
-  align-items: center;
-  gap: 24rpx;
-  background: #faf7fb;
-  border: 2rpx solid #f1ebf5;
-  border-radius: 28rpx;
-  padding: 28rpx 30rpx;
+  align-items: flex-start;
+  gap: 22rpx;
+  padding: 26rpx 4rpx;
+  border-bottom: 2rpx solid #f4eef8;
 }
 
-.hosp-ic {
-  width: 96rpx;
-  height: 96rpx;
-  border-radius: 24rpx;
-  background: linear-gradient(145deg, #ffd9e8, #ff9ec4);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 46rpx;
+.hosp:last-child {
+  border-bottom: 0;
+  padding-bottom: 4rpx;
+}
+
+/* 医院缩略图：方形圆角，object-fit 由 mode="aspectFill" 负责 */
+.hosp-thumb {
   flex: none;
+  width: 132rpx;
+  height: 132rpx;
+  border-radius: 20rpx;
+  background: #f4eef8;
 }
 
 .hosp-main {
@@ -437,8 +437,15 @@ view, text, input {
   min-width: 0;
 }
 
+.hosp-top {
+  display: flex;
+  align-items: baseline;
+  gap: 16rpx;
+}
+
 .hosp-name {
-  display: block;
+  flex: 1;
+  min-width: 0;
   font-size: 33rpx;
   font-weight: 800;
   color: #23202a;
@@ -447,46 +454,61 @@ view, text, input {
   text-overflow: ellipsis;
 }
 
-.hosp-addr {
+.hosp-dist {
+  flex: none;
+  font-size: 26rpx;
+  color: #9a93a4;
+}
+
+.hosp-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10rpx;
+  margin-top: 12rpx;
+}
+
+.hosp-tag {
+  font-size: 26rpx;
+  line-height: 1;
+  padding: 8rpx 14rpx;
+  border-radius: 10rpx;
+  color: #ff5f9e;
+  background: #fff5f9;
+  border: 2rpx solid #ffd0e3;
+}
+
+.hosp-dept {
   display: block;
-  font-size: 27rpx;
+  margin-top: 12rpx;
+  font-size: 28rpx;
   color: #7e7689;
-  margin-top: 8rpx;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-}
-
-.hosp-dist {
-  font-size: 29rpx;
-  font-weight: 800;
-  color: #ff3b80;
-  flex: none;
 }
 
 /* ---------- 医院加载骨架 ---------- */
 .hosp-skeleton {
   display: flex;
   flex-direction: column;
-  gap: 22rpx;
 }
 
 .sk-row {
   display: flex;
-  align-items: center;
-  gap: 20rpx;
-  padding: 26rpx 24rpx;
-  background: #faf7fb;
-  border: 2rpx solid #f1eaf5;
-  border-radius: 28rpx;
+  align-items: flex-start;
+  gap: 22rpx;
+  padding: 26rpx 4rpx;
+  border-bottom: 2rpx solid #f7f2fa;
 }
 
-.sk-ic {
+.sk-thumb {
   flex: none;
-  width: 76rpx;
-  height: 76rpx;
-  border-radius: 50%;
-  background: #efe9f4;
+  width: 132rpx;
+  height: 132rpx;
+  border-radius: 20rpx;
+  background: linear-gradient(90deg, #f0eaf5 25%, #f8f4fb 37%, #f0eaf5 63%);
+  background-size: 400% 100%;
+  animation: skShine 1.4s ease-in-out infinite;
 }
 
 .sk-main {
@@ -495,6 +517,7 @@ view, text, input {
   display: flex;
   flex-direction: column;
   gap: 14rpx;
+  padding-top: 6rpx;
 }
 
 .sk-line {

@@ -99,23 +99,30 @@
         <text class="sec-more" hover-class="tap-dim" hover-stay-time="80" bindtap="openOrdersPage">我的预约 ›</text>
       </view>
       <view wx:if="{{hospitals.length}}" class="hosp-list">
-        <view class="hosp" wx:for="{{hospitals}}" wx:key="id" hover-class="tap" hover-stay-time="80" bindtap="onHospitalTap" data-index="{{index}}">
-          <view class="hosp-ic">🏥</view>
+        <view class="hosp" wx:for="{{hospitals}}" wx:key="id" hover-class="tap-soft" hover-stay-time="80" bindtap="onHospitalTap" data-index="{{index}}">
+          <image class="hosp-thumb" src="{{item.thumb}}" mode="aspectFill" />
           <view class="hosp-main">
-            <text class="hosp-name">{{item.name}}</text>
-            <text class="hosp-addr">{{item.address}}</text>
+            <view class="hosp-top">
+              <text class="hosp-name">{{item.name}}</text>
+              <text wx:if="{{item.displayDistance}}" class="hosp-dist">距您 {{item.displayDistance}}</text>
+            </view>
+            <view class="hosp-tags">
+              <text class="hosp-tag">{{item.level}}</text>
+              <text class="hosp-tag">{{item.type}}</text>
+            </view>
+            <text class="hosp-dept">重点科室：{{item.departments}}</text>
           </view>
-          <text class="hosp-dist">{{item.displayDistance}}</text>
         </view>
       </view>
 
       <!-- 加载中：骨架屏 -->
       <view wx:elif="{{hospitalLoading}}" class="hosp-skeleton">
         <view class="sk-row" wx:for="{{[1,2,3]}}" wx:key="*this">
-          <view class="sk-ic"></view>
+          <view class="sk-thumb"></view>
           <view class="sk-main">
             <view class="sk-line sk-w70"></view>
             <view class="sk-line sk-w45"></view>
+            <view class="sk-line sk-w60"></view>
           </view>
         </view>
       </view>

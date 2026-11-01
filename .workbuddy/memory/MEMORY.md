@@ -15,10 +15,15 @@
 - 可点区域不小于 88rpx；正文类字号 ≥ 28rpx（主流 30~34rpx），标题 40rpx+
 
 ## 图片素材
+- **目录约定**（`assets/images/` 下按用途分文件夹）：
+  - `nurses/` —— 陪护师头像（中文人名文件名，用户要求）
+  - `bg/` —— 页面背景插画（如 `hospital.jpg` 卡通医院大楼）
+  - `login/` —— 登录/引导类插画（如 `care.jpg` 暖色诊所门口）
+- 大图插画规格：宽度 ≤ **1240px**（3 倍图够用）+ q80 + progressive + 剥 EXIF；单张 ≤ 200KB
 - 陪护师头像放 `assets/images/nurses/`，保留中文人名文件名（用户要求）
 - 压缩规格：最长边 ≤ 480px + 质量 82 + progressive + **剥离 EXIF**；单张 < 30KB
-- 原图备份在 `mockups/_nurses_originals/`（`mockups` 已被 `packOptions.ignore` 排除，不打包）
-- **WXSS 与内联样式的 `background-image` 不支持本地路径**，只能用 `<image>` 标签
+- 原图备份在 `mockups/_nurses_originals/`、`mockups/_import_originals/`（`mockups` 已被 `packOptions.ignore` 排除，不打包）
+- **WXSS 与内联样式的 `background-image` 不支持本地路径**，只能用 `<image>` 标签（用 `position:absolute` + `mode="aspectFill"` 铺满，或 `widthFix` 定宽）
 - **陪护师头像最终形态**：文件已裁成 **400×400 正方形**（按头部占比统一定标），页面用圆形展示
   - 定标算法：`发顶y`=首行非背景像素（稳）；`下巴y`=肤色行剖面从峰值下探首次跌破「脸宽×62%」（**必须画回原图目视复核**）；`脸中心x`=肤色列剖面最长连续段中点
   - 统一目标：`裁切边长 = 头高 / 0.62`，发顶固定放在裁切框 **16%** 处
@@ -30,17 +35,17 @@
   - **踩过的坑**：不要用「非背景主体的整块 bbox 宽度」当头部宽度——蓬松头发（谢远杰）、深色外套、白衬衫都会污染，导致各图脸大小不一致
 
 ## 工具脚本（都在 `mockups/` 下，不参与打包，可复用）
-- `_compress_nurses.py`：批量压缩陪护师头像（备份 + 缩放 + 剥离 EXIF）
+**顶层只留这 5 个常用 + 3 个备份目录 + 1 个预览页**（2026-10-20 清理过，别再把一次性诊断堆在顶层）：
 - `_crop_nurses_square.py`：**当前头像由它产出**——按「头高/0.62」统一定标裁 400×400，源图取 `_nurses_3x4/`
-- `_diag_head_mark_vis.py`：把检测到的发顶/下巴/脸中心线**画回原图**目视复核（改裁切算法后必跑）
-- `_diag_head_width.py` / `_diag_face_profile.py` / `_diag_boxes.py`：诊断用（宽度剖面、肤色检测、检测框可视化）
-- `_head_crop_tune.py` / `_head_crop_mock.py`：裁切参数对照
-- `_nurse_variants.py`：头像边框方案对照（白框 / 粉环 / 细环）
-- `_nurse_final_mock.py`：陪护师区块最终效果图（纯 PIL 渲染，无需浏览器）
+- `_import_images.py`：导入新插画（`SRC_MAP` 里加一行）+ 缩放 1240px + 压缩 + 备份原图
 - `_refresh_nurse_ring.py`：同步 `index-live-preview.html` 的陪护师区（base64 内联，可重复执行）
-- `_refresh_preview_nurses.py` / `_update_preview.py`：早期预览同步脚本
-- `_alt_bg_nurses.py`：红底 → 主题粉底备选方案（用户已决定不改，仅存档）
-- `_circle_check.py`：圆形裁切校验图
+- `_diag_head_mark_vis.py`：把检测到的发顶/下巴/脸中心线**画回原图**目视复核（改裁切算法后必跑）
+- `_compress_nurses.py`：批量压缩陪护师头像（备份 + 缩放 + 剥离 EXIF）
+- `index-live-preview.html`：首页实时预览
+- 备份目录：`_nurses_originals/`（原始大图）、`_nurses_3x4/`（3:4 压缩版，裁切源）、`_import_originals/`（插画原图）
+- `_archive/`：一次性诊断脚本与旧预览页的归档（`_diag_*`、`_head_crop_*`、`_nurse_variants`、`_pink_bg/`、旧 html 等），**确认不要了可整目录删掉**
+
+**习惯**：一次性诊断用完就移进 `_archive/`，不要堆在顶层。
 
 ## 环境与校验习惯
 - Python venv（已装 Pillow 12.3）：`C:\Users\hhh\.workbuddy\binaries\python\envs\default`
@@ -49,7 +54,13 @@
 
 ## 架构要点
 - 后端 FastAPI + SQLAlchemy + MySQL（UI 改造全程未动后端）
+- **⚠️ `app.js` 的 `apiBaseUrl` 是 `http://127.0.0.1:8000`（本机）**——只有开发者本机能连上；别人手机上打开小程序拿不到数据。要让别人用，后端得部署到公网 HTTPS 域名并在小程序后台配 request 合法域名
 - 高德 Web 服务经后端代理：`/api/location/regeo`、`/api/amap/hospitals`
 - 首页 `pages/index` 是门户页（`navigationStyle: custom` 自定义导航栏）；下单表单在 `pages/visit/create`
-- tabBar 5 项：主页 / 陪诊中 / 语音识别 / 消息 / 我的（纯文字无图标）
+- **登录页 `pages/login/login`**：整屏登录（custom 导航），上 46% 是 `assets/images/bg/hospital.jpg` 背景 + 渐变遮罩，下方白色面板内嵌 `assets/images/login/care.jpg` 主视觉；入口在 `pages/mine/index` 的登录按钮（`wx.navigateTo`），**启动不强制登录**
+- tabBar 5 项：主页 / 陪诊中 / 语音识别 / 消息 / 我的，**已有图标**（`assets/images/tabbar/`，81×81 PNG，常态 `#b3adbd` / 选中 `#ff4d8d`，用 `mockups/_gen_tabbar_icons.py` 生成）
+- **首页「服务医院」列表**：平铺行 + 1px 分隔线（不是卡片）；行内 = 132rpx 方形缩略图 + 医院名 + 「距您 x」+ 三甲/综合医院标签 + 重点科室
+  - 后端 `hospital_units` 表只有 name/address/经纬度/电话，**等级、类型、重点科室由前端 `HOSPITAL_META_RULES` 按名称匹配**（加字段后删掉）
+  - 缩略图暂时全部复用 `assets/images/bg/hospital.jpg`，换成各家实景图时改 `HOSPITAL_IMAGE` 即可
+  - `formatDistance()`：1km 内显示米，否则 1 位小数
 - `pages/booking/booking` 有样式但不在 app.json 页面列表，疑似废弃页

@@ -8,7 +8,7 @@
         <text class="name">{{user.name}}</text>
         <text class="level">{{user.level}}  ·  {{user.phone}}</text>
       </view>
-      <button class="login-btn" hover-class="tap-dim" loading="{{authorizing}}" bindtap="authorizeLogin">{{loginButtonText}}</button>
+      <button class="login-btn" hover-class="tap-dim" bindtap="authorizeLogin">{{loginButtonText}}</button>
     </view>
   </view>
 

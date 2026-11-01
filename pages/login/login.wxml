@@ -1,0 +1,46 @@
+<view class="page">
+
+  <!-- 整页背景：医院大楼 -->
+  <view class="stage">
+    <image class="stage-bg" src="/assets/images/bg/hospital.jpg" mode="aspectFill" />
+    <view class="stage-scrim"></view>
+
+    <!-- 自定义导航（仅返回） -->
+    <view class="nav" style="padding-top:{{statusBarHeight}}px;">
+      <view class="nav-back" hover-class="tap-soft" hover-stay-time="80" bindtap="onBack">
+        <view class="nav-back-ic"></view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 登录界面 -->
+  <view class="panel">
+    <image class="panel-art" src="/assets/images/login/care.jpg" mode="widthFix" />
+
+    <view class="panel-title">医伴心途</view>
+    <view class="panel-sub">陪您和家人，安心看每一次病</view>
+
+    <button
+      class="login-btn"
+      hover-class="btn-hover"
+      hover-stay-time="80"
+      loading="{{authorizing}}"
+      bindtap="onLogin"
+    >微信授权登录</button>
+
+    <view class="agree">
+      <view class="agree-toggle" hover-class="tap-dim" hover-stay-time="80" bindtap="toggleAgree">
+        <view class="agree-check {{agreed ? 'on' : ''}}">
+          <text wx:if="{{agreed}}" class="agree-tick">✓</text>
+        </view>
+        <text class="agree-txt">我已阅读并同意</text>
+      </view>
+      <text class="agree-link" hover-class="tap-dim" hover-stay-time="80" bindtap="openAgreement">《用户协议》</text>
+      <text class="agree-txt">与</text>
+      <text class="agree-link" hover-class="tap-dim" hover-stay-time="80" bindtap="openPrivacy">《隐私政策》</text>
+    </view>
+
+    <view class="guest" hover-class="tap-dim" hover-stay-time="80" bindtap="onGuest">先随便看看</view>
+  </view>
+
+</view>
