@@ -1,8 +1,14 @@
+// 微信已收回 wx.getUserProfile（新基础库拿到的都是灰色头像 +「微信用户」），
+// 改用官方「头像昵称填写能力」：button open-type="chooseAvatar" + input type="nickname"
+const DEFAULT_AVATAR = '/assets/images/avatar-default.png'
+
 Page({
   data: {
     statusBarHeight: 20,
     agreed: false,
-    authorizing: false
+    avatarUrl: DEFAULT_AVATAR,
+    avatarPicked: false,
+    nickname: ''
   },
 
   onLoad() {
@@ -22,36 +28,31 @@ Page({
     wx.showToast({ title: '隐私政策内容准备中', icon: 'none' })
   },
 
+  onChooseAvatar(e) {
+    const url = e.detail && e.detail.avatarUrl
+    if (!url) {
+      return
+    }
+    this.setData({ avatarUrl: url, avatarPicked: true })
+  },
+
+  onNickInput(e) {
+    this.setData({ nickname: e.detail.value })
+  },
+
   onLogin() {
     if (!this.data.agreed) {
       wx.showToast({ title: '请先阅读并同意协议', icon: 'none' })
       return
     }
-    if (this.data.authorizing) {
+    const nick = (this.data.nickname || '').trim()
+    if (!nick) {
+      wx.showToast({ title: '请填写您的昵称', icon: 'none' })
       return
     }
-    if (!wx.getUserProfile) {
-      wx.showToast({ title: '当前微信版本不支持授权', icon: 'none' })
-      return
-    }
-    this.setData({ authorizing: true })
-    wx.getUserProfile({
-      desc: '用于展示您的微信昵称和头像',
-      success: (result) => {
-        const profile = result.userInfo || {}
-        if (!profile.nickName || !profile.avatarUrl) {
-          wx.showToast({ title: '未获取到完整用户资料', icon: 'none' })
-          return
-        }
-        getApp().setUserInfo(profile)
-        wx.showToast({ title: '登录成功', icon: 'success' })
-        setTimeout(() => this.leave(), 600)
-      },
-      fail: () => {
-        wx.showToast({ title: '已取消微信授权', icon: 'none' })
-      },
-      complete: () => this.setData({ authorizing: false })
-    })
+    getApp().setUserInfo({ nickName: nick, avatarUrl: this.data.avatarUrl })
+    wx.showToast({ title: '登录成功', icon: 'success' })
+    setTimeout(() => this.leave(), 600)
   },
 
   onGuest() {

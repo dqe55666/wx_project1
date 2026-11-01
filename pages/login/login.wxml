@@ -20,13 +20,38 @@
     <view class="panel-title">医伴心途</view>
     <view class="panel-sub">陪您和家人，安心看每一次病</view>
 
+    <!-- 头像昵称填写（微信已收回 getUserProfile，用官方填写能力） -->
+    <view class="profile-row">
+      <button
+        class="avatar-btn"
+        open-type="chooseAvatar"
+        bind:chooseavatar="onChooseAvatar"
+        hover-class="tap-soft"
+        hover-stay-time="80"
+      >
+        <image class="avatar-img" src="{{avatarUrl}}" mode="aspectFill" />
+        <view class="avatar-edit"><text class="avatar-edit-txt">{{avatarPicked ? '换头像' : '选头像'}}</text></view>
+      </button>
+      <view class="nick-box">
+        <text class="nick-label">昵称</text>
+        <input
+          class="nick-input"
+          type="nickname"
+          placeholder="请输入您的昵称"
+          placeholder-class="nick-ph"
+          value="{{nickname}}"
+          bindinput="onNickInput"
+          bindblur="onNickInput"
+        />
+      </view>
+    </view>
+
     <button
       class="login-btn"
       hover-class="btn-hover"
       hover-stay-time="80"
-      loading="{{authorizing}}"
       bindtap="onLogin"
-    >微信授权登录</button>
+    >登录</button>
 
     <view class="agree">
       <view class="agree-toggle" hover-class="tap-dim" hover-stay-time="80" bindtap="toggleAgree">

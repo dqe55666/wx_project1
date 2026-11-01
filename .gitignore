@@ -18,3 +18,7 @@ __pycache__/
 .venv/
 .env
 image_date/
+
+# WorkBuddy 会话文件
+.*.genie
+.workbuddy/
