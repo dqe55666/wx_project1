@@ -33,6 +33,14 @@ def git(*args):
     return p.stdout.decode('utf-8', 'replace')
 
 
+def git_raw(*args, data=None):
+    """git 子命令，stdin 可传原始字节（如 hash-object 写 commit 对象），返回 stdout 字节"""
+    p = subprocess.run(['git', '-C', PROJ] + list(args), input=data, capture_output=True)
+    if p.returncode != 0:
+        raise RuntimeError('git %s 失败: %s' % (' '.join(args), p.stderr.decode('utf-8', 'replace')))
+    return p.stdout
+
+
 def get_token():
     p = subprocess.run(['git', '-C', PROJ, 'credential', 'fill'],
                        input=b'protocol=https\nhost=github.com\n\n', capture_output=True)
@@ -188,7 +196,7 @@ if remote_commit != head:
     if rebuilt != remote_commit:
         raise SystemExit(u'❌ 重建的远端 commit SHA 不一致（%s ≠ %s），中止对齐，'
                          u'本地保持 HEAD=%s，请手动处理' % (rebuilt, remote_commit, head))
-    git('hash-object', '-t', 'commit', '-w', '--stdin', data=rebuild)
+    git_raw('hash-object', '-t', 'commit', '-w', '--stdin', data=rebuild)
     git('update-ref', 'refs/heads/master', remote_commit)
     git('reset', '--hard', 'master')      # 对象已存在且 tree 与原 HEAD 相同，工作区不变
     git('update-ref', 'refs/remotes/origin/master', remote_commit)
